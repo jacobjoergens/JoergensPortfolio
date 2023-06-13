@@ -1,15 +1,29 @@
 import Image from 'next/image'
-import type { AppProps } from "next/app";
 import Layout from "../components/layout/Layout";
+import styles from '../styles/pages/home.module.css'
+import Footer from '@/components/layout/Footer';
 
 const Home = () => {
   return (
     <Layout>
-      <div className="container mx-auto">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Next.js!</h1>
-        <p className="text-lg">
-          Edit <code>app/pages/index.tsx</code> and save to reload.
-        </p>
+      <div className="main-content mx-auto">
+        <div className={styles.profilepic}>
+          <Image
+            src='/images/JacobJoergens.jpg'
+            alt='Jacob Joergens'
+            width={500}
+            height={300}
+          />
+        </div>
+        <div className={styles.profilepic}>
+          <Image
+            src='/images/JacobJoergens.jpg'
+            alt='Jacob Joergens'
+            width={500}
+            height={300}
+          />
+        </div>
+        <Footer/>
       </div>
     </Layout>
   );

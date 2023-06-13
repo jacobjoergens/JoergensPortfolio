@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import { useWindowSize } from '../../hooks/useWindowSize';
-import { XMarkIcon, Bars4Icon } from '@heroicons/react/24/outline';
+import { Bars4Icon } from '@heroicons/react/24/outline';
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,24 +22,23 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="flex">
-      {isMobileView && (
-        <>
-          {!isSidebarOpen ? (
-            <button className="toggle-button" onClick={handleToggleSidebar} aria-label="Open Sidebar">
-              <Bars4Icon className="h-6 w-6" />
-            </button>
-          ) : (
-            <button className="toggle-button" onClick={handleCloseSidebar} aria-label="Close Sidebar">
-              <XMarkIcon className="h-6 w-6" />
-            </button>
-          )}
-        </>
-      )}
-      <Sidebar isSidebarOpen={isSidebarOpen} onCloseSidebar={handleCloseSidebar} />
-      <div className={`flex-grow ${isMobileView && isSidebarOpen ? 'w-full' : ''}`}>{children}</div>
+    <div className="layout">
+      <header className={`header ${isMobileView ? '':'with-sidebar'}`}>
+        {isMobileView && (
+          <button className="toggle-button" onClick={handleToggleSidebar} aria-label="Toggle Sidebar">
+            <Bars4Icon className="menuicon noSelect h-6 w-6" />
+          </button>
+        )}
+        <p className="title">Jacob Joergens</p>
+      </header>
+      <div className="content-wrapper">
+        <Sidebar isSidebarOpen={isSidebarOpen} onCloseSidebar={handleCloseSidebar} />
+        <div className={`flex-grow  ${isMobileView && isSidebarOpen ? 'w-full' : ''}`}>{children}</div>
+      </div>
     </div>
   );
 };
 
 export default Layout;
+
+

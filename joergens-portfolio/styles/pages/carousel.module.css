@@ -1,0 +1,12 @@
+.carousel-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .carousel .thumbs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }

@@ -1,5 +1,7 @@
-import React from 'react';
-import Link from 'next/link';
+// import React from 'react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import Navigation from './Navigation';
+import { allCategories } from 'contentlayer/generated';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -7,20 +9,13 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isSidebarOpen, onCloseSidebar }: SidebarProps) => {
-  const sidebarItems = [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-  ];
-
   return (
-    <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <div className="sidebar-content">
-        <ul className="sidebar-menu">
-          <li className="sidebar-menu-item">Item 1</li>
-          <li className="sidebar-menu-item">Item 2</li>
-          <li className="sidebar-menu-item">Item 3</li>
-        </ul>
+    <div className='sidebar-wrapper'>
+      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <button className="icon" onClick={onCloseSidebar} aria-label="Close Sidebar">
+          <XMarkIcon className="icon noSelect h-6 w-6" />
+        </button>
+        <Navigation listStyle='sidebar-items' linkStyle='sidebar-item' allItems={allCategories}/>
       </div>
     </div>
   );

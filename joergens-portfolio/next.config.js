@@ -1,4 +1,14 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+    experimental: {
+        mdxRs: true,
+      },
+      reactStrictMode: true, 
+      swcMinify: true
+}
 
-module.exports = nextConfig
+const withMDX = require('@next/mdx')()
+
+const { withContentlayer } = require("next-contentlayer");
+
+module.exports = withContentlayer(withMDX(nextConfig));

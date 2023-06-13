@@ -12,6 +12,7 @@ import Link from "next/link";
 interface ProjectProps {
   params: {
     id: string;
+    category: string; 
   };
 }
 
@@ -38,15 +39,19 @@ async function getProjectFromParams(params: ProjectProps["params"]) {
 export async function generateStaticParams(): Promise<ProjectProps["params"][]> {
   return allProjects.map((project) => ({
     id: project.slugAsParams,
+    category: project.category,
   }));
 }
 
 export default function ProjectPage({ params }: ProjectProps) {
-  const currentProjectIndex = allProjects.findIndex((project) => project.slugAsParams === params.id);
-  const project = allProjects[currentProjectIndex]
+  const filteredProjects = allProjects.filter((project) => project.category === params.category);
+  const currentProjectIndex = filteredProjects.findIndex((project) => project.slugAsParams === params.id);
+  console.log('filtered length: ',filteredProjects.length);
+  console.log('current index: ',currentProjectIndex);
+  const project = filteredProjects[currentProjectIndex]
 
-  const nextProject = currentProjectIndex < allProjects.length - 1 ? allProjects[currentProjectIndex + 1] : null;
-  const previousProject = currentProjectIndex > 0 ? allProjects[currentProjectIndex - 1] : null;
+  const nextProject = currentProjectIndex < filteredProjects.length - 1 ? filteredProjects[currentProjectIndex + 1] : null;
+  const previousProject = currentProjectIndex > 0 ? filteredProjects[currentProjectIndex - 1] : null;
 
   if (!project) {
     return null;

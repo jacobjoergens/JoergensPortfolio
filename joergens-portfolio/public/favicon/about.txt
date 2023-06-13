@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Schibsted Grotesk
+- Font Author: Copyright 2023 The Schibsted-Grotesk Project Authors (https://github.com/schibsted/schibsted-grotesk)
+- Font Source: http://fonts.gstatic.com/s/schibstedgrotesk/v3/JqzK5SSPQuCQF3t8uOwiUL-taUTtarVKQ9vZ6pJJWlMNi8YAT8JuXFGVOQ.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

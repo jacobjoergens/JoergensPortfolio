@@ -1,11 +1,15 @@
 // import React from 'react';
+'use client'
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import Navigation from './Navigation';
-import { allCategories } from 'contentlayer/generated';
+import Link from 'next/link';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
   onCloseSidebar: () => void;
+}
+
+interface LabelProps {
+  label: string;
 }
 
 const Sidebar = ({ isSidebarOpen, onCloseSidebar }: SidebarProps) => {
@@ -15,7 +19,18 @@ const Sidebar = ({ isSidebarOpen, onCloseSidebar }: SidebarProps) => {
         <button className="icon" onClick={onCloseSidebar} aria-label="Close Sidebar">
           <XMarkIcon className="icon noSelect h-6 w-6" />
         </button>
-        <Navigation listStyle='sidebar-items' linkStyle='sidebar-item' allItems={allCategories}/>
+        <div className="navlist">
+          <ul className='sidebar-items'>
+              <li>
+                <Link className='sidebar-item' href={'woodwork'}>
+                  Woodworking
+                </Link>
+                <Link className='sidebar-item' href={'computational-design'}>
+                  Computational{'\n'}Design
+                </Link>
+              </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

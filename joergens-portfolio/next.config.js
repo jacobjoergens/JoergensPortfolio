@@ -3,7 +3,7 @@ const nextConfig = {
     experimental: {
         mdxRs: true,
       },
-      reactStrictMode: true, 
+      // reactStrictMode: true, 
       swcMinify: true
 }
 

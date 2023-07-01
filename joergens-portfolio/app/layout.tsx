@@ -1,6 +1,7 @@
 import './globals.css'
 import { Schibsted_Grotesk } from 'next/font/google'
-import Link from 'next/link'
+import Script from 'next/script'
+import Footer from '@/components/layout/Footer'
 
 const grotesk = Schibsted_Grotesk({
   subsets: ['latin'],
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={grotesk.className}>
         {children}
+        <Footer/>
       </body>
     </html>
   )

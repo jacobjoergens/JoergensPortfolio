@@ -1,31 +1,33 @@
 'use client'
-import { Project } from "contentlayer/generated";
 import { useState } from "react";
 import styles from "@/styles/pages/project.module.css";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 interface CarouselProps {
-    project: Project;
+    images: string[];
 }
-const Carousel = ({ project }: CarouselProps) => {
+
+const Carousel = ({ images }: CarouselProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const showImage = (index: number) => {
+    const showImage = async (index: number) => {
         setCurrentIndex(index);
     };
 
     const prevImage = () => {
-        if (project.images && project.images.length > 1) {
-            const newIndex = (currentIndex - 1 + project.images.length) % project.images.length;
+        if (images && images.length > 1) {
+            const newIndex = (currentIndex - 1 + images.length) % images.length;
             setCurrentIndex(newIndex);
+            showImage(newIndex);
         }
     };
 
     const nextImage = () => {
-        if (project.images && project.images.length > 1) {
-            const newIndex = (currentIndex + 1) % project.images.length;
+        if (images && images.length > 1) {
+            const newIndex = (currentIndex + 1) % images.length;
             setCurrentIndex(newIndex);
+            showImage(newIndex);
         }
     };
 
@@ -45,7 +47,7 @@ const Carousel = ({ project }: CarouselProps) => {
                         />
                 </button>
                 <div className={`noSelect ${styles.carouselImageContainer} `}>
-                    {project.images?.map((image, index) => (
+                    {images?.map((image, index) => (
                         <div
                             className={`${styles.carouselSlide} ${currentIndex === index ? styles.active : ''}`}
                             key={index}
@@ -53,8 +55,10 @@ const Carousel = ({ project }: CarouselProps) => {
                             <Image
                                 className='image'
                                 src={image}
-                                alt={project.title}
-                                fill={true}
+                                alt={`Image @ ${index}`}
+                                width={900} 
+                                height={600}
+                                // fill={true}
                             />
                         </div>
                     ))}
@@ -63,16 +67,16 @@ const Carousel = ({ project }: CarouselProps) => {
                     aria-label="Next"
                     className={`${styles.carouselButton}`}
                     onClick={nextImage}
-                    disabled={currentIndex === project.images?.length - 1}
+                    disabled={currentIndex === images?.length - 1}
                 >
                     <ChevronRightIcon 
                         className={`noSelect h-10 w-10`} 
-                        stroke={currentIndex === project.images?.length - 1 ? 'transparent' : 'gray'} 
+                        stroke={currentIndex === images?.length - 1 ? 'transparent' : 'gray'} 
                         />
                 </button>
             </div>
             <ul className={styles.thumbnailIndicators}>
-                {project.images?.map((image, index) => (
+                {images?.map((image, index) => (
                     <li
                         className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
                         key={index}

@@ -13,17 +13,14 @@ const computedFields = {
   },
 }
 
-export const Project = defineDocumentType(() => ({
-  name: "Project",
-  filePathPattern: `projects/**/*.mdx`,
+export const WoodworkingProject = defineDocumentType(() => ({
+  name: "WoodworkingProject",
+  filePathPattern: `woodworking-projects/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
       type: "string",
       required: true,
-    },
-    category:{
-      type: "string",
     },
     images: {
       type: 'list',
@@ -43,20 +40,23 @@ export const Project = defineDocumentType(() => ({
   computedFields,
 }))
 
-export const Category = defineDocumentType(() => ({
-  name: "Category",
-  filePathPattern: `categories/**/*.mdx`,
+export const ComputationalProject = defineDocumentType(() => ({
+  name: "ComputationalProject",
+  filePathPattern: `computational-projects/**/*.mdx`,
   contentType: "mdx",
   fields: {
     title: {
       type: "string",
       required: true,
     },
+    description: {
+      type: "string"
+    }
   },
   computedFields,
 }))
 
 export default makeSource({
   contentDirPath: path.resolve('content'),
-  documentTypes: [Project, Category],
+  documentTypes: [WoodworkingProject,ComputationalProject],
 })

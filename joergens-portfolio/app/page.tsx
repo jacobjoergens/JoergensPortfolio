@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Layout from "../components/layout/Layout";
 import styles from '../styles/pages/home.module.css'
-import Footer from '@/components/layout/Footer';
 
 const Home = () => {
   return (
@@ -23,7 +22,6 @@ const Home = () => {
             height={300}
           />
         </div>
-        <Footer/>
       </div>
     </Layout>
   );

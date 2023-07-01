@@ -96,7 +96,7 @@ footer {
   white-space: pre-line;
   justify-content: center;
   line-height: 1;
-  font-size: 8cqw;
+  font-size: 1em;
   color: gray;
 }
 
@@ -107,6 +107,7 @@ footer {
   justify-content: right;
   align-items: flex-end;
   text-align: end;
+  font-size: 150%;
 }
 .sidebar-item:hover {
   color: black;
@@ -129,6 +130,21 @@ footer {
   flex: 1;
   flex-direction: column;
   overflow-y: auto;
+}
+
+.backButton {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin: 0.5rem;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.backButton:hover {
+  color: pink;
 }
 
 /* Media query for mobile view */
@@ -185,7 +201,6 @@ footer {
 
 /* Hide blue highlights on buttons */
 .noSelect {
-  -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;

@@ -20,17 +20,21 @@
     "@types/ws": "^8.5.5",
     "autoprefixer": "10.4.14",
     "classnames": "^2.3.2",
+    "compute-rhino3d": "^0.13.0-beta",
     "contentlayer": "^0.3.2",
+    "encoding": "^0.1.13",
     "eslint": "8.40.0",
     "eslint-config-next": "^13.4.3",
     "mock-fs": "^5.2.0",
-    "next": "^13.4.3",
+    "next": "^13.4.7",
     "next-contentlayer": "^0.3.2",
+    "node-fetch": "^3.3.1",
     "postcss": "8.4.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",
     "react-responsive-carousel": "^3.2.23",
+    "rhino3dm": "^8.0.0-beta",
     "tailwindcss": "3.3.2",
     "three": "^0.153.0",
     "typescript": "5.0.4",
@@ -38,6 +42,7 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
-    "@types/three": "^0.152.1"
+    "@types/three": "^0.152.1",
+    "copy-webpack-plugin": "^11.0.0"
   }
 }

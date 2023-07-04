@@ -1,10 +1,26 @@
 /** @type {import('next').NextConfig} */
+const CopyPlugin = require("copy-webpack-plugin");
+
 const nextConfig = {
     experimental: {
         mdxRs: true,
       },
       // reactStrictMode: true, 
-      swcMinify: true
+      swcMinify: true,
+      webpack: (config) => {
+    
+        config.resolve.fallback = { fs: false };
+    
+        config.plugins.push(
+          new CopyPlugin({
+            patterns: [
+              { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "app/api/loadGrasshopper"}
+            ]
+          })
+        )
+    
+        return config;
+      }
 }
 
 const withMDX = require('@next/mdx')()

@@ -1,12 +1,13 @@
 'use client'
 import { notFound } from "next/navigation";
 import { allWoodworkingProjects, WoodworkingProject } from "contentlayer/generated";
-import styles from "@/styles/pages/project.module.css";
+import styles from "@/styles/pages/woodworking.module.css";
 import React from "react";
 import Carousel from "@/components/layout/Carousel";
 import { ArrowUturnLeftIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-
+import { useMDXComponent } from "next-contentlayer/hooks";
+import Footer from "@/components/layout/Footer";
 
 interface ProjectProps {
   params: {
@@ -43,8 +44,10 @@ export default function ProjectPage({ params }: ProjectProps) {
     var href = '/woodwork'
   }
 
+  const MDXContent = useMDXComponent(project.body.code)
+
   return (
-    <div>
+    <div className={styles.mainContainer}>
       <div className={styles.header}>
         <h1 className={formatLinkLabel(styles.title)}>{project.title}</h1>
         <Link className={`noSelect backButton`} href={href}>
@@ -52,12 +55,9 @@ export default function ProjectPage({ params }: ProjectProps) {
         </Link>
       </div>
       <Carousel images={project.images}/>
-      <h2 className={styles.sectionHeader}> Material: </h2>
-      <p className={styles.section}>  {project.material}</p>
-      <h2 className={styles.sectionHeader}> Dimensions: </h2>
-      <p className={styles.section}>  {project.dimensions}</p>
-      <h2 className={styles.sectionHeader}> Description: </h2>
-      <p className={styles.section}> {project.description}</p>
+      <div className={styles.content}>
+        <MDXContent />
+      </div>
       <div className={styles.pagination}>
         {previousProject &&
           <Link className={`noSelect ${styles.pageButton}`} href={'/woodwork/' + previousProject?.slugAsParams}>
@@ -71,6 +71,7 @@ export default function ProjectPage({ params }: ProjectProps) {
           </Link>
         }
       </div>
+      <Footer style={styles.footer}/>
     </div>
   );
 }

@@ -1,38 +1,49 @@
 // import React from 'react';
 'use client'
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import styles from "styles/components/sidebar.module.css"
+import { Bars4Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
-  onCloseSidebar: () => void;
+  handleToggleSidebar: () => void;
 }
 
 interface LabelProps {
   label: string;
 }
 
-const Sidebar = ({ isSidebarOpen, onCloseSidebar }: SidebarProps) => {
+const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
   return (
-    <div className='sidebar-wrapper'>
-      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <button className="icon" onClick={onCloseSidebar} aria-label="Close Sidebar">
-          <XMarkIcon className="icon noSelect h-6 w-6" />
+      <div className={isSidebarOpen ? styles.sidebar + ' ' + styles.open : styles.sidebar}>
+        <button className={styles.icon} onClick={handleToggleSidebar} aria-label="Close Sidebar">
+          {isSidebarOpen ?
+            (<XMarkIcon className=" h-6 w-6" />)
+            :
+            (<Bars4Icon className=" h-6 w-6" />)
+          }
         </button>
-        <div className="navlist">
-          <ul className='sidebar-items'>
+
+        {isSidebarOpen && (
+          <div className={styles.navlist}>
+            <ul className={styles.sidebarItems}>
               <li>
-                <Link className='sidebar-item' href={'woodwork'}>
+                <Link className={styles.sidebarItem} href={'/'}>
+                  About{'\n'}Me
+                </Link>
+              </li>
+              <li>
+                <Link className={styles.sidebarItem} href={'woodwork'}>
                   Woodworking
                 </Link>
-                <Link className='sidebar-item' href={'computational-design'}>
+                <Link className={styles.sidebarItem} href={'computational-design'}>
                   Computational{'\n'}Design
                 </Link>
               </li>
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
       </div>
-    </div>
   );
 };
 

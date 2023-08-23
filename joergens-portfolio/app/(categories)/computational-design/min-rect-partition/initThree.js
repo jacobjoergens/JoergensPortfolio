@@ -1,18 +1,9 @@
 'use client'
 import * as THREE from 'three';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
-import styles from 'styles/pages/min-rect.module.css'
+import styles from 'styles/pages/computational.module.css'
 export var scene, camera, renderer, controls
 
-/**
- * Shows or hides the loading spinner
- */
-export function showSpinner(enable) {
-    // if (enable)
-    //     styles.loader.display = 'block'
-    // else
-    //     styles.loader.display = 'none'
-}
 
 export async function init() {
     // Create the scene, camera, and renderer
@@ -29,7 +20,6 @@ export async function init() {
   
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     const canvas = document.getElementById('canvas');
-    console.log(canvas)
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: canvas });
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(canvas.offsetWidth,  canvas.offsetHeight)

@@ -3,7 +3,8 @@ import { scene, camera, renderer, controls } from './initThree.js'
 export let crvPoints = []
 
 
-let lineColor = 333333; 
+const solidColor = 0xdd6858;
+const dottedColor = 0xd83012;
 
 let dottedGeometry, dottedLine
 let crossings = new THREE.Group()
@@ -19,27 +20,70 @@ export let curves = new THREE.Group();
 let h_snapLine = [];
 let v_snapLine = [];
 
-function init(point){
+let last_direction;
+
+const cardinal = [
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(-1, 0, 0),
+    new THREE.Vector3(0, 1, 0),
+    new THREE.Vector3(0, -1, 0)
+];
+
+export function onEsc() {
+    if (last_direction.y == 0) {
+        v_snapLine.splice(-2);
+        h_snapLine.pop();
+    } else {
+        h_snapLine.splice(-2);
+        v_snapLine.pop();
+    }
+
+    const nextVertex = vertices.pop();
+    updateDottedGeometry(vertices[vertices.length - 1], nextVertex);
+    updateSolidLine();
+    crvPoints[crvPoints.length - 1].pop();
+}
+
+export function reset() {
+    crvPoints = []
+
+    dottedGeometry = null; 
+    dottedLine = null;
+    crossings = new THREE.Group()
+    previewGroup = null;
+    solidGeometry = null;
+    solidLine = null;
+
+    vertices = [];
+    curves = new THREE.Group();
+
+    h_snapLine = [];
+    v_snapLine = [];
+
+    last_direction = null; 
+}
+
+function init(point) {
     dottedGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(point.x, point.y, 0),
         new THREE.Vector3(point.x, point.y, 0)
     ]);
-    
+
     const dottedMaterial = new THREE.LineDashedMaterial({
-        color: lineColor,
-        scale: 1, 
+        color: dottedColor,
+        scale: 1,
         dashSize: 0.25,
         gapSize: 0.25,
         opacity: 0.75,
         transparent: true
     });
-    
+
     dottedLine = new THREE.Line(dottedGeometry, dottedMaterial);
     dottedLine.computeLineDistances();
-    
+
     solidGeometry = new THREE.BufferGeometry();
     solidGeometry.setAttribute('position', new THREE.Float32BufferAttribute([], 3));
-    const solidMaterial = new THREE.LineBasicMaterial({ color: lineColor });
+    const solidMaterial = new THREE.LineBasicMaterial({ color: solidColor });
     solidLine = new THREE.LineSegments(solidGeometry, solidMaterial);
 
     scene.add(dottedLine);
@@ -52,7 +96,6 @@ export function onMouseDown(event) {
     if (crossings.children.length > 0) {
         crossings.traverse((child) => {
             if (child instanceof THREE.Sprite) {
-                console.log(child.material.color)
                 if (child.material.color.equals(new THREE.Color('green'))) {
                     closePolygon();
                 } else {
@@ -149,9 +192,8 @@ export function onMouseMove(event) {
             const snaplines = snapSet[0].map(el => el[0]);
             snap_intersects = orthocaster.intersectObjects(snaplines);
             // if (snap_intersects && snap_intersects[0] && snap_intersects[0].distance < .025) {
-            if(snap_intersects && snap_intersects[0]){
-                if(snap_intersects[0].point.clone().project(camera).distanceTo(nextVertex.clone().project(camera)) * window.innerWidth / 2 < 10){
-                    console.log("snapped")
+            if (snap_intersects && snap_intersects[0]) {
+                if (snap_intersects[0].point.clone().project(camera).distanceTo(nextVertex.clone().project(camera)) * window.innerWidth / 2 < 10) {
                     orthogonal_vertex = drawPreview(snap_intersects[0].object, lastVertex);
                     if (orthogonal_vertex) {
                         order[order.indexOf(point)] = orthogonal_vertex;
@@ -166,12 +208,12 @@ export function onMouseMove(event) {
         intersect_caster.near = 0.00001;
         intersect_caster.params = { Line: { threshold: 0, useVertices: false } }; // Only check for intersections with lines
         if (vertices.length > 3) {
-            intersects = intersect_caster.intersectObjects([solidLine, curves],true);
+            intersects = intersect_caster.intersectObjects([solidLine, curves], true);
             if (intersects && intersects.length > 0) {
                 for (const intersect of intersects) {
                     if (intersect.distance <= current_distance) {
                         // if (nextVertex.distanceTo(vertices[0]) <= .001) {
-                        if(nextVertex.clone().project(camera).distanceTo(vertices[0].clone().project(camera)) * window.innerWidth / 2 < 10){
+                        if (nextVertex.clone().project(camera).distanceTo(vertices[0].clone().project(camera)) * window.innerWidth / 2 < 10) {
                             const circle = drawCircle(intersect.point, 'green', true);
                             crossings.add(circle);
                             crossings.visible = true;
@@ -232,9 +274,9 @@ function updateSolidLine() {
     solidLine.geometry.boundingSphere = null;
     solidLine.geometry.attributes.position.needsUpdate = true;
 
-    if(vertices.length>1){
+    if (vertices.length > 1) {
         const positions = solidLine.geometry.attributes.position.array;
-        const recent = positions.slice(positions.length-6)
+        const recent = positions.slice(positions.length - 6)
         const start = new THREE.Vector3(recent[0], recent[1], recent[2]);
         const end = new THREE.Vector3(recent[3], recent[4], recent[5]);
         const newSegment = new THREE.Line3(start, end);
@@ -245,15 +287,8 @@ function updateSolidLine() {
 function setSnapLines(vertex, lastVertex, secondLast) {
     const material = new THREE.LineBasicMaterial({ color: 0xb8a5a3, opacity: 0.25, transparent: true });
 
-    const cardinal = [
-        new THREE.Vector3(1, 0, 0),
-        new THREE.Vector3(-1, 0, 0),
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Vector3(0, -1, 0)
-    ];
-
     //get unviable directions
-    const last_direction = new THREE.Vector3().subVectors(vertex, lastVertex).normalize().round();
+    last_direction = new THREE.Vector3().subVectors(vertex, lastVertex).normalize().round();
     let second_direction;
 
     if (secondLast != null) {
@@ -294,11 +329,10 @@ function setSnapLines(vertex, lastVertex, secondLast) {
 
 function closePolygon() {
     // close polygon
-    console.log('closing')
     vertices.push(vertices[0]);
     crvPoints[crvPoints.length - 1].push(vertices[0].toArray())
     updateSolidLine(vertices);
-    const curveMaterial = new THREE.LineBasicMaterial({ color: 'green' });
+    const curveMaterial = new THREE.LineBasicMaterial({ color: solidColor });
     const curveGeometry = solidGeometry.clone();
     const curve = new THREE.LineSegments(curveGeometry, curveMaterial);
     curves.add(curve);
@@ -310,7 +344,7 @@ function closePolygon() {
         crossings.remove(crossings.children[0]);
     }
     dottedGeometry.setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0)]);
-    document.getElementById('computeButton').disabled = false; 
+    // document.getElementById('computeButton').disabled = false; 
 }
 
 
@@ -351,7 +385,7 @@ function drawCircle(vertex, color, visibility) {
     // Add the sprite to the scene
     circle.position.set(vertex.x, vertex.y, 0);
     circle.visible = visibility;
-    return(circle)
+    return (circle)
 }
 
 function updateDottedGeometry(lastVertex, nextVertex) {
@@ -364,8 +398,8 @@ function updateDottedGeometry(lastVertex, nextVertex) {
     positionAttribute.setXYZ(1, nextVertex.x, nextVertex.y, nextVertex.z);
 
     const updatedMaterial = new THREE.LineDashedMaterial({
-        color: lineColor,
-        scale: 1, 
+        color: dottedColor,
+        scale: 1,
         dashSize: dashSize,
         gapSize: gapSize,
         opacity: 0.75,

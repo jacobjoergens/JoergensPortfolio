@@ -1,0 +1,130 @@
+.carousel { 
+    width: 30vw;
+    border-right: 1px dashed #000000;
+    /* border-radius: 1rem; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 1rem;
+    height: 100%;
+    /* margin: 1rem 0rem 1rem 1rem; */
+}
+
+.graphCarouselSlideContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    object-fit: fill;
+}
+
+.graphCarouselSlideContainer.hidden{
+    display: none;
+    flex-shrink: 0;
+}
+
+.carouselButton {
+    position: relative;
+    display: flex;
+    z-index: 300;
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
+    justify-content: center;
+    align-items: center;
+}
+
+.carouselButton:disabled{
+    visibility: hidden;
+}
+
+.carouselImageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 80%;
+    padding: 0;
+    object-fit: fill;
+}
+
+.carouselSlide {
+    position: absolute;
+    width: 80%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    padding: 0;
+}
+
+.carouselSlide.active {
+    opacity: 1;
+}
+
+.carouselImageContainer img {
+    width: 80%;
+    height: 100%;
+    object-fit: contain;
+    padding:0;
+}
+
+.thumbnailIndicators {
+    position: fixed;
+    width: 22vw;
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* list-style-type: none; */
+    padding-top: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    object-fit: fill;
+    z-index: 100;
+    /* left: 0;  */
+}
+
+.thumbnailIndicator {
+    padding: 0 0.5rem;
+}
+
+.thumbnailIndicator button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.thumbnailImageContainer {
+    position: relative;
+    width: 50px;
+    height: 50px;
+}
+
+.thumbnailImageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.thumbnailIndicator.active img {
+    opacity: 0.9;
+
+}
+
+.thumbnailIndicator img {
+    opacity: 0.3;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem; 
+    justify-content: center;
+}

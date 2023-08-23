@@ -34,7 +34,11 @@
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.7",
     "react-responsive-carousel": "^3.2.23",
+    "react-select": "^5.7.4",
+    "rehype-katex": "^6.0.3",
+    "remark-math": "^5.1.1",
     "rhino3dm": "^8.0.0-beta",
+    "stream": "^0.0.2",
     "tailwindcss": "3.3.2",
     "three": "^0.153.0",
     "typescript": "5.0.4",
@@ -42,7 +46,9 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
+    "@types/dat.gui": "^0.7.10",
     "@types/three": "^0.152.1",
-    "copy-webpack-plugin": "^11.0.0"
+    "copy-webpack-plugin": "^11.0.0",
+    "dat.gui": "^0.7.9"
   }
 }

@@ -1,0 +1,296 @@
+.loader {
+    border: 5px solid #2d3a48;
+    border-top: 5px solid #25684c;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+}
+
+.header {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    /* margin-bottom: 1rem; */
+    color: var(--secondary-color);
+    background-color: var(--background-color);
+}
+
+.title {
+    position: relative;
+    margin: 0.5rem;
+    font-size: 3rem;
+    white-space: pre-line;
+    text-align: justify;
+    line-height: 1;
+}
+
+.mainContainer {
+    display: flex;
+    /* overflow: hidden; */
+    flex-direction: column;
+    flex-grow: 1;
+    /* height: 100vh; */
+    color: var(--primary-color);
+    background-color: var(--background-color);
+}
+
+.contentContainer {
+    display: flex;
+    flex-direction: column;
+    /* overflow: hidden; */
+    flex-grow: 1;
+    width: 100%;
+}
+
+.canvasContainer {
+    /* flex-grow: 1; */
+    max-width: 100%;
+    position: relative;
+    margin: 1em;
+    margin-bottom: 2em;
+    border-radius: 1em;
+    background-color: #080f0e;
+    border: 1px solid #000000;
+    height: 100%;
+}
+
+.mainCanvas {
+    position: relative;
+    /* z-index: 1; */
+    width: 100%;
+    max-height: 100%;
+    height: 100%;
+}
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.GUI {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    /* height: 50%; */
+    width: 20%;
+    border: 1px solid var(--primary-color);
+    border-radius: 1em;
+    z-index: 100;
+    color: var(--primary-color);
+    /* height: 50vw; */
+    /* overflow-y: auto; */
+}
+
+.GUISections{
+    overflow-y: auto;
+}
+.titleGUI {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+.titleGUI>button {
+    display: flex;
+    flex-direction: row;
+}
+
+.categories {
+    /* height: 50px; */
+    padding-bottom: 1em;
+}
+
+.sectionHeader>button {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0.5em;
+    padding-bottom: 1em;
+}
+
+.slider {
+    /* height: 100%; */
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-left: 2em;
+}
+
+.sliderInput {
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Styles for the range input */
+.rangeInput {
+    color:  var(--primary-color);
+    -webkit-appearance: none;
+    /* Remove default styling */
+    width: 75%;
+    /* Set the width of the range input */
+    height: 10px;
+    /* Set the height of the range input */
+    background: transparent;
+    /* Set a transparent background */
+    padding: 10%;
+}
+
+/* Styling the track */
+.rangeInput::-webkit-slider-runnable-track {
+    background: var(--primary-color);
+    /* Set the background color of the track */
+    height: 3px;
+    /* Set the height of the track */
+    border-radius: 1px;
+    /* Set the border radius to create rounded ends */
+}
+
+/* Styling the thumb */
+.rangeInput::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* Remove default styling */
+    width: 10px;
+    /* Set the width of the thumb */
+    height: 10px;
+    /* Set the height of the thumb */
+    background: var(--primary-color);
+    /* Set the background color of the thumb */
+    border-radius: 50%;
+    /* Create a circular shape for the thumb */
+    cursor: pointer;
+    /* Add a cursor on hover */
+    margin-top: -4px;
+    /* Adjust the vertical position of the thumb */
+}
+
+.content {
+    position: relative;
+    margin: 1rem;
+}
+
+@media (min-width: 768px){
+    .mainContainer {
+        justify-content: center;
+        align-items: center;
+    }
+    .content {
+        justify-content: center;
+        width: 50%;
+        margin: 3rem;
+    }
+
+    .content>blockquote {
+        margin: 2rem; 
+        padding: 1rem 3rem 1rem 3rem;
+    }
+
+    .content>figure {
+        padding: 1rem 3rem 1rem 3rem;
+    }
+    
+}
+
+.content>p {
+    position: relative;
+    margin-left: 1rem;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.content>figure {
+    padding: 0.5rem;
+    border: 1px dotted var(--secondary-color);
+    border-radius: 1em;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.content>figure>figcaption {
+    display: block;
+    font-style: italic;
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.content>figure>img {
+    display: block;
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    /* margin-top: 1rem; */
+}
+
+.content>blockquote {
+    margin: 1rem; 
+    padding: 1rem;
+    border: 1px dotted var(--secondary-color);
+    border-radius: 1em;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+.pagination { 
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    font-size: 2rem;
+    justify-content: space-between;
+    padding: 1rem;
+    padding-top: 2rem;
+    background-color: var(--background-color);
+}
+
+.pageButton{ 
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: 1;
+    justify-content: flex-end;
+    color: var(--secondary-color)
+}
+
+.nextPage{
+    display: flex;
+    text-align: right;
+}
+
+.pageButton:hover {
+    color: var(--primary-color);
+}
+
+.footer{
+    background-color:var(--background-color);
+    color: var(--secondary-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: small;
+    padding: 10px;
+}
+
+.footer>p{
+    padding-right: 5px;
+}
+
+.footer>a:hover{
+    color:var(--primary-color);
+}

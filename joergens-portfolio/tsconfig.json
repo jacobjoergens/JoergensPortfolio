@@ -39,8 +39,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".contentlayer/generated"
-  ],
+    ".contentlayer/generated", "components/layout/GUI.js" ],
   "exclude": [
     "node_modules"
   ]

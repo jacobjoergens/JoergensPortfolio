@@ -1,9 +1,12 @@
 import Link from "next/link"
 
-const Footer = () => {
+interface StylesProp{
+    style: string;
+}
+const Footer = ({style}:StylesProp) => {
     return (
-        <footer>
-            <p className='copyright'> &copy; {new Date().getFullYear()} </p>
+        <footer className={style}>
+            <p> &copy; {new Date().getFullYear()} </p>
             <Link href="/"> Jacob Joergens</Link>
         </footer>
     )

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import path from "path";
+import styles from "styles/components/sidebar.module.css";
 
 interface LabelProps {
   label: string;
@@ -25,11 +26,11 @@ interface NavigationProps {
 
 const Navigation = ({ allItems, category, linkStyle, listStyle }: NavigationProps) => {
   return (
-    <div className="navlist">
-      <ul className={listStyle}>
+    <div className={styles.navlist}>
+      <ul className={styles.navItems}>
         {allItems.map((item, index) => (
           <li key={index}>
-            <Link className={linkStyle} href={category ? path.join(category, item.slugAsParams) : item.slugAsParams}>
+            <Link className={styles.navItem} href={category ? path.join(category, item.slugAsParams) : item.slugAsParams}>
               {formatLinkLabel(item.title)}
             </Link>
           </li>

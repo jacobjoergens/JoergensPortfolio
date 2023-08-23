@@ -1,11 +1,12 @@
+'use client'
+import { useEffect, useState } from "react";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { notFound } from "next/navigation"
 import { allWoodworkingProjects } from "contentlayer/generated"
 import Navigation from "@/components/layout/Navigation"
-import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
+import { ArrowUturnLeftIcon, Bars4Icon } from "@heroicons/react/24/outline"
 import Link from "next/link"
-import { Metadata } from "next"
-import { Mdx } from "@/components/mdx-components"
-import Image from "next/image"
+import Layout from "@/components/layout/Layout";
 
 interface projectProps {
   params: {
@@ -29,14 +30,14 @@ interface projectProps {
 //   }));
 // }
 
-export default async function projectPage({ params }: projectProps) {
+export default async function projectPage() {
   const href = '/'
+
   return (
     <div>
-      <Link className={`noSelect backButton`} href={href}>
-          <ArrowUturnLeftIcon className="h-8 w-8" /> Back
-      </Link>
-      <Navigation listStyle='sidebar-items' linkStyle='sidebar-item' category='woodwork' allItems={allWoodworkingProjects}/>
+      <Layout>
+        <Navigation listStyle='sidebar-items' linkStyle='sidebar-item' category='woodwork' allItems={allWoodworkingProjects}/>
+      </Layout>
     </div>
   )
 }

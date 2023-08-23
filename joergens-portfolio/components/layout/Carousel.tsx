@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import styles from "@/styles/pages/project.module.css";
+import styles from "@/styles/pages/woodworking.module.css";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 

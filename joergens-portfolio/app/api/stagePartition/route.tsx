@@ -16,7 +16,6 @@ async function sendStageMessage(data: any): Promise<any> {
     return new Promise((resolve, reject) => {
       ws.on('message', (message) => {
         const data = JSON.parse(message.toString());
-        // console.log('Received message:', data);
   
         if (data.type === 'stage') {
           resolve(data.message); // Resolve the Promise with the received message

@@ -1,108 +1,20 @@
 'use client'
-import styles from "styles/pages/min-rect.module.css"
-import * as THREE from "three";
-import { Suspense, useEffect, useState } from "react";
-import { init, showSpinner } from "./initThree.js";
-import { showPartition, switchDegSet, zoomToFit } from "./threeUI.js";
+import styles from "styles/pages/minrect.module.css"
+// import * as THREE from "three";
+import { useRef, useEffect, useState } from "react";
+import { init } from "./initThree.js";
+import { setInitValues, showPartition, switchDegSet, zoomToFit, createListeners } from "./threeUI.js";
 import GraphCarousel from "@/components/layout/GraphCarousel";
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { onMouseDown, onMouseMove, onMouseUp, crvPoints } from "./drawCurve.js";
-import { createListeners } from "./threeUI.js";
-
+import { ArrowRightIcon, ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+// import { onMouseDown, onMouseMove, onMouseUp, crvPoints } from "./drawCurve.js";
+import Link from "next/link.js";
+import Footer from "@/components/layout/Footer";
+import stagePartitioning from "@/components/fetching/stagePartitioning";
+import getPartition from "@/components/fetching/getPartition";
+import spinUpSocket from "@/components/fetching/spinUpSocket";
+import { reset, crvPoints } from "./drawCurve.js";
 
 let bipartite_figures: string[] = [];
-let setLength: number = 0;
-
-export async function spinUpSocket() {
-    const response = await fetch('/api/startServer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    });
-
-    console.log('RESPONSE: ', response)
-
-    if (response.ok) {
-        const data = await response.text();
-        console.log(data);
-        if (data === 'Connection established!') {
-            showSpinner(false);
-        }
-    } else {
-        console.error('Failed to spin up socket:', response.status);
-    }
-}
-
-export async function stagePartitioning() {
-    let areas: number[] = [];
-    // iterate over the curves
-    for (let i = 0; i < crvPoints.length; i++) {
-        const curve = crvPoints[i];
-        const numVertices = curve.length;
-        let signedArea = 0;
-
-        // iterate over the vertices of the curve and compute the signed area using cross products
-        for (let j = 0; j < numVertices; j++) {
-            const p1 = new THREE.Vector3(curve[j][0], curve[j][1], curve[j][2]);
-            const p2 = new THREE.Vector3(curve[(j + 1) % numVertices][0], curve[(j + 1) % numVertices][1], curve[(j + 1) % numVertices][2]);
-            signedArea += p1.x * p2.y - p2.x * p1.y;
-        }
-
-        if (signedArea < 0) {
-            curve.reverse();
-            signedArea *= -1;
-        }
-        areas.push(signedArea);
-    }
-    try {
-        const response = await fetch('/api/stagePartition', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                crvPoints: crvPoints,
-                k: 4,
-                areas: areas
-            })
-        })
-
-        console.log('response:', response)
-        if (response.ok) {
-            const data = await response.text();
-            const resData = JSON.parse(data);
-            console.log('resData:', resData)
-            bipartite_figures = resData.text.bipartite_figures; // addFigures(resData.bipartite_figures);
-            setLength = resData.text.setLength;
-            await showPartition(0);
-            console.log('bipfig length:', bipartite_figures.length)
-        } else {
-            console.error('Failed to stage partition:', response.status);
-        }
-    } catch (error) {
-        console.error('Error in stagePartition:', error);
-    }
-}
-
-export async function getPartition(partitionCache: any, degSetIndex: number, index: number) {
-    try {
-        const response = await fetch('/api/getPartition', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                index: index,
-                degSetIndex: degSetIndex
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.text();
-            const resData = JSON.parse(data);
-            partitionCache[degSetIndex][index] = resData.text;
-        } else {
-            console.error('Failed to get partition:', response.status);
-        }
-    } catch (error) {
-        console.error('Error in getPartition:', error);
-    }
-}
 
 function getCardinalAbbreviation(number: number): string {
     const suffixes = ['th', 'st', 'nd', 'rd'];
@@ -125,98 +37,194 @@ function getCardinalAbbreviation(number: number): string {
     return `${number}${suffix}`;
 }
 
-export default async function ProjectPage() {
-    let [message, setMessage] = useState('');
+function formatLinkLabel(label: string) {
+    const words = label.split(" ");
+    return words.join("\n");
+}
+
+export default function ProjectPage() {
+    const [applied, setApplied] = useState(0);
+    const [loading, setLoading] = useState(0);
     const [nonDegIndex, setNonDegIndex] = useState(0);
     const [degIndex, setDegIndex] = useState(0);
+    const [groupLength, setGroupLength] = useState(0);
+    const prevNonDegRef = useRef<number>(nonDegIndex);
 
-    // const handleComputeClick = async(): Promise<void> => {
-    //     setInitValues();
-    //     await stagePartitioning();
-    //     zoomToFit();
-    //     setMessage(1);
-    // }
+    useEffect(() => {
 
-    const handleDegChange = (index: number): void => {
-        switchDegSet(index);
-        setDegIndex(index);
+        async function applyPart() {
+            setInitValues();
+            const part_out = await stagePartitioning(crvPoints);
+            bipartite_figures = part_out.bipartite_figures;
+            setGroupLength(part_out.setLength);
+            // setLoading(0);
+            await showPartition(0);
+            zoomToFit();
+            setLoading(0);
+        }
+
+        async function applyReset() {
+            setInitValues();
+            reset();
+            init();
+            setLoading(0);
+        }
+
+        if (applied) {
+            applyPart();
+        } else {
+            applyReset();
+        }
+
+    }, [applied]);
+
+    const handleApply = (state: number): void => {
+        console.log(state);
+        setApplied(state);
+        setLoading(1);
     }
 
+    useEffect(() => {
+        async function change(){
+            await switchDegSet(degIndex);
+            setLoading(0);
+        }
+
+        if(applied){
+            change();
+        }
+    }, [degIndex])
+
+    const handleDegChange = (index: number): void => {
+        setDegIndex(index);
+        setLoading(1);
+    }
+
+    useEffect(() => {
+
+        async function change(){
+            let dir = (nonDegIndex-prevNonDegRef.current)>0;
+            await showPartition(dir ? 1 : -1);
+            prevNonDegRef.current = nonDegIndex;
+            setLoading(0);
+        }
+
+        if(applied){
+            change();
+        }
+    }, [nonDegIndex])
+
     const handleNonDegChange = (dir: number) => {
-        showPartition(dir)
+        setLoading(1);
         let newIndex = nonDegIndex + dir
-        if (newIndex > setLength) {
-            newIndex -= setLength + dir;
+        if (newIndex >= groupLength) {
+            newIndex = 0;
         } else if (newIndex < 0) {
-            newIndex += setLength - dir;
+            newIndex = groupLength - 1;
         }
         setNonDegIndex(newIndex);
     }
 
     useEffect(() => {
-        console.log('message value:',message)
-    },[message]);
-
-    useEffect(() => {
         const stageThree = async () => {
             await init(); // Call the init function when the component mounts
             await spinUpSocket();
-            await createListeners(setMessage);
+            await createListeners();
         }
         stageThree();
     }, []);
-    return (
-        <>
-            {/* <div className={styles.loader}></div> */}
-            <div className={styles.mainContainer} id='mainContainer'>
-                <div className={styles.computeContainer}>
-                    <p className={styles.title}> Minimum Rectangular Partitioning</p>
-                    <button
-                        // onClick={handleComputeClick}
-                        // disabled={true}
-                        className={styles.computeButton}
-                        id='computeButton'
-                    >
-                        Apply Partition
-                    </button>
-                </div>
-                <div className={styles.contentContainer}>
-                    {message && <GraphCarousel
-                        dataType="data:image/svg+xml;base64,"
-                        images={bipartite_figures}
-                        onImageChange={handleDegChange} />
-                    }
 
-                    <div className={styles.canvasContainer} id='canvas-container'>
-                        <canvas className={styles.mainCanvas} id='canvas'></canvas>
-                        {message && <div className={styles.nonDegNav}>
-                            <button
-                                type='button'
-                                color='red'
-                                id='prevButton'
-                                aria-label="Previous Partition"
-                                onClick={() => handleNonDegChange(-1)}
-                            >
-                                <ArrowLeftIcon className="noSelect h-6 w-12" />
-                            </button>
-                            <p>
-                                Partition {nonDegIndex + 1} of {setLength + 1} under {getCardinalAbbreviation(degIndex + 1)} nondegenerate set
-                            </p>
-                            <button
-                                type='button'
-                                color='red'
-                                id='nextButton'
-                                aria-label='Next Partition'
-                                onClick={() => handleNonDegChange(1)}
-                            >
-                                <ArrowRightIcon className="noSelect h-6 w-12" />
-                            </button>
+    const href = '/computational-design/'
+
+    return (
+        <div className={styles.mainContainer} id='mainContainer'>
+            <div className={styles.header}>
+                <h1 className={styles.title}>{formatLinkLabel('Minimum Rectangular Partitioning')}</h1>
+                <Link className={`noSelect backButton`} href={href}>
+                    <ArrowUturnLeftIcon className="h-8 w-8" /> Back
+                </Link>
+            </div>
+            <div className={styles.directionContainer}>
+                <div className={styles.bubble}>
+                    <div className={styles.bubbleTitle}> Description: </div>
+                    <p>
+                        The basic idea of this model is to determine the minimum number of rectangles
+                        required to tile an orthogonal (right-angle only) polygon. You can
+                        read the fuller explanation below to see why I came across this question, why I found it more
+                        difficult than it first appeared, and what I am trying currently working to extend it to.
+                    </p>
+                </div>
+                <div className={styles.bubble}>
+                    <div className={styles.bubbleTitle}> Directions: </div>
+                    <ul>
+                        <li> - Click anywhere on the canvas to place points </li>
+                        <li> - Return to your original point to close a shape </li>
+                        <li> - Snaplines will help you match endpoints </li>
+                        <li> - Intersections are not allowed and will be highlighted</li>
+                        <li> - Polygonal holes (shapes within shapes) are permitted </li>
+                        <li> - Shapes within holes are not understood </li>
+                    </ul>
+                </div>
+            </div>
+            <div className={styles.contentContainer}>
+                {applied ?
+                    (
+                        <GraphCarousel
+                            dataType="data:image/svg+xml;base64,"
+                            images={bipartite_figures}
+                            onImageChange={handleDegChange}
+                        />
+                    )
+                    :
+                    <div />
+                }
+                <div className={styles.canvasContainer} id='canvas-container'>
+                    {loading ?
+                        (<div className={styles.loadingContainer}>
+                            <div className={styles.loader} />
                         </div>
+                        ): ''}
+                    <canvas className={styles.mainCanvas} id='canvas'> </canvas>
+                    <div>
+                        {applied ?
+                            (<div className={styles.nav}>
+                                <button
+                                    type='button'
+                                    id='prevButton'
+                                    aria-label="Previous Partition"
+                                    onClick={() => handleNonDegChange(-1)}
+                                >
+                                    <ArrowLeftIcon className="noSelect h-6 w-12" />
+                                </button>
+                                <p>
+                                    Partition {nonDegIndex + 1} of {groupLength} under {getCardinalAbbreviation(degIndex + 1)} nondegenerate set
+                                </p>
+                                <button
+                                    type='button'
+                                    id='nextButton'
+                                    aria-label='Next Partition'
+                                    onClick={() => handleNonDegChange(1)}
+                                >
+                                    <ArrowRightIcon className="noSelect h-6 w-12" />
+                                </button>
+                            </div>)
+                            :
+                            <div />
                         }
                     </div>
                 </div>
             </div>
-        </>
+            <button
+                // onClick={handleComputeClick}
+                // disabled={true}
+                className={styles.computeButton}
+                // id='computeButton'
+                onClick={() => handleApply((applied+1)%2)}
+            >
+                {!applied ? 'Apply Partition' : 'Reset'}
+            </button>
+            <Footer style={styles.footer} />
+        </div>
     )
 }
 

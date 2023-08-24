@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react';
-import rhino3dm from 'rhino3dm';
+import rhino3dm, { RhinoModule } from 'rhino3dm';
 import { init, compute, count_slider } from './initThree.js'
 import styles from "styles/pages/computational.module.css"
 import Spinner from '@/components/layout/Spinner';
@@ -13,7 +13,7 @@ import PdbSearchBar from '@/components/fetching/pdbSearch';
 import { downloadPDB } from '@/components/fetching/pdbDownload';
 import path from 'path';
 
-export let rhino: any
+// export let rhino: RhinoModule | null = null;
 
 
 interface ProjectProps {
@@ -70,19 +70,16 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   // const nextProject = currentProjectIndex < allComputationalProjects.length - 1 ? allComputationalProjects[currentProjectIndex + 1] : null;
   // const previousProject = currentProjectIndex > 0 ? allComputationalProjects[currentProjectIndex - 1] : null;
 
-  if (!project) {
-    return null;
-  } else {
-    var href = '/computational-design'
-  }
+  
+  const href = '/computational-design'
 
   useEffect(() => {
     setLoading(true);
     const stageThree = async () => {
-      await rhino3dm().then(async (m) => {
-        console.log('Loaded rhino3dm.');
-        rhino = m; // global
-      });
+      // const m: RhinoModule = await rhino3dm(); // Wait for the promise to resolve
+      // console.log('m', m, typeof m); 
+      // console.log('Loaded rhino3dm.');
+      // rhino = m;
 
       if (canvasRef.current) {
         await init(canvasRef.current);

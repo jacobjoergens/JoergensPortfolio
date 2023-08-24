@@ -4,9 +4,10 @@ import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader';
 import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
+import rhino3dm from 'rhino3dm';
 
 import styles from 'styles/pages/computational.module.css'
-import { rhino } from './page.tsx';
+// import { rhino } from './page.tsx';
 import path from 'path'
 import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import PMREMGenerator
 
@@ -14,12 +15,15 @@ import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import P
 export var scene, camera, renderer, controls, count_slider
 let hdrCubeMap, exrCubeRenderTarget;
 
+let rhino; 
+
 const loader = new Rhino3dmLoader()
 loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@8.0.0/")
 
 // let light = new THREE.DirectionalLight(0xffffff, 1)
 
 export async function init(canvas) {
+  rhino = await rhino3dm(); 
   count_slider = document.getElementById('count')
   // Create the scene, camera, and renderer
   scene = new THREE.Scene();

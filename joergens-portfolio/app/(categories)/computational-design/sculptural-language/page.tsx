@@ -8,8 +8,6 @@ import rhino3dm from "rhino3dm";
 import { Mdx } from "@/components/mdx-components";
 import Footer from "components/layout/Footer";
 
-export let rhino: any;
-
 interface ProjectProps {
     params: {
         category: string;

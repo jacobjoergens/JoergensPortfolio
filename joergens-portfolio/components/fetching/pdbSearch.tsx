@@ -20,7 +20,7 @@ const darkGreen = '#080f0e'
 
 
 const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
-    const [menuHeight, setMenuHeight] = useState(0);
+    // const [menuHeight, setMenuHeight] = useState(0);
 
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
@@ -45,7 +45,7 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
         menu: (provided) => ({
             ...provided,
             zIndex: 500, // Adjust the value as needed
-            marginTop: `-${menuHeight}px`,
+            // marginTop: `-${menuHeight}px`,
         }),
     
         placeholder: (provided) => ({
@@ -94,13 +94,13 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
         </div>
     );
 
-    useEffect(() => {
-        // Access the menu element by ID after the component mounts
-        const menu = document.getElementById('react-select-menu');
-        if (menu) {
-          setMenuHeight(menu.clientHeight);
-        }
-      }, []);
+    // useEffect(() => {
+    //     // Access the menu element by ID after the component mounts
+    //     const menu = document.getElementById('react-select-menu');
+    //     if (menu) {
+    //       setMenuHeight(menu.clientHeight);
+    //     }
+    //   }, []);
 
     return (
         <AsyncSelect
@@ -118,7 +118,7 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
             onChange={onChange}
             formatOptionLabel={formatOptionLabel} // Use custom formatOptionLabel function
             placeholder="1E6V"
-            menuPortalTarget={document.body}
+            // menuPortalTarget={document.body}
         />
     );
 };

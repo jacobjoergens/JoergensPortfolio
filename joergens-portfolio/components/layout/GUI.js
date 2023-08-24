@@ -157,7 +157,7 @@ export default function GUI({filePath}) {
 
   // console.log(contentHeight, document.getElementById('canvas').offsetHeight*.8)
   const containerStyle = {
-    height: `${Math.min(contentHeight,document.getElementById('canvas')).offsetHeight*.8}px`,
+    // height: `${Math.min(contentHeight,document.getElementById('canvas')).offsetHeight*.8}px`,
     // overflow: 'auto',
     transition: 'height 0.3s ease',
   };

@@ -8,6 +8,7 @@ import { ArrowUturnLeftIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/re
 import Link from "next/link";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import Footer from "@/components/layout/Footer";
+import { Mdx } from '@/components/mdx-components';
 
 interface ProjectProps {
   params: {
@@ -44,7 +45,7 @@ export default function ProjectPage({ params }: ProjectProps) {
     var href = '/woodwork'
   }
 
-  const MDXContent = useMDXComponent(project.body.code)
+  // const MDXContent = useMDXComponent(project.body.code)
 
   return (
     <div className={styles.mainContainer}>
@@ -56,7 +57,8 @@ export default function ProjectPage({ params }: ProjectProps) {
       </div>
       <Carousel images={project.images}/>
       <div className={styles.content}>
-        <MDXContent />
+        {/* <MDXContent /> */}
+        <Mdx code={project.body.code} />
       </div>
       <div className={styles.pagination}>
         {previousProject &&

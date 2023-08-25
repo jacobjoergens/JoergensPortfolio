@@ -43,12 +43,12 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   const canvasRef = useRef(null);
   const defaultOption = {label: '1E6V', value: '1E6V', description: 'placeholder'};
   const [selectedOption, setSelectedOption] = useState<Option | null>(defaultOption);
-  const [filePath, setFilePath] = useState(`C:/Users/jacob/OneDrive/Documents/GitHub/JoergensPortfolio/joergens-portfolio/public/pdb/1E6V.pdb`)
+  const [filePath, setFilePath] = useState(`pdb/1E6V.pdb`)
   
   useEffect(() => {
     async function download(entryID: string){
       await downloadPDB(entryID);
-      setFilePath(`C:/Users/jacob/OneDrive/Documents/GitHub/JoergensPortfolio/joergens-portfolio/public/pdb/${entryID}.pdb`)
+      setFilePath(`pdb/${entryID}.pdb`)
     }
     if(selectedOption){
       download(selectedOption.label);

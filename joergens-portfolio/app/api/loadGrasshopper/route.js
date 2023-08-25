@@ -3,12 +3,8 @@ import compute from 'compute-rhino3d'
 import path from 'path'
 import fs from 'fs'
 
-async function runCompute(definitionPath, params) {
+async function runCompute(definition, params) {
     let data = {}
-    const url = definitionPath
-    const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
-    const definition = new Uint8Array(buffer)
-
     data.definition = definition
     data.inputs = params
 
@@ -45,13 +41,14 @@ async function runCompute(definitionPath, params) {
 }
 
 export async function POST(req) {
-    const definitionPath = path.resolve(path.join(process.cwd(), 'ghDefinitions/final.gh'));
+    // const definitionPath = path.resolve(path.join(process.cwd(), 'ghDefinitions/final.gh'));
     console.log("process.cwd():", path.resolve(process.cwd()), process.cwd());
-    console.log('definitionPath:', definitionPath);
     const request = await req.json();
 
+    const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
+    const definition = new Uint8Array(buffer)
 
-    const res = await runCompute(definitionPath, request);
+    const res = await runCompute(definition, request);
     return new NextResponse(JSON.stringify(res), {
         status: 200,
         headers: { "Content-Type": "application/json" }

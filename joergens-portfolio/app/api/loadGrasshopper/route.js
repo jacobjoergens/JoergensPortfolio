@@ -18,8 +18,8 @@ async function runCompute(definitionPath, params) {
 
     try {
         // let definitionPath = path.join(process.cwd(), 'app/(categories)/computational-design/sculptural-language/BranchNodeRnd.gh');
-        compute.url = 'http://localhost:8081/'
-        compute.apiKey = ''
+        compute.url = 'http://20.231.1.123:80/'
+        compute.apiKey = '44XyNqF2egQfa7m'
 
         // set parameters
         let trees = []

@@ -10,7 +10,6 @@ import styles from 'styles/pages/computational.module.css'
 // import { rhino } from './page.tsx';
 import path from 'path'
 import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import PMREMGenerator
-import { runCompute } from '@/app/api/loadGrasshopper/route';
 
 // import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 export var scene, camera, renderer, controls, count_slider

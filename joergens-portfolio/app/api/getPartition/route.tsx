@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import WebSocket from "ws";
 import { getWebSocketConnection} from "@/components/WsClient";
 
+export const dynamic = 'force-dynamic'
 
 async function sendGetMessage(data: any): Promise<any> {
     const message = {

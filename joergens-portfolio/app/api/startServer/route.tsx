@@ -1,7 +1,8 @@
 import { spawn } from 'child_process';
 import { NextResponse } from 'next/server';
 import { getWebSocketConnection, getWebSocketListeners } from '@/components/WsClient';
-import WebSocket from 'ws';
+
+export const dynamic = 'force-dynamic'
 
 function startPythonServer() {
 

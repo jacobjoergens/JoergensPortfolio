@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
     const json = await req.json()
     const pdbID = json.id;

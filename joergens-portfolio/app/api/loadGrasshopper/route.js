@@ -4,7 +4,7 @@ import compute from 'compute-rhino3d'
 import path from 'path'
 import fs from 'fs'
 
-let rhino
+export const dynamic = 'force-dynamic'
 
 async function runCompute(definitionPath, params) {
     let data = {}

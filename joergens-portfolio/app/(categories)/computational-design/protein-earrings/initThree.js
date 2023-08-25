@@ -129,6 +129,7 @@ function onWindowResize() {
 export async function compute(values, displayParams) {
   // return new Promise(async (resolve, reject) => {
   let data = JSON.stringify(values)
+  console.log('loadGrasshopper:', process.cwd())
   try {
     const response = await fetch('/api/loadGrasshopper', {
       method: 'POST',

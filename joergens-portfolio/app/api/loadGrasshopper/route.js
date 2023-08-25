@@ -48,7 +48,8 @@ async function runCompute(definitionPath, params) {
 }
 
 export async function POST(req) {
-    const definitionPath = path.join('/ghDefinitions/final.gh');
+    const definitionPath = path.join('./ghDefinitions/final.gh');
+    console.log('definitionPath:', definitionPath);
     const request = await req.json();
 
 

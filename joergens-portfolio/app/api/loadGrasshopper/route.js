@@ -1,15 +1,12 @@
-import rhino3dm from "rhino3dm"
 import { NextResponse } from 'next/server'
 import compute from 'compute-rhino3d'
 import path from 'path'
 import fs from 'fs'
 
-export const dynamic = 'force-dynamic'
-
-async function runCompute(definitionPath, params) {
+export async function runCompute(definitionPath, params) {
     let data = {}
     const url = definitionPath
-    const buffer = fs.readFileSync(url)
+    const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
     const definition = new Uint8Array(buffer)
 
     data.definition = definition

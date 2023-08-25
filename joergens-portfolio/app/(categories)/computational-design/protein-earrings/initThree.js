@@ -10,6 +10,7 @@ import styles from 'styles/pages/computational.module.css'
 // import { rhino } from './page.tsx';
 import path from 'path'
 import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import PMREMGenerator
+import { runCompute } from '@/app/api/loadGrasshopper/route';
 
 // import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 export var scene, camera, renderer, controls, count_slider
@@ -129,15 +130,15 @@ function onWindowResize() {
 export async function compute(values, displayParams) {
   // return new Promise(async (resolve, reject) => {
   let data = JSON.stringify(values)
-  console.log('loadGrasshopper:', process.cwd())
   try {
-    const response = await fetch('/api/loadGrasshopper', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: data
-    });
-    const responseData = await response.text();
-    const responseJson = JSON.parse(responseData);
+    // const response = await fetch('/api/loadGrasshopper', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: data
+    // });
+    // const responseData = await response.text();
+    // const responseJson = JSON.parse(responseData);
+    const responseJson= runCompute("",values);
     return (await collectResults(responseJson, displayParams));
     // resolve();
   } catch (error) {

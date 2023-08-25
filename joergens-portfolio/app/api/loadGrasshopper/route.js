@@ -3,7 +3,7 @@ import compute from 'compute-rhino3d'
 import path from 'path'
 import fs from 'fs'
 
-export async function runCompute(definitionPath, params) {
+async function runCompute(definitionPath, params) {
     let data = {}
     const url = definitionPath
     const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));

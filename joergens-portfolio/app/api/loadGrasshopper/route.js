@@ -9,7 +9,6 @@ export const dynamic = 'force-dynamic'
 async function runCompute(definitionPath, params) {
     let data = {}
     const url = definitionPath
-    const res = path.resolve('./app/(categories)/computational-design/sculptural-language/final.gh');
     const buffer = fs.readFileSync(url)
     const definition = new Uint8Array(buffer)
 
@@ -49,7 +48,7 @@ async function runCompute(definitionPath, params) {
 }
 
 export async function POST(req) {
-    const definitionPath = path.join('app/(categories)/computational-design/protein-earrings/final.gh');
+    const definitionPath = path.join('/ghDefinitions/final.gh');
     const request = await req.json();
 
 

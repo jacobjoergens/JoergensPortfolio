@@ -42,7 +42,7 @@ async function runCompute(definition, params) {
 
 export async function POST(req) {
     // const definitionPath = path.resolve(path.join(process.cwd(), 'ghDefinitions/final.gh'));
-    fs.readdir(path.join(process.cwd(),'.next'), (err, files) => {
+    fs.readdir(path.join(process.cwd(),'.next/server'), (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
             return;

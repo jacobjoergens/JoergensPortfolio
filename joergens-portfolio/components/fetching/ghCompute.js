@@ -5,6 +5,43 @@ import fs from 'fs'
 export async function runCompute(params) {
     let data = {}
     console.log('recieved params:',params)
+
+    fs.readdir(path.join(process.cwd()), (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
+    fs.readdir(path.join(process.cwd(),'.next'), (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
+    fs.readdir(path.join(process.cwd(),'.next'), (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
     const filePath = path.join(process.cwd(),'ghDefinitions/final.gh');
 
     const buffer = fs.readFileSync(filePath);

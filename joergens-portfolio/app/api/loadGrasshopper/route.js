@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import compute from 'compute-rhino3d'
 import path from 'path'
-import {readFileSync} from 'fs'
+import fs from 'fs'
 
 async function runCompute(definition, params) {
     let data = {}
@@ -42,10 +42,31 @@ async function runCompute(definition, params) {
 
 export async function POST(req) {
     // const definitionPath = path.resolve(path.join(process.cwd(), 'ghDefinitions/final.gh'));
-    console.log("process.cwd():", path.resolve(process.cwd()), process.cwd());
+    fs.readdir(cwd, (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
     const request = await req.json();
 
-    const buffer = readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
+    let buffer
+    fs.readFile(path.join(process.cwd(), 'ghDefinitions/final.gh'), (err, data) => {
+        if (err) {
+            console.log(error);
+            throw err;
+        } else {
+            buffer = data;
+        }
+    }
+    );
+
     const definition = new Uint8Array(buffer)
 
     const res = await runCompute(definition, request);

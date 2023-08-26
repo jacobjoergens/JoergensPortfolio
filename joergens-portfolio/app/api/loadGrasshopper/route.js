@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import compute from 'compute-rhino3d'
 import path from 'path'
-import fs from 'fs'
+import {readFileSync} from 'fs'
 
 async function runCompute(definition, params) {
     let data = {}
@@ -45,7 +45,7 @@ export async function POST(req) {
     console.log("process.cwd():", path.resolve(process.cwd()), process.cwd());
     const request = await req.json();
 
-    const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
+    const buffer = readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
     const definition = new Uint8Array(buffer)
 
     const res = await runCompute(definition, request);

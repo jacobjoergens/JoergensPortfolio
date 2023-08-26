@@ -4,6 +4,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 const nextConfig = {
     experimental: {
         mdxRs: true,
+        outputFileTracingIncludes: {
+          '/api/loadGrasshopper': ['./ghDefinitions/**/*'],
+        }
       },
       // reactStrictMode: true, 
       swcMinify: true,

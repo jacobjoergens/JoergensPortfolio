@@ -4,10 +4,10 @@ import fs from 'fs'
 
 export async function runCompute(params) {
     let data = {}
-
+    console.log('recieved params:',params)
     const buffer = fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
     const definition = new Uint8Array(buffer)
-
+    console.log('created buffer')
     data.definition = definition
     data.inputs = params
 
@@ -25,6 +25,7 @@ export async function runCompute(params) {
         }
     }
     const response = await compute.Grasshopper.evaluateDefinition(definition, trees, false);
+    console.log('got response:',response)
     return await response.json();
 }
 

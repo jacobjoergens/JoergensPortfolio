@@ -5,7 +5,9 @@ import fs from 'fs'
 export async function runCompute(params) {
     let data = {}
     console.log('recieved params:',params)
-    const buffer = fs.readFileSync('ghDefinitions/final.gh');
+    const filePath = path.join(process.cwd(),'ghDefinitions/final.gh');
+
+    const buffer = fs.readFileSync(filePath);
     const definition = new Uint8Array(buffer)
     console.log('created buffer')
     data.definition = definition

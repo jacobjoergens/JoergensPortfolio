@@ -15,7 +15,7 @@ export async function runCompute(params) {
     data.inputs = params
 
     // let definitionPath = path.join(process.cwd(), 'app/(categories)/computational-design/sculptural-language/BranchNodeRnd.gh');
-    compute.url = 'http://20.231.1.123:80/'
+    compute.url = 'https://20.231.1.123:443/'
     compute.apiKey = '44XyNqF2egQfa7m'
 
     // set parameters

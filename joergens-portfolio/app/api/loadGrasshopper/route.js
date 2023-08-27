@@ -43,7 +43,31 @@ async function runCompute(definition, params) {
 export async function POST(req) {
     // const definitionPath = path.resolve(path.join(process.cwd(), 'ghDefinitions/final.gh'));
 
-    fs.readdir(path.join(process.cwd(),'.next/server'), (err, files) => {
+    fs.readdir(path.join(process.cwd(),'.next/server/app'), (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
+     fs.readdir(path.join(process.cwd(),'.next/server/chunks'), (err, files) => {
+        if (err) {
+            console.error('Error reading directory:', err);
+            return;
+        }
+        console.log('cwd:',process.cwd());
+        console.log('Contents of the current working directory:');
+        files.forEach((file) => {
+            console.log(file);
+        });
+    });
+
+     fs.readdir(path.join(process.cwd(),'.next/server/pages'), (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
             return;

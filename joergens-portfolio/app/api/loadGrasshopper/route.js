@@ -6,12 +6,12 @@ import '../../deps';
 
 async function runCompute(definition, params) {
     let data = {}
-    data.definition = definition
+    // data.definition = definition
     data.inputs = params
 
     try {
         // let definitionPath = path.join(process.cwd(), 'app/(categories)/computational-design/sculptural-language/BranchNodeRnd.gh');
-        compute.url = 'http://20.231.1.123:80/'
+        compute.url = 'https://20.231.1.123:443/'
         compute.apiKey = '44XyNqF2egQfa7m'
 
         // set parameters
@@ -32,7 +32,7 @@ async function runCompute(definition, params) {
         // }
 
         // call compute server
-        const response = await compute.Grasshopper.evaluateDefinition(definition, trees, false);
+        const response = await compute.Grasshopper.evaluateDefinition('https://joergens.blob.core.windows.net/grasshopper-definitions/final.gh', trees, false);
         const responseJson = await response.json();
         return responseJson
     } catch (error) {
@@ -46,10 +46,10 @@ export async function POST(req) {
 
     const request = await req.json();
 
-    let buffer
-    fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
+    // let buffer
+    // fs.readFileSync(path.join(process.cwd(), 'ghDefinitions/final.gh'));
 
-    const definition = new Uint8Array(buffer)
+    // const definition = new Uint8Array(buffer)
 
     const res = await runCompute(definition, request);
     return new NextResponse(JSON.stringify(res), {

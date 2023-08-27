@@ -8,7 +8,7 @@ async function runCompute(definition, params) {
     let data = {}
     // data.definition = definition
     data.inputs = params
-
+    console.log(data.inputs);
     try {
         // let definitionPath = path.join(process.cwd(), 'app/(categories)/computational-design/sculptural-language/BranchNodeRnd.gh');
         compute.url = 'https://20.231.1.123:443/'
@@ -23,6 +23,7 @@ async function runCompute(definition, params) {
                 trees.push(param)
             }
         }
+        console.log(trees);
         // if (data.values !== undefined) {
         //     for (let index = 0; index < res.locals.params.values.length; index++) {
         //         let param = new compute.Grasshopper.DataTree('')

@@ -32,7 +32,7 @@ async function runCompute(definition, params) {
         // }
 
         // call compute server
-        const response = await compute.Grasshopper.evaluateDefinition('https://joergens.blob.core.windows.net/grasshopper-definitions/final.gh', trees, false);
+        const response = await compute.Grasshopper.evaluateDefinition('https://joergens.blob.core.windows.net/grasshopper-definitions/stringPDB.gh', trees, false);
         const responseJson = await response.json();
         return responseJson
     } catch (error) {

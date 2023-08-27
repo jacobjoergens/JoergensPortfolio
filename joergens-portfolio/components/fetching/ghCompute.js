@@ -27,7 +27,7 @@ export async function runCompute(params) {
             trees.push(param)
         }
     }
-    const response = await compute.Grasshopper.evaluateDefinition('https://joergens.blob.core.windows.net/grasshopper-definitions/final.gh', trees, false);
+    const response = await compute.Grasshopper.evaluateDefinition('https://joergens.blob.core.windows.net/grasshopper-definitions/stringPDB.gh', trees, false);
     console.log('got response:',response)
     return await response.json();
 }

@@ -10,7 +10,7 @@ import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Link from 'next/link';
 import PdbSearchBar from '@/components/fetching/pdbSearch';
-import { downloadPDB } from '@/components/fetching/pdbDownload';
+// import { downloadPDB } from '@/components/fetching/pdbDownload';
 import path from 'path';
 
 // export let rhino: RhinoModule | null = null;
@@ -93,23 +93,31 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   const canvasRef = useRef(null);
   const defaultOption = {label: '1E6V', value: '1E6V', description: 'placeholder'};
   const [selectedOption, setSelectedOption] = useState<Option | null>(defaultOption);
-  const [filePath, setFilePath] = useState(path.join(process.cwd(), `pdb/1E6V.pdb`))
+  const [atomData, setAtomData] = useState("")
   
   useEffect(() => {
     async function download(entryID: string){
       // await downloadPDB(entryID);
       // setFilePath(path.join(process.cwd(),`pdb/${entryID}.pdb`))
       const pdbContent = await fetchPdbContent(entryID);
-
-      if (pdbContent) {
-        const pdbAtoms = extractAtomsFromPdbContent(pdbContent);
-    
-        // Format and print the extracted atom information
-        pdbAtoms.forEach((atom) => {
-          const formattedAtomInfo = formatAtomInfo(atom);
-          console.log(formattedAtomInfo);
-        });
+      if(pdbContent){
+        const atom_record = pdbContent
+        .split('\n')
+        .filter(line => line.trim().startsWith('ATOM'))
+        .join('\n'); // Join the filtered lines back into a single string
+        setAtomData(atom_record);
       }
+
+      // if (pdbContent) {
+      //   const pdbAtoms = extractAtomsFromPdbContent(pdbContent);
+    
+      //   // Format and print the extracted atom information
+      //   pdbAtoms.forEach((atom) => {
+      //     const formattedAtomInfo = formatAtomInfo(atom);
+      //     console.log(formattedAtomInfo);
+      //   });
+      // }
+
     }
     if(selectedOption){
       download(selectedOption.label);
@@ -164,7 +172,7 @@ export default function GrasshopperPage({ params }: ProjectProps) {
           <div className={styles.canvasContainer}>
             {loading && <Spinner />}
             <canvas className={styles.mainCanvas} id='canvas' ref={canvasRef} />
-            <GUI filePath={filePath}/>
+            <GUI atomData={atomData}/>
             {/* {`$visibility: loading ? 'visible' : 'hidden' }`} */}
             <PdbSearchBar onChange={handleSelectChange} />
           </div>

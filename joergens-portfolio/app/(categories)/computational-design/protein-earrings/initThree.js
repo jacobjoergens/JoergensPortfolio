@@ -5,7 +5,7 @@ import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader';
 import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import rhino3dm from 'rhino3dm';
-// import { runCompute } from 'components/fetching/ghCompute.js';
+import { runCompute } from 'components/fetching/ghCompute.js';
 
 import styles from 'styles/pages/computational.module.css'
 // import { rhino } from './page.tsx';
@@ -131,12 +131,12 @@ export async function compute(values, displayParams) {
   // return new Promise(async (resolve, reject) => {
   let data = JSON.stringify(values)
   try {
-    const response = await fetch('/api/loadGrasshopper', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: data
-    });
-    // const response = runCompute(values)
+    // const response = await fetch('/api/loadGrasshopper', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: data
+    // });
+    const response = runCompute(values)
     const responseData = await response.text();
     const responseJson = JSON.parse(responseData);
     return (await collectResults(responseJson, displayParams));

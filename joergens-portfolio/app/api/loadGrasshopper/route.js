@@ -51,7 +51,7 @@ export async function POST(req) {
 
     // const definition = new Uint8Array(buffer)
 
-    const res = await runCompute(definition, request);
+    const res = await runCompute(null, request);
     return new NextResponse(JSON.stringify(res), {
         status: 200,
         headers: { "Content-Type": "application/json" }

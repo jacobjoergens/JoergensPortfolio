@@ -6,7 +6,7 @@ import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { compute, rhinoToThree } from "@/app/(categories)/computational-design/protein-earrings/initThree";
 import PdbSearchBar from "../fetching/pdbSearch";
 
-export default function GUI({filePath}) {
+export default function GUI({atomData}) {
   const [openGUI, setOpenGui] = useState(true);
   const [openSection, setOpenSection] = useState({ 'Parameters': true, 'Display': true });
   const [contentHeight, setContentHeight] = useState(0);
@@ -71,7 +71,7 @@ export default function GUI({filePath}) {
     };
 
     computeData();
-  }, [filePath]);
+  }, [atomData]);
 
   const handleParamSliderMouseUp = async () => {
     // const sliderList = Object.keys(sliderValues).map(name => ({
@@ -86,7 +86,7 @@ export default function GUI({filePath}) {
     Object.entries(displaySliderValues).forEach(([sliderName, sliderData]) => {
       extractedDisplayValues[sliderName] = sliderData.value;
     })
-    extractedParamValues['pdbID'] = filePath;
+    extractedParamValues['pdbID'] = atomData;
     await compute(extractedParamValues, extractedDisplayValues);
   };
 

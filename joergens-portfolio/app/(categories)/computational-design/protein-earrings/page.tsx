@@ -38,6 +38,56 @@ function formatLinkLabel(label: LabelProps["label"]) {
   return words.join("\n");
 }
 
+async function fetchPdbContent(pdbId: string): Promise<string | null> {
+  const url = `https://files.rcsb.org/download/${pdbId}.pdb`;
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      return await response.text();
+    } else {
+      console.error('Failed to fetch PDB content:', response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch PDB content:', error);
+    return null;
+  }
+}
+
+interface AtomInfo {
+  atomName: string;
+  residueName: string;
+  x: number;
+  y: number;
+  z: number;
+}
+
+function extractAtomsFromPdbContent(pdbContent: string): AtomInfo[] {
+  const atoms: AtomInfo[] = [];
+
+  const lines = pdbContent.split('\n');
+  for (const line of lines) {
+    if (line.startsWith('ATOM')) {
+      const atom: AtomInfo = {
+        atomName: line.slice(12, 16).trim(),
+        residueName: line.slice(17, 20).trim(),
+        x: parseFloat(line.slice(30, 38).trim()),
+        y: parseFloat(line.slice(38, 46).trim()),
+        z: parseFloat(line.slice(46, 54).trim()),
+      };
+      atoms.push(atom);
+    }
+  }
+
+  return atoms;
+}
+
+function formatAtomInfo(atom: AtomInfo): string {
+  const formattedInfo = `${atom.atomName} [${atom.residueName}] ` +
+    `(${atom.x.toFixed(3)}, ${atom.y.toFixed(3)}, ${atom.z.toFixed(3)})`;
+  return formattedInfo;
+}
+
 export default function GrasshopperPage({ params }: ProjectProps) {
   const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
@@ -47,8 +97,19 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   
   useEffect(() => {
     async function download(entryID: string){
-      await downloadPDB(entryID);
-      setFilePath(path.join(process.cwd(),`pdb/${entryID}.pdb`))
+      // await downloadPDB(entryID);
+      // setFilePath(path.join(process.cwd(),`pdb/${entryID}.pdb`))
+      const pdbContent = await fetchPdbContent(entryID);
+
+      if (pdbContent) {
+        const pdbAtoms = extractAtomsFromPdbContent(pdbContent);
+    
+        // Format and print the extracted atom information
+        pdbAtoms.forEach((atom) => {
+          const formattedAtomInfo = formatAtomInfo(atom);
+          console.log(formattedAtomInfo);
+        });
+      }
     }
     if(selectedOption){
       download(selectedOption.label);

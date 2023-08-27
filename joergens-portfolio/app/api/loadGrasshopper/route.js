@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import compute from 'compute-rhino3d'
 import path from 'path'
 import fs from 'fs'
+import '../../deps';
 
 async function runCompute(definition, params) {
     let data = {}

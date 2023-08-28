@@ -104,6 +104,7 @@ export default function GrasshopperPage({ params }: ProjectProps) {
         const atom_record = pdbContent
         .split('\n')
         .filter(line => line.trim().startsWith('ATOM'))
+        .splice(0,30)
         .join('\n'); // Join the filtered lines back into a single string
         setAtomData(atom_record);
       }

@@ -93,7 +93,7 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   const canvasRef = useRef(null);
   const defaultOption = {label: '1E6V', value: '1E6V', description: 'placeholder'};
   const [selectedOption, setSelectedOption] = useState<Option | null>(defaultOption);
-  const [atomData, setAtomData] = useState("")
+  const [atomData, setAtomData] = useState("");
   
   useEffect(() => {
     async function download(entryID: string){
@@ -101,22 +101,12 @@ export default function GrasshopperPage({ params }: ProjectProps) {
       // setFilePath(path.join(process.cwd(),`pdb/${entryID}.pdb`))
       const pdbContent = await fetchPdbContent(entryID);
       if(pdbContent){
-        const atom_record = pdbContent
-        .split('\n')
-        .filter(line => line.trim().startsWith('ATOM'))
-        .join('\n'); // Join the filtered lines back into a single string
+        const atom_record = pdbContent;
+        // .split('\n')
+        // .filter(line => line.trim().startsWith('ATOM'))
+        // .join('\n'); // Join the filtered lines back into a single string
         setAtomData(atom_record);
       }
-
-      // if (pdbContent) {
-      //   const pdbAtoms = extractAtomsFromPdbContent(pdbContent);
-    
-      //   // Format and print the extracted atom information
-      //   pdbAtoms.forEach((atom) => {
-      //     const formattedAtomInfo = formatAtomInfo(atom);
-      //     console.log(formattedAtomInfo);
-      //   });
-      // }
 
     }
     if(selectedOption){

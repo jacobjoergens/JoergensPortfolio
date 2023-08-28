@@ -107,7 +107,6 @@ export async function switchDegSet(index) {
 export function zoomToFit() {
     const canvasWidth = parseInt(canvas.style.width);
     const canvasHeight = parseInt(canvas.style.height);
-    console.log(canvasWidth, canvasHeight);
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     renderer.setSize(canvasWidth, canvasHeight);

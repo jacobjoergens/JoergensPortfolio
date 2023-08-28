@@ -101,10 +101,10 @@ export default function GrasshopperPage({ params }: ProjectProps) {
       // setFilePath(path.join(process.cwd(),`pdb/${entryID}.pdb`))
       const pdbContent = await fetchPdbContent(entryID);
       if(pdbContent){
-        const atom_record = pdbContent;
-        // .split('\n')
-        // .filter(line => line.trim().startsWith('ATOM'))
-        // .join('\n'); // Join the filtered lines back into a single string
+        const atom_record = pdbContent
+        .split('\n')
+        .filter(line => line.trim().startsWith('ATOM'))
+        .join('\n'); // Join the filtered lines back into a single string
         setAtomData(atom_record);
       }
 

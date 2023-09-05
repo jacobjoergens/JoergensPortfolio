@@ -14,9 +14,9 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
   const GUIRef = useRef(null);
   const [parameterSliderValues, setParameterSliderValues] = useState(
     {
-      'Radius': { value: 10, min: 0, max: 20, step: 0.5, multiplier: 2 },
+      'Radius': { value: 8.5, min: 4, max: 20, step: 0.5, multiplier: 2 },
       'Charge Strength': { value: 0.5, min: 0, max: 1, step: 0.1, multiplier: 10 },
-      'Trim Tolerance': { value: 10, min: 0, max: 10, step: 0.2, multiplier: 5 },
+      'Trim Tolerance': { value: 10, min: 5, max: 15, step: 0.1, multiplier: 10 },
       'Smoothing Passes': { value: 0, min: 0, max: 10, step: 1, multiplier: 1 },
       'Scale': { value: 1.0, min: 1.0, max: 10, step: 0.1, multiplier: 10 },
     }); // Initial Parameter slider values
@@ -105,6 +105,7 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
             value={slider.value * slider.multiplier}
             onChange={e => handleParamSliderChange(sliderName, parseInt(e.target.value) / slider.multiplier)}
             onMouseUp={handleParamSliderMouseUp}
+            onTouchEnd={handleParamSliderMouseUp}
           />
           <span className={styles.currentValue}>{slider.value}</span>
         </div>
@@ -167,6 +168,7 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
               value={slider.value * slider.multiplier}
               onChange={e => handleDisplaySliderChange(sliderName, parseInt(e.target.value) / slider.multiplier)}
               onMouseUp={handleDisplayMouseUp}
+              onTouchEnd={handleDisplayMouseUp}
             />
             <span className={styles.currentValue}>{slider.value}</span>
           </div>

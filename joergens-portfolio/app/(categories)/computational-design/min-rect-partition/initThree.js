@@ -19,7 +19,7 @@ export async function init() {
     }
   
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('minrect-canvas');
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: canvas });
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(canvas.offsetWidth,  canvas.offsetHeight)

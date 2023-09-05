@@ -1,6 +1,6 @@
 .carousel { 
     width: 30vw;
-    border-right: 1px dashed #000000;
+    border-right: 1px dashed var(--darkGreen);
     /* border-radius: 1rem; */
     display: flex;
     flex-direction: column;

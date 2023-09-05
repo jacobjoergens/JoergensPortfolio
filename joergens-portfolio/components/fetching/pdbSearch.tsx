@@ -26,26 +26,38 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
         control: (provided, state) => ({
             ...provided,
             border: `1px solid ${primaryColor}`, // Remove focus border
-            borderRadius: '4px',
-            boxShadow: `0 0 0 1px ${primaryColor}`,
+            borderRadius: '1rem',
+            // boxShadow: `0 0 0 1px ${primaryColor}`,
             '&:hover': {
                 border: `1px solid ${secondaryColor}`
             },
-            width: '100%',
+            width: '75%',
             backgroundColor: darkGreen,
             color: primaryColor,
             bottom: '1rem',
+            '&:focus .css-1hwfws3': {
+                color: 'transparent',
+              },
+            marginLeft: '1rem',
         }),
         input: (provided) => ({
             ...provided,
             margin: '0',
+            color: primaryColor,
             //   color: '#dd6858',
         }),
         // Style the menu with a higher z-index
         menu: (provided) => ({
             ...provided,
-            zIndex: 500, // Adjust the value as needed
+            zIndex: 500, 
+            color: primaryColor,
+            // Adjust the value as needed
             // marginTop: `-${menuHeight}px`,
+        }),
+
+        singleValue: (provided) => ({
+            ...provided, 
+            color: primaryColor,
         }),
     
         placeholder: (provided) => ({
@@ -117,7 +129,7 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
             }}
             onChange={onChange}
             formatOptionLabel={formatOptionLabel} // Use custom formatOptionLabel function
-            placeholder="1E6V"
+            placeholder={formatOptionLabel({label: '7XHS', value: '7XHS', description:'Crystal structure of CipA crystal produced by cell-free protein synthesis'})}
             // menuPortalTarget={document.body}
         />
     );

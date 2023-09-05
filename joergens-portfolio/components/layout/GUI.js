@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from 'styles/pages/computational.module.css';
-import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { compute, rhinoToThree } from "@/app/(categories)/computational-design/protein-earrings/initThree";
 
-export default function GUI({ atomData, onRenderComplete}) {
-  const [openGUI, setOpenGui] = useState(true);
+export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
+  // const [openGUI, setOpenGui] = useState(true);
   const [openSection, setOpenSection] = useState({ 'Parameters': true, 'Material': true });
   const [contentHeight, setContentHeight] = useState(0);
   const buttonRef = useRef(null);
@@ -44,9 +44,9 @@ export default function GUI({ atomData, onRenderComplete}) {
   ];
 
 
-  const toggleGUI = () => {
-    setOpenGui(!openGUI);
-  };
+  // const toggleGUI = () => {
+  //   setOpenGui(!openGUI);
+  // };
 
   const toggleSection = (sectionHeader) => {
     setOpenSection(prevState => ({
@@ -56,20 +56,8 @@ export default function GUI({ atomData, onRenderComplete}) {
   }
 
   useEffect(() => {
-    if (openGUI) {
-      const calculateContentHeight = () => {
-        const controlsHeight = controlsRef.current.scrollHeight;
-        setContentHeight(buttonRef.current.offsetHeight + controlsHeight);
-      };
-
-      // Delay the height calculation to allow rendering of the content
-      const timeoutId = setTimeout(calculateContentHeight, 0);
-      handleParamSliderMouseUp();
-      return () => clearTimeout(timeoutId);
-    } else {
-      setContentHeight(buttonRef.current.offsetHeight);
-    }
-  }, [openGUI, openSection]);
+    handleParamSliderMouseUp();
+  }, [openSection]);
 
   const handleParamSliderChange = (sliderName, value) => {
     const { min, max } = parameterSliderValues[sliderName];
@@ -137,7 +125,7 @@ export default function GUI({ atomData, onRenderComplete}) {
       setSelectedColor('#d83012');
       setDisplaySliderValues(prevState => ({
         ...prevState,
-        ['Reflectivity']: {...prevState['Reflectivity'], value: 0}
+        ['Reflectivity']: { ...prevState['Reflectivity'], value: 0 }
       }));
     }
     else {
@@ -195,18 +183,9 @@ export default function GUI({ atomData, onRenderComplete}) {
   };
 
   return (
-    <div className={styles.GUIContainer} style={containerStyle} ref={GUIRef}>
+    <div className={`${styles.GUIContainer} ${openGUI ? styles.open : styles.closed}`} style={containerStyle} ref={GUIRef}>
       <div className={styles.GUI}>
-        <div className={styles.titleGUI} ref={buttonRef}>
-          <button aria-label="Toggle Section" onClick={toggleGUI}>
-            {openGUI ?
-              (<ChevronDownIcon className='h-6 w-12' />)
-              :
-              (<ChevronRightIcon className="h-6 w-12" />)
-            }
-            Controls
-          </button>
-        </div>
+
         <div className={styles.GUISections} ref={controlsRef}>
           <div className={styles.sectionHeader}>
             {openGUI && (
@@ -221,6 +200,13 @@ export default function GUI({ atomData, onRenderComplete}) {
                 Parameters
               </button>
             )}
+            <div className={styles.exitGUI} ref={buttonRef}>
+              {openGUI && (
+                <button aria-label="Close GUI" onClick={toggle}>
+                  {/* <XMarkIcon className='h-6 w-12' /> */}
+                  Close
+                </button>
+              )}</div>
           </div>
           <div>
             {openSection['Parameters'] &&
@@ -240,52 +226,52 @@ export default function GUI({ atomData, onRenderComplete}) {
               }
               Material
             </button>
-            {openSection['Material'] &&
-              (<div className={styles.materialSection}>
-                <div className={styles.materialContainer}>
-                  <button
-                    className={selectedMaterial === 'metal' ? styles.active : ''}
-                    onClick={() => setSelectedMaterial('metal')}>Metal
-                  </button>
-                  <button
-                    className={selectedMaterial === 'plastic' ? styles.active : ''}
-                    onClick={() => setSelectedMaterial('plastic')}>Plastic
-                  </button>
-                </div>
-                <div className={styles.Colors}>
-                  {/* Colors */}
-                  {selectedMaterial === 'metal' && (
-                    <ul>
-                      {metalColors.map((color) => (
-                        <li key={color.name}>
-                          <span
-                            className={styles.colorSwatch}
-                            style={{ backgroundColor: color.code }}
-                          ></span>
-                          <button className={(selectedColor==color.code)?styles.active:''} onClick={() => handleColorChange(color.code)}> {color.name}</button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {selectedMaterial === 'plastic' && (
-                    <ul>
-                      {plasticColors.map((color) => (
-                        <li key={color.name}>
-                          <span
-                            className={styles.colorSwatch}
-                            style={{ backgroundColor: color.code }}
-                          ></span>
-                          <button className={(selectedColor==color.code)?styles.active:''} onClick={() => handleColorChange(color.code)}> {color.name}</button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                {displaySliders}
-              </div>
-              )
-            }
           </div>
+          {openSection['Material'] &&
+            (<div className={styles.materialSection}>
+              <div className={styles.materialContainer}>
+                <button
+                  className={selectedMaterial === 'metal' ? styles.active : ''}
+                  onClick={() => setSelectedMaterial('metal')}>Metal
+                </button>
+                <button
+                  className={selectedMaterial === 'plastic' ? styles.active : ''}
+                  onClick={() => setSelectedMaterial('plastic')}>Plastic
+                </button>
+              </div>
+              <div className={styles.Colors}>
+                {/* Colors */}
+                {selectedMaterial === 'metal' && (
+                  <ul>
+                    {metalColors.map((color) => (
+                      <li key={color.name}>
+                        <span
+                          className={styles.colorSwatch}
+                          style={{ backgroundColor: color.code }}
+                        ></span>
+                        <button className={(selectedColor == color.code) ? styles.active : ''} onClick={() => handleColorChange(color.code)}> {color.name}</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {selectedMaterial === 'plastic' && (
+                  <ul>
+                    {plasticColors.map((color) => (
+                      <li key={color.name}>
+                        <span
+                          className={styles.colorSwatch}
+                          style={{ backgroundColor: color.code }}
+                        ></span>
+                        <button className={(selectedColor == color.code) ? styles.active : ''} onClick={() => handleColorChange(color.code)}> {color.name}</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {displaySliders}
+            </div>
+            )
+          }
         </div>
       </div>
     </div>

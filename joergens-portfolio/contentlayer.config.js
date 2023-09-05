@@ -58,9 +58,30 @@ export const ComputationalProject = defineDocumentType(() => ({
   computedFields,
 }))
 
+export const ResearchProject = defineDocumentType(() => ({
+  name: "ResearchProject",
+  filePathPattern: `research-projects/**/*.mdx`,
+  contentType: "mdx",
+  fields: {
+    title: {
+      type: "string",
+      required: true,
+    },
+    images: {
+      type: 'list',
+      of: { type: 'string' },
+      required: true,
+    },
+    description: {
+      type: "string"
+    }
+  },
+  computedFields,
+}))
+
 export default makeSource({
   contentDirPath: path.resolve('content'),
-  documentTypes: [WoodworkingProject,ComputationalProject],
+  documentTypes: [WoodworkingProject,ComputationalProject,ResearchProject],
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],

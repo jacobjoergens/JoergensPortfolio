@@ -1,6 +1,6 @@
 .loader {
-    border: 5px solid #2d3a48;
-    border-top: 5px solid #25684c;
+    border: 5px solid var(--primary-color);
+    border-top: 5px solid var(--secondary-color);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -58,7 +58,7 @@
     margin-bottom: 2em;
     border-radius: 1em;
     background-color: #080f0e;
-    border: 1px solid #000000;
+    border: 1px solid #080f0e;
     height: 100%;
 }
 
@@ -81,25 +81,63 @@
     }
 }
 
-.GUI {
+.GUIContainer {
+    border: 1px solid var(--primary-color);
+    border-radius: 1em;
+    width: 20%;
+    height: 80%;
+    color: var(--primary-color);
     position: absolute;
     right: 1em;
     top: 1em;
+    align-items: center;
+}
+
+.GUI {
+    /* position: absolute;
+    right: 1em;
+    top: 1em; */
     /* height: 50%; */
-    width: 20%;
-    border: 1px solid var(--primary-color);
-    border-radius: 1em;
+    padding: 0.5rem;
     z-index: 100;
     color: var(--primary-color);
     /* height: 50vw; */
-    /* overflow-y: auto; */
+    position: absolute;
+    overflow-y: auto;
+    max-height: 95%;
+    margin-top: 10px;
+    width: 95%;
 }
 
-.GUISections{
-    overflow-y: auto;
+/* Hide the default scrollbar */
+.GUI::-webkit-scrollbar {
+    width: 3px;
+    height: 80%;
 }
+
+/* Track */
+.GUI::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+    height: 80%;
+}
+
+/* Handle */
+.GUI::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 1rem;
+    /* Add border-radius for rounded corners */
+    height: 5px;
+    width: 6px;
+}
+
+/* Handle on hover */
+.GUI::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
 .titleGUI {
-    padding-top: 1em;
+    /* padding-top: 1em; */
     padding-bottom: 1em;
 }
 
@@ -136,9 +174,76 @@
     align-items: center;
 }
 
+.materialContainer {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.active {
+    background-color: var(--primary-color);
+    color: #080f0e;
+}
+
+.materialContainer>button {
+    margin: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+}
+
+.materialContainer button:hover {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.Colors {
+    padding-top: 1rem;
+    padding-left: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.Colors ul {
+    list-style-type: none;
+}
+
+.Colors>ul>li {
+    display: flex;
+    align-items: center;
+    margin: 0.25rem;
+}
+
+.colorSwatch {
+    display: inline-block;
+    width: 20px;
+    /* Adjust the size of the swatch as needed */
+    height: 20px;
+    /* Adjust the size of the swatch as needed */
+    border-radius: 50%;
+    /* Create circular swatches */
+    margin-right: 10px;
+    /* Add spacing between swatch and label */
+}
+
+.Colors button {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+}
+
+.Colors button:hover {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
 /* Styles for the range input */
 .rangeInput {
-    color:  var(--primary-color);
+    color: var(--primary-color);
     -webkit-appearance: none;
     /* Remove default styling */
     width: 75%;
@@ -178,16 +283,21 @@
     /* Adjust the vertical position of the thumb */
 }
 
+.rangeInput::-webkit-slider-thumb:hover{
+    background: var(--secondary-color);
+}
+
 .content {
     position: relative;
     margin: 1rem;
 }
 
-@media (min-width: 768px){
+@media (min-width: 768px) {
     .mainContainer {
         justify-content: center;
         align-items: center;
     }
+
     .content {
         justify-content: center;
         width: 50%;
@@ -195,14 +305,14 @@
     }
 
     .content>blockquote {
-        margin: 2rem; 
+        margin: 2rem;
         padding: 1rem 3rem 1rem 3rem;
     }
 
     .content>figure {
         padding: 1rem 3rem 1rem 3rem;
     }
-    
+
 }
 
 .content>p {
@@ -238,7 +348,7 @@
 }
 
 .content>blockquote {
-    margin: 1rem; 
+    margin: 1rem;
     padding: 1rem;
     border: 1px dotted var(--secondary-color);
     border-radius: 1em;
@@ -246,7 +356,7 @@
     color: var(--secondary-color);
 }
 
-.pagination { 
+.pagination {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -257,7 +367,7 @@
     background-color: var(--background-color);
 }
 
-.pageButton{ 
+.pageButton {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -267,7 +377,7 @@
     color: var(--secondary-color)
 }
 
-.nextPage{
+.nextPage {
     display: flex;
     text-align: right;
 }
@@ -276,8 +386,8 @@
     color: var(--primary-color);
 }
 
-.footer{
-    background-color:var(--background-color);
+.footer {
+    background-color: var(--background-color);
     color: var(--secondary-color);
     display: flex;
     flex-direction: row;
@@ -287,10 +397,10 @@
     padding: 10px;
 }
 
-.footer>p{
+.footer>p {
     padding-right: 5px;
 }
 
-.footer>a:hover{
-    color:var(--primary-color);
+.footer>a:hover {
+    color: var(--primary-color);
 }

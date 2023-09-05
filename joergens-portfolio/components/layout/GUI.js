@@ -18,7 +18,7 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
       'Charge Strength': { value: 0.5, min: 0, max: 1, step: 0.1, multiplier: 10 },
       'Trim Tolerance': { value: 10, min: 5, max: 15, step: 0.1, multiplier: 10 },
       'Smoothing Passes': { value: 0, min: 0, max: 10, step: 1, multiplier: 1 },
-      'Scale': { value: 1.0, min: 1.0, max: 10, step: 0.1, multiplier: 10 },
+      'Scale': { value: 2.0, min: 1.0, max: 10, step: 0.1, multiplier: 10 },
     }); // Initial Parameter slider values
 
   const [displaySliderValues, setDisplaySliderValues] = useState(

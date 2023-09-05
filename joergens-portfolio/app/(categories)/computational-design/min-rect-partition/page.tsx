@@ -188,7 +188,7 @@ export default function ProjectPage() {
                             <div className={styles.loader} />
                         </div>
                         ): ''}
-                    <div className={styles.blockCanvas}> Unfortunately, this model doesn't work on touch screens. If you're on a computer, just make the page bigger.</div>
+                    <div className={styles.blockCanvas}> Unfortunately, this model does not work on touch screens. If you are on a computer, just make the page bigger.</div>
                     <canvas className={styles.mainCanvas} id='minrect-canvas'> </canvas>
                     <div>
                         {applied ?

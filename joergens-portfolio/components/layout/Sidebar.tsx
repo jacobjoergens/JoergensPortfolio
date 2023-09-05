@@ -39,6 +39,9 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
                 <Link className={styles.sidebarItem} href={'computational-design'}>
                   Computational{'\n'}Design
                 </Link>
+                <Link className={styles.sidebarItem} href={'research'}>
+                  Research
+                </Link>
               </li>
             </ul>
           </div>

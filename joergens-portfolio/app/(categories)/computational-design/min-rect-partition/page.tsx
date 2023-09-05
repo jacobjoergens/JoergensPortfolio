@@ -1,18 +1,17 @@
 'use client'
 import styles from "styles/pages/minrect.module.css"
-// import * as THREE from "three";
 import { useRef, useEffect, useState } from "react";
 import { init } from "./initThree.js";
 import { setInitValues, showPartition, switchDegSet, zoomToFit, createListeners } from "./threeUI.js";
 import GraphCarousel from "@/components/layout/GraphCarousel";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-// import { onMouseDown, onMouseMove, onMouseUp, crvPoints } from "./drawCurve.js";
 import Link from "next/link.js";
 import Footer from "@/components/layout/Footer";
 import stagePartitioning from "@/components/fetching/stagePartitioning";
-import getPartition from "@/components/fetching/getPartition";
 import spinUpSocket from "@/components/fetching/spinUpSocket";
 import { reset, crvPoints } from "./drawCurve.js";
+import { Mdx } from '@/components/mdx-components';
+import { allComputationalProjects } from 'contentlayer/generated';
 
 let bipartite_figures: string[] = [];
 
@@ -133,6 +132,12 @@ export default function ProjectPage() {
         stageThree();
     }, []);
 
+    const currentProjectIndex = allComputationalProjects.findIndex((project) => project.slugAsParams === 'min-rect-partition');
+
+    const project = allComputationalProjects[currentProjectIndex]
+    const nextProject = currentProjectIndex < allComputationalProjects.length - 1 ? allComputationalProjects[currentProjectIndex + 1] : null;
+    const previousProject = currentProjectIndex > 0 ? allComputationalProjects[currentProjectIndex - 1] : null;
+
     const href = '/computational-design/'
 
     return (
@@ -177,13 +182,13 @@ export default function ProjectPage() {
                     :
                     <div />
                 }
-                <div className={styles.canvasContainer} id='canvas-container'>
+                <div className={styles.canvasContainer} id='min-rect-canvas-container'>
                     {loading ?
                         (<div className={styles.loadingContainer}>
                             <div className={styles.loader} />
                         </div>
                         ): ''}
-                    <canvas className={styles.mainCanvas} id='canvas'> </canvas>
+                    <canvas className={styles.mainCanvas} id='minrect-canvas'> </canvas>
                     <div>
                         {applied ?
                             (<div className={styles.nav}>
@@ -222,6 +227,22 @@ export default function ProjectPage() {
             >
                 {!applied ? 'Apply Partition' : 'Reset'}
             </button>
+            <div className={styles.content}>
+                <Mdx code={project.body.code} />
+            </div>
+            <div className={styles.pagination}>
+                {previousProject &&
+                    <Link className={`noSelect ${styles.pageButton}`} href={href + previousProject?.slugAsParams}>
+                        <ArrowLeftIcon className='h-8 w-8' /> {previousProject.title}
+                    </Link>
+                }
+                <div className="flex-grow" />
+                {nextProject &&
+                    <Link className={`noSelect ${styles.pageButton} ${styles.nextPage}`} href={href + nextProject?.slugAsParams}>
+                        {nextProject.title} <ArrowRightIcon className='h-8 w-8' />
+                    </Link>
+                }
+            </div>
             <Footer style={styles.footer} />
         </div>
     )

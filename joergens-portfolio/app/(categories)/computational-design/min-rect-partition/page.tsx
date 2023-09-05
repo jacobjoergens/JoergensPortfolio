@@ -79,7 +79,6 @@ export default function ProjectPage() {
     }, [applied]);
 
     const handleApply = (state: number): void => {
-        console.log(state);
         setApplied(state);
         setLoading(1);
     }

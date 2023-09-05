@@ -16,15 +16,14 @@ import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import P
 export var scene, camera, renderer, controls, count_slider
 let hdrCubeMap, exrCubeRenderTarget;
 
-let rhino; 
+let rhino;
 
 const loader = new Rhino3dmLoader()
 loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@8.0.0/")
-
-// let light = new THREE.DirectionalLight(0xffffff, 1)
+const ambientLight = new THREE.AmbientLight(0xCD7F32, 0.2); // Color, Intensity
 
 export async function init(canvas) {
-  rhino = await rhino3dm(); 
+  rhino = await rhino3dm();
   count_slider = document.getElementById('count')
   // Create the scene, camera, and renderer
   scene = new THREE.Scene();
@@ -46,9 +45,9 @@ export async function init(canvas) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.useLegacyLights = false;
 
-  const pmremGenerator = new PMREMGenerator(renderer); 
+  const pmremGenerator = new PMREMGenerator(renderer);
   pmremGenerator.compileCubemapShader();
-  
+
   // const hdrUrls = ['mistyMorning.exr'];
   // const hdrPath = path.join(process.cwd(), 'textures/kloofendal/');
   // hdrCubeMap = new THREE.CubeTextureLoader().setPath(hdrPath).load(hdrUrls, function () {
@@ -57,19 +56,19 @@ export async function init(canvas) {
   //   hdrCubeMap.needsUpdate = true;
   // });
 
-  new EXRLoader().load( '/textures/kloofendal/studioSmall.exr', function ( texture ) {
+  new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
 
     texture.mapping = THREE.EquirectangularReflectionMapping;
 
-    exrCubeRenderTarget = pmremGenerator.fromEquirectangular( texture );
+    exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
     // exrBackground = texture;
 
-  } );
+  });
 
 
   // const pmremGenerator = new THREE.PMREMGenerator(renderer);
   // pmremGenerator.compileCubemapShader();
-
+  scene.add(ambientLight);
   camera.position.set(0, 0, 50);
   camera.lookAt(0, 0, 0);
   renderer.toneMappingExposure = 1.0;
@@ -101,12 +100,12 @@ function animate() {
   // light.position.add(offsetVector);
   renderer.render(scene, camera)
   // render();
-  
+
 }
 
 function render() {
   torusMesh.material.roughness = params.roughness;
-  torusMesh.material.metalness = params.metalness;
+  torusMesh.material.metalness = params.reflectivity;
 
   if (hdrCubeRenderTarget) {
     torusMesh.material.envMap = hdrCubeRenderTarget.texture;
@@ -129,7 +128,9 @@ function onWindowResize() {
 
 export async function compute(values, displayParams) {
   // return new Promise(async (resolve, reject) => {
-  let data = JSON.stringify(values)
+  // const buffer = fs.readFileSync('C:/Users/Administrator/Desktop/stringPDB.gh')
+  // const definition = new Uint8Array(buffer);
+  let data = JSON.stringify({ values: values })
   try {
     const response = await fetch('/api/loadGrasshopper', {
       method: 'POST',
@@ -157,9 +158,9 @@ let doc
 export async function collectResults(responseJson, displayParams) {
 
   const values = responseJson.values
-  // clear doc
+  //clear doc
   if (doc != undefined) {
-    doc.delete()
+    doc = null;
   }
 
   doc = new rhino.File3dm()
@@ -190,41 +191,62 @@ export async function collectResults(responseJson, displayParams) {
   return false;
 }
 
-export async function rhinoToThree(displayParams){
+export async function rhinoToThree(displayParams) {
   // load rhino doc into three.js scene
-  const buffer = new Uint8Array(doc.toByteArray()).buffer
-  loader.parse(buffer, function (object) {
-    // debug 
-    let material = new THREE.MeshStandardMaterial( {
-      color: 0xF7D498, //0xffffff,
-      envMap: exrCubeRenderTarget.texture,
-      metalness: displayParams['Metalness'],
-      roughness: displayParams['Roughness'],
-      flatShading: false,
-      envMapIntensity: 1.0
-    } );
+  if (doc) {
+    const buffer = new Uint8Array(doc.toByteArray()).buffer
+    loader.parse(buffer, function (object) {
+      console.log('object:',object)
+      let material = new THREE.MeshStandardMaterial({
+        color: displayParams['Color'],
+        envMap: exrCubeRenderTarget.texture,
+        metalness: displayParams['Reflectivity'],
+        roughness: displayParams['Roughness'],
+        flatShading: false,
+        envMapIntensity: 1.0
+      });
 
-    object.traverse(child => {
-      if (child.material)
-        child.material = material;
+      // console.log(object);
+      object.traverse(child => {
+        if (child.material)
+          child.material = material;
         // child.material.flatShading = false;
-    }, false)
+      }, false);
 
+      // console.log(scene)
+      // clear objects from scene. do this here to avoid blink
+      // if (scene) {
+      //   scene.traverse(child => {
+      //     console.log('type:',child.type)
+      //     // if (!child.isLight && child.name !== 'context') {
+      //       if(child.type=='Mesh' || child.type=='Object3D')
+      //       console.log('removing:',child)
+      //       scene.remove(child)
+      //     // }
+      //   })
+      // }
+      
+      const boundingBox = new THREE.Box3();
+      boundingBox.setFromObject(object.children[0],true);
+      const width = boundingBox.max.x - boundingBox.min.x;
+      object.position.x = 0; 
+      const duplicateObject = object.clone();
+      duplicateObject.scale.x = -1; // Flip horizontally
+      duplicateObject.position.x = width*2; // Move it to the right
+      // add object graph from rhino model to three.js scene
+      scene = new THREE.Scene();
+      scene.add(ambientLight)
+      scene.add(object);
+      scene.add(duplicateObject);
+      console.log(scene);
 
-    // clear objects from scene. do this here to avoid blink
-    scene.traverse(child => {
-
-      if (!child.isLight && child.name !== 'context') {
-        scene.remove(child)
-      }
+      // zoom to extents
+      zoomCameraToSelection(camera, controls, scene.children)
+    }, function (error) {
+      // Error callback
+      console.error(error);
     })
-
-    // add object graph from rhino model to three.js scene
-    scene.add(object)
-
-    // zoom to extents
-    zoomCameraToSelection(camera, controls, scene.children)
-  })
+  }
 }
 
 /**

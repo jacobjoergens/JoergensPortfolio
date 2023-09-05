@@ -17,7 +17,7 @@ const nextConfig = {
         config.plugins.push(
           new CopyPlugin({
             patterns: [
-              { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "app/(categories)/computational-design/protein-earrings/"},
+              { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/app/(categories)/computational-design/protein-earrings/"},
               { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/"} //app/(categories)/computational-design/protein-earrings/
             ]
           })

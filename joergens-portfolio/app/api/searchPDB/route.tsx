@@ -4,9 +4,7 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
     const json = await req.json()
-    console.log(json);
     const inputValue = json.input;
-    console.log('body:', inputValue);
     try {
         // const encodedInputValue = encodeURIComponent(inputValue);
         const response = await fetch(

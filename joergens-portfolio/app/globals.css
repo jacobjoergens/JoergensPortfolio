@@ -117,10 +117,11 @@ footer {
   justify-content: center;
   align-items: center;
   font-size: 1.5rem;
+  color: var(--secondary-color);
 }
 
 .backButton:hover {
-  color: pink;
+  color: var(--darkGreen)
 }
 
 /* Hide blue highlights on buttons */
@@ -175,4 +176,5 @@ footer {
   --primary-color: #dd6858;
   --secondary-color: #d83012;
   --background-color: #eae9d2;
+  --darkGreen: #080f0e;
 }

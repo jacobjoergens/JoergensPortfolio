@@ -16,7 +16,7 @@
 .sidebar.open {
     width: 100%;
     background-color: var(--background-color);
-    color: #000000;
+    color: var(--darkGreen);
     transition: width .75s ease-in-out, background-color .25s ease-in-out, color 2s ease-in-out;
 }
 

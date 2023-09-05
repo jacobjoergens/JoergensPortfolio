@@ -11,6 +11,16 @@
     z-index: 2;
 }
 
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 .header {
     position: relative;
     width: 100%;
@@ -36,7 +46,8 @@
     display: flex;
     /* overflow: hidden; */
     flex-direction: column;
-    flex-grow: 1;
+    height: 100%;
+    width: 100%;
     /* height: 100vh; */
     color: var(--primary-color);
     background-color: var(--background-color);
@@ -46,23 +57,34 @@
     display: flex;
     flex-direction: column;
     /* overflow: hidden; */
-    flex-grow: 1;
     width: 100%;
+    height: 90vh;
+}
+
+.canvasGUI {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 70%;
+    margin: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 .canvasContainer {
     /* flex-grow: 1; */
-    max-width: 100%;
+    width: 82%;
     position: relative;
-    margin: 1em;
-    margin-bottom: 2em;
+    /* margin: 1em; */
+    /* margin-bottom: 2em; */
+    margin-right: 1rem; 
     border-radius: 1em;
-    background-color: #080f0e;
-    border: 1px solid #080f0e;
+    background-color: var(--darkGreen);
+    border: 1px solid var(--secondary-color);
     height: 100%;
 }
 
 .mainCanvas {
+    display: flex;
     position: relative;
     /* z-index: 1; */
     width: 100%;
@@ -70,26 +92,55 @@
     height: 100%;
 }
 
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+.searchbar {
+    margin: 1rem;
 }
 
+.toggleGUI {
+    display: none;
+    border-radius: 1rem;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--darkGreen);
+    padding: 0.5rem; 
+    z-index: 300;
+}
+
+@media (max-width: 768px){
+    .toggleGUI {
+        display: block;
+        right: 1rem;
+        top: 1rem;
+        position: absolute;
+    }
+    .GUIContainer.closed{
+        display: none;
+    }
+    .GUIContainer.open{
+        display: flex;
+        position: absolute;
+        left:0;
+        top:0;
+        height: 100%;
+        width: 100%;
+        z-index: 300;
+    }
+    .canvasContainer{
+        width:100%;
+        margin-right: 2rem;
+    }
+}
 .GUIContainer {
+    margin-right: 2rem;
+    background-color: var(--darkGreen);
     border: 1px solid var(--primary-color);
     border-radius: 1em;
-    width: 20%;
-    height: 80%;
+    width: 18%;
+    height: 100%;
     color: var(--primary-color);
-    position: absolute;
-    right: 1em;
-    top: 1em;
+    position: relative;
+    /* right: 1em;
+    top: 1em; */
     align-items: center;
 }
 
@@ -102,8 +153,9 @@
     z-index: 100;
     color: var(--primary-color);
     /* height: 50vw; */
-    position: absolute;
+    /* position: absolute; */
     overflow-y: auto;
+    height: 95%;
     max-height: 95%;
     margin-top: 10px;
     width: 95%;
@@ -136,14 +188,25 @@
     background: var(--secondary-color);
 }
 
-.titleGUI {
+.exitGUI {
     /* padding-top: 1em; */
-    padding-bottom: 1em;
+    padding: 1em;
+    flex-grow: 1;
+    direction: rtl;
 }
 
-.titleGUI>button {
+.exitGUI>button {
     display: flex;
     flex-direction: row;
+    position: relative;
+    /* right: 1rem; */
+    /* right: 1rem; */
+    color:var(--darkGreen); 
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+    padding-right: 1rem;
+    padding: 0.5rem;
 }
 
 .categories {
@@ -151,11 +214,15 @@
     padding-bottom: 1em;
 }
 
+.sectionHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 .sectionHeader>button {
     display: flex;
     flex-direction: row;
-    padding-left: 0.5em;
-    padding-bottom: 1em;
+    padding: 0.5em;
 }
 
 .slider {
@@ -184,7 +251,7 @@
 
 .active {
     background-color: var(--primary-color);
-    color: #080f0e;
+    color: var(--darkGreen);
 }
 
 .materialContainer>button {
@@ -290,6 +357,7 @@
 .content {
     position: relative;
     margin: 1rem;
+    color: var(--darkGreen);
 }
 
 @media (min-width: 768px) {

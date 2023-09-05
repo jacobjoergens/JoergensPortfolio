@@ -2,6 +2,7 @@
 .mainContainer{
     background-color: var(--background-color);
     padding-bottom: 1rem;
+    color: var(--primary-color)
 }
 
 .header {
@@ -11,6 +12,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    color: var(--secondary-color);
     margin-bottom: 1rem;
 }
 
@@ -26,6 +28,7 @@
 .content { 
     position: relative;
     margin: 3rem;
+    color: var(--darkGreen)
 }
 
 .content > p { 
@@ -33,6 +36,10 @@
     margin-left: 1rem;
     font-size: 1rem; 
     margin-bottom: 1rem;
+}
+
+.content > p > a {
+    color: var(--secondary-color);
 }
 
 .content > h1 {

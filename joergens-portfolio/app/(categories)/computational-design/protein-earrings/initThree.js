@@ -2,19 +2,15 @@
 import * as THREE from 'three';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader';
-import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
+// import { HDRCubeTextureLoader } from 'three/addons/loaders/HDRCubeTextureLoader.js';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import rhino3dm from 'rhino3dm';
-// import { runCompute } from 'components/fetching/ghCompute.js';
-
-import styles from 'styles/pages/computational.module.css'
-// import { rhino } from './page.tsx';
-import path from 'path'
 import { PMREMGenerator } from 'three/src/extras/PMREMGenerator.js'; // Import PMREMGenerator
+import { render } from 'react-dom';
 
 // import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-export var scene, camera, renderer, controls, count_slider
-let hdrCubeMap, exrCubeRenderTarget;
+export var scene, camera, renderer, controls
+let exrCubeRenderTarget;
 
 let rhino;
 
@@ -24,24 +20,31 @@ const ambientLight = new THREE.AmbientLight(0xCD7F32, 0.2); // Color, Intensity
 
 export async function init(canvas) {
   rhino = await rhino3dm();
-  count_slider = document.getElementById('count')
   // Create the scene, camera, and renderer
   scene = new THREE.Scene();
 
-  let width = 800;
-  let height = 600;
+  const container = document.getElementById('canvas-container');
+  let width = container.clientWidth;
+  let height = container.clientHeight;
 
-  if (typeof window !== 'undefined') {
-    // Running in a browser environment
-    width = window.innerWidth;
-    height = window.innerHeight;
+  // console.log(width)
+
+  camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: document.getElementById('canvas') });
+  renderer.setSize(width, height);
+
+  function updateCanvasSize() {
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    renderer.setSize(containerWidth,containerHeight);
+    camera.aspect = containerWidth / containerHeight;
+    camera.updateProjectionMatrix();
   }
 
-  camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-  // const canvas = document.getElementById('canvas');
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: canvas });
+  updateCanvasSize();
+  window.addEventListener('resize', updateCanvasSize, false);
+
   renderer.setPixelRatio(window.devicePixelRatio)
-  renderer.setSize(canvas.offsetWidth, canvas.offsetHeight)
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.useLegacyLights = false;
 
@@ -78,58 +81,23 @@ export async function init(canvas) {
   controls.enableGrid = true;
   controls.enablePan = false;
   controls.enableZoom = true;
-  window.addEventListener('resize', onWindowResize, false)
+  // window.addEventListener('resize', onWindowResize, false)
 
   animate()
-}
-
-function calculateOffsetVector(camera, offsetDistance) {
-  const offsetVector = new THREE.Vector3();
-  const cameraDirection = new THREE.Vector3();
-  camera.getWorldDirection(cameraDirection);
-  offsetVector.copy(cameraDirection);
-  offsetVector.multiplyScalar(-offsetDistance);
-  offsetVector.setY(offsetVector.y + offsetDistance);
-  return offsetVector;
 }
 
 function animate() {
   requestAnimationFrame(animate)
-  // const offsetVector = calculateOffsetVector(camera, 100);
-  // light.position.copy(camera.position)
-  // light.position.add(offsetVector);
   renderer.render(scene, camera)
-  // render();
-
 }
 
-function render() {
-  torusMesh.material.roughness = params.roughness;
-  torusMesh.material.metalness = params.reflectivity;
-
-  if (hdrCubeRenderTarget) {
-    torusMesh.material.envMap = hdrCubeRenderTarget.texture;
-    torusMesh.material.needsUpdate = true;
-  }
-
-  torusMesh.rotation.y += 0.005;
-  planeMesh.visible = params.debug;
-
-  renderer.toneMappingExposure = params.exposure;
-  renderer.render(scene, camera);
-}
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  animate()
-}
+// function onWindowResize() {
+//   camera.aspect = window.innerWidth / window.innerHeight
+//   camera.updateProjectionMatrix()
+//   animate()
+// }
 
 export async function compute(values, displayParams) {
-  // return new Promise(async (resolve, reject) => {
-  // const buffer = fs.readFileSync('C:/Users/Administrator/Desktop/stringPDB.gh')
-  // const definition = new Uint8Array(buffer);
   let data = JSON.stringify({ values: values })
   try {
     const response = await fetch('/api/loadGrasshopper', {
@@ -137,17 +105,13 @@ export async function compute(values, displayParams) {
       headers: { 'Content-Type': 'application/json' },
       body: data
     });
-    // const response = runCompute(values)
     const responseData = await response.text();
     const responseJson = JSON.parse(responseData);
     return (await collectResults(responseJson, displayParams));
-    // resolve();
   } catch (error) {
     console.error(error);
     return true;
-    // return error
   }
-  // });
 };
 
 
@@ -196,7 +160,7 @@ export async function rhinoToThree(displayParams) {
   if (doc) {
     const buffer = new Uint8Array(doc.toByteArray()).buffer
     loader.parse(buffer, function (object) {
-      console.log('object:',object)
+      console.log('object:', object)
       let material = new THREE.MeshStandardMaterial({
         color: displayParams['Color'],
         envMap: exrCubeRenderTarget.texture,
@@ -225,14 +189,14 @@ export async function rhinoToThree(displayParams) {
       //     // }
       //   })
       // }
-      
+
       const boundingBox = new THREE.Box3();
-      boundingBox.setFromObject(object.children[0],true);
+      boundingBox.setFromObject(object.children[0], true);
       const width = boundingBox.max.x - boundingBox.min.x;
-      object.position.x = 0; 
+      object.position.x = 0;
       const duplicateObject = object.clone();
       duplicateObject.scale.x = -1; // Flip horizontally
-      duplicateObject.position.x = width*2; // Move it to the right
+      duplicateObject.position.x = width * 2; // Move it to the right
       // add object graph from rhino model to three.js scene
       scene = new THREE.Scene();
       scene.add(ambientLight)

@@ -24,21 +24,21 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
 
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
-            ...provided,
+            ...provided,            
+            paddingLeft: '1rem',
             border: `1px solid ${primaryColor}`, // Remove focus border
             borderRadius: '1rem',
             // boxShadow: `0 0 0 1px ${primaryColor}`,
             '&:hover': {
                 border: `1px solid ${secondaryColor}`
             },
-            width: '75%',
+            width: '100%',
             backgroundColor: darkGreen,
             color: primaryColor,
             bottom: '1rem',
             '&:focus .css-1hwfws3': {
                 color: 'transparent',
               },
-            marginLeft: '1rem',
         }),
         input: (provided) => ({
             ...provided,

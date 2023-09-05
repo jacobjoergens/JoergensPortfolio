@@ -1,12 +1,10 @@
 'use client'
-import { notFound } from "next/navigation";
-import { allWoodworkingProjects, WoodworkingProject } from "contentlayer/generated";
+import { allWoodworkingProjects } from "contentlayer/generated";
 import styles from "@/styles/pages/woodworking.module.css";
 import React from "react";
 import Carousel from "@/components/layout/Carousel";
 import { ArrowUturnLeftIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useMDXComponent } from "next-contentlayer/hooks";
 import Footer from "@/components/layout/Footer";
 import { Mdx } from '@/components/mdx-components';
 
@@ -17,11 +15,7 @@ interface ProjectProps {
   };
 }
 
-interface LabelProps {
-  label: string;
-}
-
-function formatLinkLabel(label: LabelProps["label"]) {
+function formatLinkLabel(label: string) {
   const words = label.split(" ");
   return words.join("\n");
 }
@@ -50,7 +44,7 @@ export default function ProjectPage({ params }: ProjectProps) {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.header}>
-        <h1 className={formatLinkLabel(styles.title)}>{project.title}</h1>
+        <h1 className={styles.title}>{formatLinkLabel(project.title)}</h1>
         <Link className={`noSelect backButton`} href={href}>
           <ArrowUturnLeftIcon className="h-8 w-8" /> Back
         </Link>

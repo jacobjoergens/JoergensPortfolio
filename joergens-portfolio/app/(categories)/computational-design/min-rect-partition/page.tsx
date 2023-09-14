@@ -1,17 +1,19 @@
 'use client'
 import styles from "styles/pages/minrect.module.css"
 import { useRef, useEffect, useState } from "react";
-import { init } from "./initThree.js";
-import { setInitValues, showPartition, switchDegSet, zoomToFit, createListeners } from "./threeUI.js";
+import { camera, controls, init, scene } from "./initThree.js";
+import { setInitValues, showPartition, switchDegSet, zoomCameraToSelection, createListeners, removeListeners, lengthDegSet } from "./threeUI.js";
 import GraphCarousel from "@/components/layout/GraphCarousel";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link.js";
 import Footer from "@/components/layout/Footer";
 import stagePartitioning from "@/components/fetching/stagePartitioning";
 import spinUpSocket from "@/components/fetching/spinUpSocket";
-import { reset, crvPoints } from "./drawCurve.js";
+import { reset, crvPoints, curves } from "./drawCurve.js";
 import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
+import Spinner from "@/components/layout/Spinner";
+import { removeListener } from "process";
 
 let bipartite_figures: string[] = [];
 
@@ -42,78 +44,104 @@ function formatLinkLabel(label: string) {
 }
 
 export default function ProjectPage() {
-    const [applied, setApplied] = useState(0);
-    const [loading, setLoading] = useState(0);
+    const [applied, setApplied] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [nonDegIndex, setNonDegIndex] = useState(0);
     const [degIndex, setDegIndex] = useState(0);
     const [groupLength, setGroupLength] = useState(0);
     const prevNonDegRef = useRef<number>(nonDegIndex);
+    const [isMounted, setIsMounted] = useState(false);
+    const [isDegenerate, setIsDegenerate] = useState(true);
+    const [openGraphs, setOpenGraphs] = useState(false);
 
     useEffect(() => {
+        const stageThree = async () => {
+            await init(); // Call the init function when the component mounts
+            await spinUpSocket();
+        }
+        stageThree();
+        console.log('crvPoints at mount:', crvPoints)
+        setIsMounted(true);
+        handleApply();
+    }, []);
 
+    useEffect(() => {
+        console.log('applied:', applied)
         async function applyPart() {
+            console.log('crvPoints:', crvPoints)
+            scene.remove(curves);
             setInitValues();
             const part_out = await stagePartitioning(crvPoints);
             bipartite_figures = part_out.bipartite_figures;
-            setGroupLength(part_out.setLength);
-            // setLoading(0);
+            if (bipartite_figures.length == 0) {
+                setIsDegenerate(false);
+            }
             await showPartition(0);
-            zoomToFit();
-            setLoading(0);
+            setGroupLength(lengthDegSet);
+            zoomCameraToSelection(camera, controls)
+            removeListeners();
+            controls.enableRotate = true;
+            setLoading(false);
         }
 
         async function applyReset() {
             setInitValues();
+            createListeners();
+            controls.enableRotate = false;
             reset();
             init();
-            setLoading(0);
+            setIsDegenerate(true);
+            setLoading(false);
         }
 
-        if (applied) {
-            applyPart();
-        } else {
-            applyReset();
+        if (isMounted) {
+            if (applied) {
+                applyPart();
+            } else {
+                applyReset();
+            }
         }
-
     }, [applied]);
 
-    const handleApply = (state: number): void => {
-        setApplied(state);
-        setLoading(1);
+    const handleApply = (): void => {
+        setApplied(!applied);
+        setLoading(true);
     }
 
     useEffect(() => {
-        async function change(){
+        async function change() {
             await switchDegSet(degIndex);
-            setLoading(0);
+            setLoading(false);
         }
 
-        if(applied){
+        if (applied) {
             change();
         }
     }, [degIndex])
 
     const handleDegChange = (index: number): void => {
         setDegIndex(index);
-        setLoading(1);
+        setLoading(true);
     }
 
     useEffect(() => {
 
-        async function change(){
-            let dir = (nonDegIndex-prevNonDegRef.current)>0;
-            await showPartition(dir ? 1 : -1);
-            prevNonDegRef.current = nonDegIndex;
-            setLoading(0);
+        async function change() {
+            if (nonDegIndex != prevNonDegRef.current) {
+                let dir = (nonDegIndex - prevNonDegRef.current) > 0;
+                await showPartition(dir ? 1 : -1);
+                prevNonDegRef.current = nonDegIndex;
+                setLoading(false);
+            }
         }
 
-        if(applied){
+        if (applied) {
             change();
         }
     }, [nonDegIndex])
 
     const handleNonDegChange = (dir: number) => {
-        setLoading(1);
+        setLoading(true);
         let newIndex = nonDegIndex + dir
         if (newIndex >= groupLength) {
             newIndex = 0;
@@ -123,14 +151,9 @@ export default function ProjectPage() {
         setNonDegIndex(newIndex);
     }
 
-    useEffect(() => {
-        const stageThree = async () => {
-            await init(); // Call the init function when the component mounts
-            await spinUpSocket();
-            await createListeners();
-        }
-        stageThree();
-    }, []);
+    const toggleGraphs = () => {
+        setOpenGraphs(!openGraphs);
+    }
 
     const currentProjectIndex = allComputationalProjects.findIndex((project) => project.slugAsParams === 'min-rect-partition');
 
@@ -171,52 +194,50 @@ export default function ProjectPage() {
                 </div>
             </div>
             <div className={styles.contentContainer}>
-                {applied ?
+                <button className={styles.toggleGraphs} onClick={() => toggleGraphs()}>
+                    {openGraphs ?
+                        'Close'
+                        :
+                        'Explore degeneracies'
+                    }
+                </button>
+                {(applied && isDegenerate) &&
                     (
                         <GraphCarousel
                             dataType="data:image/svg+xml;base64,"
                             images={bipartite_figures}
                             onImageChange={handleDegChange}
+                            openGraphs={openGraphs}
                         />
                     )
-                    :
-                    <div />
                 }
-                <div className={styles.canvasContainer} id='min-rect-canvas-container'>
-                    {loading ?
-                        (<div className={styles.loadingContainer}>
-                            <div className={styles.loader} />
-                        </div>
-                        ): ''}
-                    <div className={styles.blockCanvas}> Unfortunately, this model does not work on touch screens. If you are on a computer, just make the page bigger.</div>
-                    <canvas className={styles.mainCanvas} id='minrect-canvas'> </canvas>
-                    <div>
-                        {applied ?
-                            (<div className={styles.nav}>
-                                <button
-                                    type='button'
-                                    id='prevButton'
-                                    aria-label="Previous Partition"
-                                    onClick={() => handleNonDegChange(-1)}
-                                >
-                                    <ArrowLeftIcon className="noSelect h-6 w-12" />
-                                </button>
-                                <p>
-                                    Partition {nonDegIndex + 1} of {groupLength} under {getCardinalAbbreviation(degIndex + 1)} nondegenerate set
-                                </p>
-                                <button
-                                    type='button'
-                                    id='nextButton'
-                                    aria-label='Next Partition'
-                                    onClick={() => handleNonDegChange(1)}
-                                >
-                                    <ArrowRightIcon className="noSelect h-6 w-12" />
-                                </button>
-                            </div>)
-                            :
-                            <div />
-                        }
-                    </div>
+                <div className={`${styles.canvasContainer} ${openGraphs ? styles.closed : styles.open}`} id='canvas-container'>
+                    {loading && <Spinner />}
+                    <canvas className={styles.mainCanvas} id='canvas'> </canvas>
+
+                    {applied &&
+                        (<div className={`${styles.nav} ${isDegenerate ? '' : styles.nondeg}`}>
+                            <button
+                                type='button'
+                                id='prevButton'
+                                aria-label="Previous Partition"
+                                onClick={() => handleNonDegChange(-1)}
+                            >
+                                <ArrowLeftIcon className="noSelect h-6 w-12" />
+                            </button>
+                            <p>
+                                Partition {nonDegIndex + 1} of {groupLength} {`${isDegenerate ? `under ${getCardinalAbbreviation(degIndex + 1)} nondegenerate set` : ''}`}
+                            </p>
+                            <button
+                                type='button'
+                                id='nextButton'
+                                aria-label='Next Partition'
+                                onClick={() => handleNonDegChange(1)}
+                            >
+                                <ArrowRightIcon className="noSelect h-6 w-12" />
+                            </button>
+                        </div>)
+                    }
                 </div>
             </div>
             <button
@@ -224,9 +245,9 @@ export default function ProjectPage() {
                 // disabled={true}
                 className={styles.computeButton}
                 // id='computeButton'
-                onClick={() => handleApply((applied+1)%2)}
+                onClick={handleApply}
             >
-                {!applied ? 'Apply Partition' : 'Reset'}
+                {!applied ? 'Apply partition' : 'Create a new shape'}
             </button>
             <div className={styles.content}>
                 <Mdx code={project.body.code} />

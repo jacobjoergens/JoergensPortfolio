@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; 
     /* margin-bottom: 1rem; */
     color: var(--secondary-color);
     background-color: var(--background-color);
@@ -19,20 +19,24 @@
     line-height: 1;
 }
 
-.loadingContainer {
+/* .loadingContainer {
     position: fixed;
     top: 45%;
     width: 40px;
     height: 40px;
-}
+} */
+
 .loader {
-    border: 4px solid var(--primary-color);
-    border-top: 4px solid var(--secondary-color);
-    border-radius: 50px;
-    animation: spin 1.5s linear infinite; /*Apply the rotation animation */
+    border: 5px solid var(--primary-color);
+    border-top: 5px solid var(--secondary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
     z-index: 2;
-    width: 100%;
-    height: 100%;
 }
   
   @keyframes spin {
@@ -101,33 +105,35 @@
     /* overflow: hidden; */
     width: 96vw;
     height: 80vh;
-    max-width: 100%;
-    max-height: 100vh;
+    /* max-width: 100%;
+    max-height: 100vh; */
     border-radius: 1em;
     border: 1px solid var(--darkGreen);
     margin: 2rem;
     align-items: center;
+    position: relative;
     /* padding: 1rem; */
 }
 
 .canvasContainer {
-    /* flex-grow: 1; */
-    height: 100%;
-    /* margin: 1em; */
     background-color: var(--background-color);
     display: flex;
     flex-direction: column;
     border-radius: 1rem;
-    /* align-items: center; */
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
+    height: 100%;
+    width: 100%;
+    position: relative;
 }
 
 .mainCanvas {
     transition: opacity 0.5s ease-in-out;
-    flex: 1;
+    /* flex: 1; */
     max-width: 100%;
     height: 100%;
+    position: relative;
+    top: 0; 
 }
 
 .blockCanvas {
@@ -140,29 +146,56 @@
     justify-content: center;
 }
 
-@media (max-width:786px){
-    .blockCanvas {
-        display: flex;
-    }
-    
-    .mainCanvas {
-        display: none;
-    }
-
-    .computeButton {
-        display: none;
-    }
+.toggleGraphs {
+    display: none;
 }
 
 .nav {
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
     padding: 0.5rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    max-width: -moz-fit-content;
-    max-width: fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
     position: relative;
+    bottom: 1.5rem;
+}
+
+.nav > p{
+    text-align: center;
+}
+
+.nav.nondeg{
+    bottom: 3rem;
+}
+
+@media (max-width:786px){
+    .toggleGraphs {
+        display: block;
+        z-index: 400;
+        background-color: var(--primary-color);
+        color: var(--darkGreen);
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: -moz-fit-content;
+        width: fit-content;
+        padding: 0.5rem;
+        border-radius: 1rem;
+    }
+    .canvasContainer.open {
+        display: flex;
+    }
+    .canvasContainer.closed{
+        display: none;
+    }
+    .nav {
+        bottom: 4rem;
+    }
+    .directionContainer{
+        flex-direction: column;
+    }
 }
 
 .content { 

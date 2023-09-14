@@ -20,63 +20,72 @@ const darkGreen = '#080f0e'
 
 
 const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
-    // const [menuHeight, setMenuHeight] = useState(0);
+    const [isInputFocused, setInputFocused] = useState(false);
 
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
             ...provided,            
             paddingLeft: '1rem',
-            border: `1px solid ${primaryColor}`, // Remove focus border
+            border: `1px solid ${isInputFocused ? secondaryColor : primaryColor}`, // Remove focus border
             borderRadius: '1rem',
-            // boxShadow: `0 0 0 1px ${primaryColor}`,
+            boxShadow: `0 0 0 ${isInputFocused ? '1px':'0px'} ${primaryColor}`,
             '&:hover': {
                 border: `1px solid ${secondaryColor}`
             },
-            width: '100%',
             backgroundColor: darkGreen,
             color: primaryColor,
-            bottom: '1rem',
             '&:focus .css-1hwfws3': {
                 color: 'transparent',
               },
+            alignItems: 'center',
+            marginLeft: '1rem',
+            marginRight: '1rem',
         }),
+
         input: (provided) => ({
             ...provided,
             margin: '0',
             color: primaryColor,
             //   color: '#dd6858',
         }),
-        // Style the menu with a higher z-index
+
         menu: (provided) => ({
             ...provided,
             zIndex: 500, 
             color: primaryColor,
-            // Adjust the value as needed
-            // marginTop: `-${menuHeight}px`,
+            display: 'flex',
+            flexDirection: 'row',
+            width: '97%',
+            top: '2rem',
+            left: '1rem',
         }),
 
         singleValue: (provided) => ({
             ...provided, 
             color: primaryColor,
+            display: `${isInputFocused ? 'none' : 'flex'}`,
+            whiteSpace: 'normal',
+            padding: '0.5rem',
         }),
     
         placeholder: (provided) => ({
             ...provided,
             color: primaryColor, // Change placeholder color
-          }),
+            display: `${isInputFocused?'none':'block'}`
+        }),
         
-          dropdownIndicator: (provided) => ({
+        dropdownIndicator: (provided) => ({
             ...provided,
             color: primaryColor, // Change dropdown arrow color
             '&:hover':{
                 color: secondaryColor,
             },
-          }),
+        }),
         
-          indicatorSeparator: (provided) => ({
+        indicatorSeparator: (provided) => ({
             ...provided,
             backgroundColor: primaryColor,
-          }),
+        }),
     };
 
     const loadOptions = async (inputValue: string) => {
@@ -100,19 +109,26 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
     };
 
     const formatOptionLabel = (option: Option) => (
-        <div>
-            <div>{option.label}</div>
-            <div>{option.description}</div>
+        <div className={styles.proteinInfo}>
+            <div className={styles.label}> {option.label}</div>
+            <div className={styles.divider}></div>
+            <div className={styles.description}> {option.description}</div>
         </div>
     );
 
-    // useEffect(() => {
-    //     // Access the menu element by ID after the component mounts
-    //     const menu = document.getElementById('react-select-menu');
-    //     if (menu) {
-    //       setMenuHeight(menu.clientHeight);
-    //     }
-    //   }, []);
+    const handleInputFocus = () => {
+        setInputFocused(true);
+      };
+    
+      // Handle input blur
+    const handleInputBlur = () => {
+        setInputFocused(false);
+    };
+
+    const handleChange = (option: any) => {
+        handleInputBlur();
+        onChange(option);
+    }
 
     return (
         <AsyncSelect
@@ -127,9 +143,13 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ onChange }) => {
                         callback([]);
                     });
             }}
-            onChange={onChange}
+            onChange={handleChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
             formatOptionLabel={formatOptionLabel} // Use custom formatOptionLabel function
-            placeholder={formatOptionLabel({label: '7XHS', value: '7XHS', description:'Crystal structure of CipA crystal produced by cell-free protein synthesis'})}
+            placeholder={"Search for protein..."}
+            defaultValue={{ label: '7XHS', value: '7XHS', description: 'Crystal structure of CipA crystal produced by cell-free protein synthesis' }}
+                // formatOptionLabel({label: '7XHS', value: '7XHS', description:'Crystal structure of CipA crystal produced by cell-free protein synthesis'})}
             // menuPortalTarget={document.body}
         />
     );

@@ -2,11 +2,11 @@ import compute_rhino3d.Util
 import compute_rhino3d.AreaMassProperties
 import numpy as np
 import rhino3dm as rh
-import json
 import operator
 
-compute_rhino3d.Util.url = "http://localhost:8081/"
- 
+compute_rhino3d.Util.url = "http://18.222.210.44:80/"
+compute_rhino3d.Util.apiKey = "TMqHt.2h;4q8cakYAroEMD&KmXUKw5qB"
+
 """
 Description:
 -a Corner is a data structure that stores information on the vertices between edges of an input curve
@@ -187,15 +187,7 @@ Outputs:
 def calculateExtents(vertices):
     sorted_indices = [i[0] for i in sorted(enumerate(vertices), key=lambda x:(x[1][0],x[1][1]))]
     bottom_left_index = sorted_indices[0]
-    bottom_left = vertices[bottom_left_index]
-    top_right = vertices[sorted_indices[-1]]
-    if(abs(bottom_left[0]-top_right[0])==abs(bottom_left[1]-top_right[1])):
-        max_extent = "square"
-    elif(abs(bottom_left[0]-top_right[0]>abs(bottom_left[1]-top_right[1]))):
-        max_extent = "x"
-    else: 
-        max_extent = "y"
-    return bottom_left_index, max_extent
+    return bottom_left_index
 
 """
 Description: build corner_lists from input curves 
@@ -226,7 +218,6 @@ def digestCurves(curve_data):
     
 
     corner_lists = []
-
     #push largest curve to index 0 
     if(len(curves)>1):
         max_area_index = np.argmax(areas)
@@ -242,17 +233,17 @@ def digestCurves(curve_data):
         vertices.pop(-1) #if an input curve is closed (which it must be) then the last vertex is the same as the first
         
         #the bottom leftmost vertex must be convex 
-        leftmost, extent = calculateExtents(vertices)
+        leftmost = calculateExtents(vertices)
         if(i==0): 
             corner_lists[0].exterior = True #set the curve with greatest area to be an exterior curve
-            max_extent = extent #set max_extent from prevailing dimension of the largest curve
+            # max_extent = extent #set max_extent from prevailing dimension of the largest curve
 
         #calculate the direction at the bottom leftmost vertex from the input curve 
         trailing = edges[(leftmost-1)%len(vertices)]
         leading = edges[leftmost%len(vertices)]
-        rhrule = np.cross(np.array(trailing[1])-np.array(trailing[0]),np.array(leading[1])-np.array(leading[0]))[2]
-        rhrule = rhrule/abs(rhrule)
-        
+        cross1 = lambda x,y:np.cross(x,y)
+        cross = cross1(np.array(trailing[1])-np.array(trailing[0]),np.array(leading[1])-np.array(leading[0]))[2]
+        rhrule = cross/abs(cross)
         #set direction conventions 
         if((corner_lists[i].exterior==True and rhrule==-1) or (corner_lists[i].exterior==False and rhrule==1)):
             flow = -1
@@ -270,7 +261,7 @@ def digestCurves(curve_data):
                 prev_edge = edges[(leftmost+(j-1)*flow)%len(vertices)]
 
             #perform right-hand rule at each vertex
-            z = np.cross(np.array(prev_edge[1])-np.array(prev_edge[0]),np.array(next_edge[1])-np.array(next_edge[0]))
+            z = cross1(np.array(prev_edge[1])-np.array(prev_edge[0]),np.array(next_edge[1])-np.array(next_edge[0]))
             z = z/np.linalg.norm(z)
             dot = np.dot(z,np.array([0,0,1]))
             # labelled_edges.append(sorted(gh.EndPoints(next_edge),key=lambda coor: (coor[0],coor[1])))
@@ -284,7 +275,8 @@ def digestCurves(curve_data):
 
             #add new corner to cornerList
             corner_lists[i].make(new_corner, i)
-    return corner_lists, max_extent
+    
+    return corner_lists
 
 """
 Description: traverse through corner_lists and append concave corners to output array
@@ -306,7 +298,7 @@ def findConcaveVertices(corner_lists):
         i+=1
     return concave_corners
 
-def sortTransverseSegments(corner, corner_lists, dir, oper):
+def sortTransverseSegments(corner, corner_lists, dir, oper, strict=False):
     edges = []
     opdir = (dir+1)%2
     intersection_corner = None
@@ -317,9 +309,13 @@ def sortTransverseSegments(corner, corner_lists, dir, oper):
             relevant = "vertical_edges"
         else: 
             relevant = "horizontal_edges"
-        edges.extend(list(filter(lambda seg: oper(seg[0][dir],corner.vertex[dir])
-                                 and min(seg[0][opdir],seg[1][opdir])<=corner.vertex[opdir]<=max(seg[0][opdir],seg[1][opdir]),
-                                 list(getattr(corner_list,relevant)))))
+        if(strict):
+            overlap = lambda seg: oper(seg[0][dir],corner.vertex[dir]) and min(seg[0][opdir],seg[1][opdir])<=corner.vertex[opdir]<=max(seg[0][opdir],seg[1][opdir])
+        else: 
+            overlap = lambda seg: oper(seg[0][dir],corner.vertex[dir]) and min(seg[0][opdir],seg[1][opdir])<corner.vertex[opdir]<max(seg[0][opdir],seg[1][opdir])
+        
+        edges.extend(list(filter(overlap,list(getattr(corner_list,relevant)))))
+        
     if(oper==operator.gt):
         edges.sort(key=lambda seg:seg[0][dir])
     else:
@@ -328,6 +324,17 @@ def sortTransverseSegments(corner, corner_lists, dir, oper):
         for i in range(len(corner_lists)):
             if(edges[0] in getattr(corner_lists[i],relevant)):
                 intersection_list=i
+                # #9/13: handle case where nearest edge is not the right one
+                # print('edges[0]:',edges[0][0],edges[0][1],corner.vertex)
+                # if(edges[0][0][opdir]==corner.vertex[opdir] or edges[0][1][opdir]==corner.vertex[opdir]):
+                #     farthest_exact_edge = edges[-1]
+                #     print(farthest_exact_edge)
+                #     while(len(edges)>1):
+                #         if(farthest_exact_edge[0][opdir]==corner.vertex[opdir] or farthest_exact_edge[1][opdir]==corner.vertex[opdir]):
+                #             edges = [farthest_exact_edge]
+                #         else: 
+                #             farthest_exact_edge = edges.pop()
+                # print(edges[0])
                 ext_length = abs(corner.vertex[dir]-edges[0][0][dir])
                 break
         current_corner = corner_lists[intersection_list].head
@@ -371,7 +378,7 @@ def findColinearVertices(corner_lists, concave_corners, dir):
             b_corners = sorted(b_corners, key=lambda corner:(ext_dot/np.linalg.norm(ext_dot))*corner.vertex[dir])
             b_corner = b_corners[0]
             pair_vect = np.array(b_corner.vertex)-np.array(a_corner.vertex)
-            __, ext_length, __ = sortTransverseSegments(a_corner, corner_lists, dir, oper)
+            __, ext_length, __ = sortTransverseSegments(a_corner, corner_lists, dir, oper, True)
             
             if(ext_length and ext_length>=abs(pair_vect[dir])):
                 colinear_chords.append((a_corner,b_corner))

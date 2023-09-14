@@ -114,13 +114,10 @@ export default function GrasshopperPage({ params }: ProjectProps) {
       // console.log('m', m, typeof m); 
       // console.log('Loaded rhino3dm.');
       // rhino = m;
-
-      if (canvasRef.current) {
         await init();
-      }
     };
     stageThree();
-    // setSelectedOption({ label: '7XHS', value: '7XHS', description: 'Crystal structure of CipA crystal produced by cell-free protein synthesis' })
+    setSelectedOption({ label: '7XHS', value: '7XHS', description: 'Crystal structure of CipA crystal produced by cell-free protein synthesis' })
   }, []);
 
   return (

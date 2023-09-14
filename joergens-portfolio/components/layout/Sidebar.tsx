@@ -1,52 +1,76 @@
-// import React from 'react';
-'use client'
-import styles from "styles/components/sidebar.module.css"
+import React from 'react';
+import styles from 'styles/components/sidebar.module.css';
 import { Bars4Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'
 
 interface SidebarProps {
   isSidebarOpen: boolean;
   handleToggleSidebar: () => void;
 }
 
-interface LabelProps {
-  label: string;
-}
-
 const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
-  return (
-      <div className={isSidebarOpen ? styles.sidebar + ' ' + styles.open : styles.sidebar}>
-        <button className={styles.icon} onClick={handleToggleSidebar} aria-label="Close Sidebar">
-          {isSidebarOpen ?
-            (<XMarkIcon className=" h-6 w-6" />)
-            :
-            (<Bars4Icon className=" h-6 w-6" />)
-          }
-        </button>
+  const pathname = usePathname(); // Get the current route information
 
-        {isSidebarOpen && (
-          <div className={styles.navlist}>
-            <ul className={styles.sidebarItems}>
-              <li>
-                <Link className={styles.sidebarItem} href={'/'}>
-                  About{'\n'}Me
-                </Link>
-              </li>
-              <li>
-                <Link className={styles.sidebarItem} href={'woodwork'}>
-                  Woodworking
-                </Link>
-                <Link className={styles.sidebarItem} href={'computational-design'}>
-                  Computational{'\n'}Design
-                </Link>
-                <Link className={styles.sidebarItem} href={'research'}>
-                  Research
-                </Link>
-              </li>
-            </ul>
-          </div>
+  return (
+    <div className={isSidebarOpen ? styles.sidebar + ' ' + styles.open : styles.sidebar}>
+      <button className={styles.icon} onClick={handleToggleSidebar} aria-label="Close Sidebar">
+        {isSidebarOpen ? (
+          <XMarkIcon className=" h-6 w-6" />
+        ) : (
+          <Bars4Icon className=" h-6 w-6" />
         )}
-      </div>
+      </button>
+
+      {isSidebarOpen && (
+        <div className={styles.navlist}>
+          <ul className={styles.sidebarItems}>
+            <li>
+              <Link
+                className={
+                  pathname === '/' ? styles.sidebarItemActive : styles.sidebarItem
+                }
+                href="/"
+              >
+                About Me
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={
+                  pathname === '/computational-design'
+                    ? styles.sidebarItemActive
+                    : styles.sidebarItem
+                }
+                href="/computational-design"
+              >
+                Computational Design
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={
+                  pathname === '/woodwork' ? styles.sidebarItemActive : styles.sidebarItem
+                }
+                href="/woodwork"
+              >
+                Woodworking
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={
+                  pathname === '/research' ? styles.sidebarItemActive : styles.sidebarItem
+                }
+                href="/research"
+              >
+                Research
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 

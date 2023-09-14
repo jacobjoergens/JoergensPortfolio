@@ -140,12 +140,13 @@ footer {
 }
 
 .noSelect:hover {
-  stroke: pink;
+  stroke: var(--secondary-color);
 }
 
 /* Hide the default scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */

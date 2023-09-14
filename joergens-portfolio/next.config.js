@@ -5,8 +5,8 @@ const nextConfig = {
     experimental: {
         mdxRs: true,
         outputFileTracingIncludes: {
-          '/api/loadGrasshopper': ['./ghDefinitions/**/*'],
-        }
+          '/api/startServer': ['/app/(categories)/computational-design/min-rect-partition/min-k-partition.py'],
+        },
       },
       // reactStrictMode: true, 
       swcMinify: true,

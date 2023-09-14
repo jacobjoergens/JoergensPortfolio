@@ -1,0 +1,16 @@
+{
+    "version": 3,
+    "builds": [
+      {
+        "src": "api/**/*.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "functions": {
+      "api/startServer/**/*.js": {
+        "includeFiles": [
+          "app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
+        ]
+      }
+    }
+  }

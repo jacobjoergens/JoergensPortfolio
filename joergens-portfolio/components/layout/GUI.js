@@ -5,10 +5,8 @@ import styles from 'styles/pages/computational.module.css';
 import { ChevronRightIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { compute, rhinoToThree } from "@/app/(categories)/computational-design/protein-earrings/initThree";
 
-export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
-  // const [openGUI, setOpenGui] = useState(true);
+export default function GUI({ atomData, render, onRenderComplete, openGUI, toggle }) {
   const [openSection, setOpenSection] = useState({ 'Parameters': true, 'Material': true });
-  const [contentHeight, setContentHeight] = useState(0);
   const buttonRef = useRef(null);
   const controlsRef = useRef(null);
   const GUIRef = useRef(null);
@@ -44,20 +42,12 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
   ];
 
 
-  // const toggleGUI = () => {
-  //   setOpenGui(!openGUI);
-  // };
-
   const toggleSection = (sectionHeader) => {
     setOpenSection(prevState => ({
       ...prevState,
       [sectionHeader]: !openSection[sectionHeader]
     }))
   }
-
-  useEffect(() => {
-    handleParamSliderMouseUp();
-  }, [openSection]);
 
   const handleParamSliderChange = (sliderName, value) => {
     const { min, max } = parameterSliderValues[sliderName];
@@ -83,11 +73,16 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
     })
 
     extractedDisplayValues['Color'] = selectedColor;
+    extractedDisplayValues['Material'] = selectedMaterial;
     extractedParamValues['pdbID'] = atomData;
     onRenderComplete(true);
     await compute(extractedParamValues, extractedDisplayValues);
     onRenderComplete(false);
   };
+
+  if (render) {
+    handleParamSliderMouseUp();
+  }
 
   const parameterSliders = Object.keys(parameterSliderValues).map(sliderName => {
     const slider = parameterSliderValues[sliderName];
@@ -133,6 +128,7 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
       setSelectedColor('#F7D498');
     }
   }, [selectedMaterial])
+
   const handleDisplaySliderChange = (sliderName, value) => {
     const { min, max } = displaySliderValues[sliderName];
     const adjustedValue = Math.min(Math.max(value, min), max);
@@ -190,18 +186,16 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
 
         <div className={styles.GUISections} ref={controlsRef}>
           <div className={styles.sectionHeader}>
-            {openGUI && (
-              <button className={styles.section} aria-label="Toggle Section" onClick={() => toggleSection('Parameters')}>
-                {openSection['Parameters'] ?
-                  (
-                    <ChevronDownIcon className="h-6 w-12" />
-                  )
-                  :
-                  (<ChevronRightIcon className="h-6 w-12" />)
-                }
-                Parameters
-              </button>
-            )}
+            <button className={styles.section} aria-label="Toggle Section" onClick={() => toggleSection('Parameters')}>
+              {openSection['Parameters'] ?
+                (
+                  <ChevronDownIcon className="h-6 w-12" />
+                )
+                :
+                (<ChevronRightIcon className="h-6 w-12" />)
+              }
+              Parameters
+            </button>
             <div className={styles.exitGUI} ref={buttonRef}>
               {openGUI && (
                 <button aria-label="Close GUI" onClick={toggle}>
@@ -219,7 +213,7 @@ export default function GUI({ atomData, onRenderComplete, openGUI, toggle }) {
           </div>
           <div className={styles.sectionHeader}>
             <button className={styles.section} aria-label="Toggle Section" onClick={() => toggleSection('Material')}>
-              {openGUI && openSection['Material'] ?
+              {openSection['Material'] ?
                 (
                   <ChevronDownIcon className="h-6 w-12" />
                 )

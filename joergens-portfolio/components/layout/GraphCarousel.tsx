@@ -1,55 +1,55 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/styles/components/graphCarousel.module.css";
 import Image from "next/image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-
-
-function getCardinalAbbreviation(number: number): string {
-    const suffixes = ['th', 'st', 'nd', 'rd'];
-    const lastDigit = number % 10;
-    const secondLastDigit = Math.floor(number / 10) % 10;
-
-    let suffix = suffixes[0]; // Default to 'th'
-
-    // Exceptions for 11th, 12th, 13th
-    if (secondLastDigit !== 1) {
-        if (lastDigit === 1) {
-            suffix = suffixes[1]; // 'st' for 1
-        } else if (lastDigit === 2) {
-            suffix = suffixes[2]; // 'nd' for 2
-        } else if (lastDigit === 3) {
-            suffix = suffixes[3]; // 'rd' for 3
-        }
-    }
-
-    return `${number}${suffix}`;
-}
 
 interface CarouselProps {
     dataType: string;
     images: string[];
     onImageChange: (index: number) => void;
+    openGraphs: boolean;
 }
 
-const GraphCarousel = ({ dataType, images, onImageChange }: CarouselProps) => {
+const GraphCarousel = ({ dataType, images, onImageChange, openGraphs }: CarouselProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const thumbnailIndicators = document.getElementsByClassName(styles.thumbnailIndicators)[0] as HTMLElement;
-    const thumbnailWidth = document.getElementsByClassName(styles.active)[1] as HTMLElement; 
 
     const showImage = async (index: number) => {
         setCurrentIndex(index);
         onImageChange(index);
-        let scrollPosition;
-        if(index>2||index<images.length-2){
-            scrollPosition = (index - 2) * thumbnailWidth.offsetWidth;
-        } else {
-            scrollPosition = (index) * thumbnailWidth.offsetWidth;
+
+        // Find the thumbnailIndicators element
+        const thumbnailIndicators = document.querySelector(`.${styles.thumbnailIndicators}`) as HTMLElement;
+
+        if (thumbnailIndicators) {
+            // Find the width of one thumbnail element
+            const thumbnailWidth = thumbnailIndicators.firstElementChild?.clientWidth || 0;
+
+            let scrollPosition;
+            if (index > 2 || index < images.length - 2) {
+                scrollPosition = (index - 2) * thumbnailWidth;
+            } else {
+                scrollPosition = index * thumbnailWidth;
+            }
+
+            // Scroll the thumbnailIndicators element
+            thumbnailIndicators.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth',
+            });
         }
-        thumbnailIndicators.scrollTo({
-            left: scrollPosition,
-            behavior: 'smooth',
-        });
+        // if(thumbnailIndicators){
+        //     console.log(thumbnailIndicators.offsetWidth);
+        //     if (index > 2 || index < images.length - 2) {
+        //         scrollPosition = (index - 2) * thumbnailIndicators.offsetWidth;
+        //     } else {
+        //         scrollPosition = (index) * thumbnailIndicators.offsetWidth;
+        //     }
+        //     thumbnailIndicators.scrollTo({
+        //         left: scrollPosition,
+        //         behavior: 'smooth',
+        //     });
+        // }
     };
 
     const prevImage = () => {
@@ -69,7 +69,7 @@ const GraphCarousel = ({ dataType, images, onImageChange }: CarouselProps) => {
     };
 
     return (
-        <div className={styles.carousel}>
+        <div className={`${styles.carousel} ${openGraphs?styles.open:styles.closed}`}>
             <div className={`${styles.graphCarouselSlideContainer} ${currentIndex === 0 ? styles.start : ''}`}>
                 <div className={`noSelect ${styles.carouselImageContainer} `}>
                     {images?.map((image, index) => (
@@ -89,26 +89,28 @@ const GraphCarousel = ({ dataType, images, onImageChange }: CarouselProps) => {
                     ))}
                 </div>
             </div>
-            <ul className={styles.thumbnailIndicators}>
-                {images?.map((image, index) => (
-                    <li
-                        className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
-                        key={index}
-                    >
-                        <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
-                            <div className={styles.thumbnailImageContainer}>
-                                <Image
-                                    src={dataType + image}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    width={100}
-                                    height={100}
-                                    style={{ objectFit: 'contain' }}
-                                />
-                            </div>
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            {images.length > 1 &&
+                <ul className={styles.thumbnailIndicators}>
+                    {images?.map((image, index) => (
+                        <li
+                            className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
+                            key={index}
+                        >
+                            <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
+                                <div className={styles.thumbnailImageContainer}>
+                                    <Image
+                                        src={dataType + image}
+                                        alt={`Thumbnail ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            }
             <div className={styles.pagination}>
                 <button
                     type="button"

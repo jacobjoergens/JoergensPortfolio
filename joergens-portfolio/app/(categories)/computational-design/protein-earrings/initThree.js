@@ -16,9 +16,9 @@ let rhino;
 
 const loader = new Rhino3dmLoader()
 loader.setLibraryPath("https://cdn.jsdelivr.net/npm/rhino3dm@8.0.0/")
-const ambientLight = new THREE.AmbientLight(0xCD7F32, 0.2); // Color, Intensity
+// const ambientLight = new THREE.AmbientLight(0xCD7F32, 0.2); // Color, Intensity
 
-export async function init(canvas) {
+export async function init() {
   rhino = await rhino3dm();
   // Create the scene, camera, and renderer
   scene = new THREE.Scene();
@@ -71,7 +71,7 @@ export async function init(canvas) {
 
   // const pmremGenerator = new THREE.PMREMGenerator(renderer);
   // pmremGenerator.compileCubemapShader();
-  scene.add(ambientLight);
+  // scene.add(ambientLight);
   camera.position.set(0, 0, 50);
   camera.lookAt(0, 0, 0);
   renderer.toneMappingExposure = 1.0;
@@ -116,6 +116,7 @@ export async function compute(values, displayParams) {
 
 
 let doc
+
 /**
  * Parse response
  */
@@ -128,9 +129,9 @@ export async function collectResults(responseJson, displayParams) {
   }
 
   doc = new rhino.File3dm()
-
   // for each output (RH_OUT:*)...
   for (let i = 0; i < values.length; i++) {
+    
     // ...iterate through data tree structure...
     for (const path in values[i].InnerTree) {
       const branch = values[i].InnerTree[path]
@@ -139,6 +140,8 @@ export async function collectResults(responseJson, displayParams) {
         // ...load rhino geometry into doc
         const rhinoObject = decodeItem(branch[j])
         if (rhinoObject !== null) {
+          console.log(values[i])
+          console.log('rhino object:',rhinoObject)
           doc.objects().add(rhinoObject, null)
         }
       }
@@ -160,22 +163,38 @@ export async function rhinoToThree(displayParams) {
   if (doc) {
     const buffer = new Uint8Array(doc.toByteArray()).buffer
     loader.parse(buffer, function (object) {
-      console.log('object:', object)
+      
       let material = new THREE.MeshStandardMaterial({
         color: displayParams['Color'],
         envMap: exrCubeRenderTarget.texture,
         metalness: displayParams['Reflectivity'],
         roughness: displayParams['Roughness'],
         flatShading: false,
-        envMapIntensity: 1.0
+        envMapIntensity: 1.0,
+        emissive: '#000000',
+        emissiveIntensity: 1,
       });
 
+      console.log(material.roughness, material.metalness)
+
+      let hookMaterial = new THREE.MeshStandardMaterial({
+        color: '#F7D498',
+        envMap: exrCubeRenderTarget.texture,
+        metalness: 1.0,
+        roughness: 0.0,
+        flatShading: false,
+        envMapIntensity: 1.0
+      })
+      
       // console.log(object);
-      object.traverse(child => {
-        if (child.material)
-          child.material = material;
-        // child.material.flatShading = false;
-      }, false);
+      // object.traverse(child => {
+      //   console.log('child:',child)
+      //   if (child.material)
+      //     child.material = material;
+      //   // child.material.flatShading = false;
+      // }, false);
+      object.children[0].material = material; 
+      object.children[1].material = hookMaterial;
 
       // console.log(scene)
       // clear objects from scene. do this here to avoid blink
@@ -192,14 +211,15 @@ export async function rhinoToThree(displayParams) {
 
       const boundingBox = new THREE.Box3();
       boundingBox.setFromObject(object.children[0], true);
+      boundingBox.expandByObject(object.children[1], false);
       const width = boundingBox.max.x - boundingBox.min.x;
-      object.position.x = 0;
+      object.position.x = -width;
       const duplicateObject = object.clone();
       duplicateObject.scale.x = -1; // Flip horizontally
-      duplicateObject.position.x = width * 2; // Move it to the right
+      duplicateObject.position.x = width; // Move it to the right
       // add object graph from rhino model to three.js scene
       scene = new THREE.Scene();
-      scene.add(ambientLight)
+      // scene.add(ambientLight)
       scene.add(object);
       scene.add(duplicateObject);
       console.log(scene);

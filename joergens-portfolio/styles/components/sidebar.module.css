@@ -76,6 +76,18 @@
     text-align: end;
 }
 
+.sidebarItemActive {
+    direction: ltr;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2rem;
+    padding-right: 40px;
+    justify-content: right;
+    align-items: flex-end;
+    text-align: end;
+    color: var(--secondary-color);
+}
+
 .sidebarItem:hover{
     color: var(--secondary-color);
 }
@@ -103,7 +115,7 @@
     width: 100cqw;
     height: 100cqh;
     /* padding-top: 5rem; */
-    font-size: calc(12vw);
+    font-size: calc(8vw);
     overflow-y: auto;
     overflow-x: hidden;
 }

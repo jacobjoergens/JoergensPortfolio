@@ -32,7 +32,7 @@ const Carousel = ({ images }: CarouselProps) => {
     };
 
     return (
-        <div className={styles.carousel}>
+        <div className={`${images.length>1?styles.carousel:styles.carouselSingle}`}>
             <div className={`${styles.carouselSlideContainer} ${currentIndex === 0 ? styles.start : ''}`}>
                 <button
                     type="button"
@@ -41,12 +41,12 @@ const Carousel = ({ images }: CarouselProps) => {
                     onClick={prevImage}
                     disabled={currentIndex === 0}
                 >
-                    <ChevronLeftIcon 
-                        className="noSelect h-10 w-10" 
-                        stroke={currentIndex === 0 ? 'transparent' : 'gray'} 
-                        />
+                    <ChevronLeftIcon
+                        className="noSelect h-10 w-10"
+                        stroke={currentIndex === 0 ? 'transparent' : '#080f0e'}
+                    />
                 </button>
-                <div className={`noSelect ${styles.carouselImageContainer} `}>
+                <div className={`noSelect ${styles.carouselImageContainer}`}>
                     {images?.map((image, index) => (
                         <div
                             className={`${styles.carouselSlide} ${currentIndex === index ? styles.active : ''}`}
@@ -56,9 +56,11 @@ const Carousel = ({ images }: CarouselProps) => {
                                 className='image'
                                 src={image}
                                 alt={`Image @ ${index}`}
-                                width={900} 
-                                height={600}
                                 // fill={true}
+                                width={500}
+                                height={400}
+                                object-fit="contain"
+                            // fill={true}
                             />
                         </div>
                     ))}
@@ -69,32 +71,34 @@ const Carousel = ({ images }: CarouselProps) => {
                     onClick={nextImage}
                     disabled={currentIndex === images?.length - 1}
                 >
-                    <ChevronRightIcon 
-                        className={`noSelect h-10 w-10`} 
-                        stroke={currentIndex === images?.length - 1 ? 'transparent' : 'gray'} 
-                        />
+                    <ChevronRightIcon
+                        className={`noSelect h-10 w-10`}
+                        stroke={currentIndex === images?.length - 1 ? 'transparent' : '#080f0e'}
+                    />
                 </button>
             </div>
-            <ul className={styles.thumbnailIndicators}>
-                {images?.map((image, index) => (
-                    <li
-                        className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
-                        key={index}
-                    >
-                        <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
-                            <div className={styles.thumbnailImageContainer}>
-                                <Image
-                                    src={image}
-                                    alt={`Thumbnail ${index + 1}`}
-                                    width={100}
-                                    height={100}
-                                    style={{ objectFit: 'contain' }}
-                                />
-                            </div>
-                        </button>
-                    </li>
-                ))}
-            </ul>
+            {images.length > 1 &&
+                <ul className={styles.thumbnailIndicators}>
+                    {images?.map((image, index) => (
+                        <li
+                            className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
+                            key={index}
+                        >
+                            <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
+                                <div className={styles.thumbnailImageContainer}>
+                                    <Image
+                                        src={image}
+                                        alt={`Thumbnail ${index + 1}`}
+                                        width={100}
+                                        height={100}
+                                        style={{ objectFit: 'contain' }}
+                                    />
+                                </div>
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            }
         </div>
     );
 }

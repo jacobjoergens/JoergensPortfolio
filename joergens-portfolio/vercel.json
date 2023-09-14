@@ -8,9 +8,13 @@
     ],
     "functions": {
       "api/startServer/**/*.js": {
-        "includeFiles": [
-          "app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
-        ]
+        "runtime": "@vercel/node@18",
+        "includeFiles": {
+          "app/(categories)/computational-design/min-rect-partition/min-k-partition.py": "./app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
+        }
       }
-    }
+    },
+    "files": [
+      "app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
+    ]
   }

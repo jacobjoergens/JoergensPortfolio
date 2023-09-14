@@ -13,8 +13,5 @@
           "app/(categories)/computational-design/min-rect-partition/min-k-partition.py": "./app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
         }
       }
-    },
-    "files": [
-      "app/(categories)/computational-design/min-rect-partition/min-k-partition.py"
-    ]
+    }
   }

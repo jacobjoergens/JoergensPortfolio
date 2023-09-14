@@ -33,11 +33,13 @@ def stageDegDecompGeometry(corner, horver, dir):
         backward = "next"
     return forward, backward
 
-def getMaxIndependentSet(horizontal, vertical, intersections, corner_lists):
-    k = 4
+def getMaxIndependentSet(horizontal, vertical, intersections):
     max_sets = []
     independent_sets = set()
     G = None
+    top, bottom = set(), set()
+    h_counter = 0
+    v_counter = 0 
     if(len(intersections)>0):
         G = nx.Graph()
         B = nx.Graph()
@@ -84,53 +86,63 @@ def getMaxIndependentSet(horizontal, vertical, intersections, corner_lists):
 def generateGraphs(max_sets, G, top, bottom, horizontal, vertical, h_counter, v_counter):
     top_len = len(list(top))
     bottom_len = len(list(bottom))
-    for j in range(len(horizontal)):
-        G.add_node(horizontal[j],biparite=0,label=f"H{h_counter+j}")
-
-    for k in range(len(vertical)):
-        G.add_node(vertical[k],biparite=1,label=f"V{v_counter+k}")
-
-    labels = nx.get_node_attributes(G, "label")
-    node_list = list(G.nodes)
-    pos = {}
-    label_pos = {}
-
     max_part_len = max(top_len+len(horizontal),bottom_len+len(vertical))-1
-    step = 9/max_part_len
-    if(bottom_len>top_len):
-        h,v = (bottom_len-top_len)/2*step,0
-    elif(top_len>bottom_len):
-        h,v = 0,(top_len-bottom_len)/2*step
-    else: 
-        h,v = 0,0
-    for node, label in sorted(labels.items(),key=lambda i: int(i[1][1:])):
-        if(label[0]=='H'):
-            pos[node] = (0.1,h)
-            label_pos[node] = (pos[node][0] - 0.2, pos[node][1])
-            h+=step
-        elif(label[0]=='V'):
-            pos[node] = (0.9,v)
-            label_pos[node] = (pos[node][0] + 0.2, pos[node][1])
-            v+=step
-
+    
     bipartite_figures = []
-    for i in range(len(max_sets)):
-        plt.figure(figsize=(2,9))
-        node_color = {node: 'black' if node in max_sets[i] else 'none' for node in node_list}
-        nx.draw_networkx_nodes(G, pos, node_size= min(200, 290-max_part_len*15),nodelist=node_list, node_shape='o', edgecolors='black', node_color=[node_color[node] for node in node_list])
-        nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5, edge_color='gray')
-        nx.draw_networkx_labels(G, label_pos, labels, font_size=min(9, 9.9-max_part_len*0.15), font_family="monospace", font_color='black')
-        plt.xlim(-0.25, 1.25)
-        plt.axis('off')
-        plt.gca().set_aspect(2/9)
-        # Convert the plot to a SVG image in memory
-        buf = io.BytesIO()
-        plt.savefig(buf, bbox_inches='tight', format='svg', transparent=True)
-        buf.seek(0)
 
-        # Encode the SVG image as a base64 string
-        b64_bytes = base64.b64encode(buf.read())
-        bipartite_figures.append(b64_bytes.decode('utf-8'))
+    if(max_part_len>=0):
+        for j in range(len(horizontal)):
+            G.add_node(horizontal[j],biparite=0,label=f"H{h_counter+j}")
+
+        for k in range(len(vertical)):
+            G.add_node(vertical[k],biparite=1,label=f"V{v_counter+k}")
+        
+
+        labels = nx.get_node_attributes(G, "label")
+        node_list = list(G.nodes)
+        pos = {}
+        label_pos = {}
+        max_part_len = max(1, max_part_len)
+        step = 9/max_part_len 
+        print(step, bottom_len, top_len, max_part_len)
+        sys.stdout.flush()
+        if(bottom_len>top_len):
+            h,v = (bottom_len-top_len)/2*step,0
+        elif(top_len>bottom_len):
+            h,v = 0,(top_len-bottom_len)/2*step
+        elif(top_len==1 and bottom_len==1):
+            h,v = 4.5, 4.5
+        else: 
+            h,v = 0,0
+        for node, label in sorted(labels.items(),key=lambda i: int(i[1][1:])):
+            if(label[0]=='H'):
+                pos[node] = (0.1,h)
+                label_pos[node] = (pos[node][0] - 0.2, pos[node][1])
+                h+=step
+            elif(label[0]=='V'):
+                pos[node] = (0.9,v)
+                label_pos[node] = (pos[node][0] + 0.2, pos[node][1])
+                v+=step
+
+        for i in range(len(max_sets)):
+            plt.figure(figsize=(2,9))
+            node_color = {node: 'black' if node in max_sets[i] else 'none' for node in node_list}
+            nx.draw_networkx_nodes(G, pos, node_size= min(200, 290-max_part_len*15),nodelist=node_list, node_shape='o', edgecolors='black', node_color=[node_color[node] for node in node_list])
+            nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5, edge_color='gray')
+            nx.draw_networkx_labels(G, label_pos, labels, font_size=min(9, 9.9-max_part_len*0.15), font_family="monospace", font_color='black')
+            plt.xlim(-0.25, 1.25)
+            plt.ylim(-1,10)
+            plt.axis('off')
+            plt.gca().set_aspect(2/9)
+            # Convert the plot to a SVG image in memory
+            buf = io.BytesIO()
+            plt.savefig(buf, bbox_inches='tight', format='svg', transparent=True)
+            buf.seek(0)
+
+            # Encode the SVG image as a base64 string
+            b64_bytes = base64.b64encode(buf.read())
+            bipartite_figures.append(b64_bytes.decode('utf-8'))
+
     return bipartite_figures
 
 def decompose(max_set, corner_lists, interior_edges):

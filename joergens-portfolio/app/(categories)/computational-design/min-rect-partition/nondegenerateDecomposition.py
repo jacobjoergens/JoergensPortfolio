@@ -149,22 +149,31 @@ Output: None (appends to regions)
 """
 def decompose(dir_pattern, concave_corners, corner_lists, regions, k, interior_edges):
     ext_corner = None
+
     for i in range(len(corner_lists)):
         if(corner_lists[i].concave_count>0 and ext_corner==None):
             current_corner = corner_lists[i].head
             while(current_corner.concave==False): 
                 current_corner = current_corner.next
             corner_lists.insert(0,corner_lists.pop(i))
+            
             ext_corner = current_corner
+   
+    
+    decomposed = all((corner_list.length<=k for corner_list in corner_lists))
 
-    if(not any(corner_list.length>k for corner_list in corner_lists)):
+    for corner_list in corner_lists:
+        current = corner_list.head.next
+        while current!=corner_list.head:
+            current = current.next
+
+    if(decomposed):
         for i in range(len(corner_lists)):
             corner_list = corner_lists[i]
             corner_list.updateState(i)
             edges, vertices = corner_list.iterLoop()
             # vertices.append(vertices[0])
             regions.append(vertices)
-        sys.stdout.flush()
     else: 
         dir = dir_pattern[concave_corners.index(ext_corner)]
         chord, intersection_corner, intersection_list = extendCurve(current_corner,corner_lists, dir)

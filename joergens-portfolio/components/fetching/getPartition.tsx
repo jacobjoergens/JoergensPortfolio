@@ -12,7 +12,7 @@ export default async function getPartition(partitionCache: any, degSetIndex: num
         if (response.ok) {
             const data = await response.text();
             const resData = JSON.parse(data);
-            partitionCache[degSetIndex][index] = resData.text;
+            partitionCache[degSetIndex][index] = await resData.text;
         } else {
             console.error('Failed to get partition:', response.status);
         }

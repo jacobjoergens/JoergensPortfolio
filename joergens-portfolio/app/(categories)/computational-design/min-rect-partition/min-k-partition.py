@@ -31,16 +31,14 @@ def stagePartitioning(input):
     # componentDict, xcomp, minx, maxy, vertices = spaceDecomposition.digestCurves(curves)
     # grid, concavities = spaceDecomposition.buildGrid(componentDict, xcomp, minx, maxy, vertices)
     # spaceDecomposition.getPartitions(grid, concavities, k)
-    corner_lists, max_extent = ingest.digestCurves(curves)
+    corner_lists = ingest.digestCurves(curves)
     concave_corners = ingest.findConcaveVertices(corner_lists)
-    
     horizontal = ingest.findColinearVertices(corner_lists, concave_corners.copy(),0)
     vertical = ingest.findColinearVertices(corner_lists, concave_corners,1)
     intersections = ingest.findIntersections(horizontal,vertical)
-    max_sets, G, top, bottom, h_counter, v_counter = degenerateDecomposition.getMaxIndependentSet(horizontal,vertical,intersections,corner_lists)
+    max_sets, G, top, bottom, h_counter, v_counter = degenerateDecomposition.getMaxIndependentSet(horizontal,vertical,intersections)
     bipartite_figures = degenerateDecomposition.generateGraphs(max_sets, G, top, bottom, horizontal, vertical, h_counter, v_counter)
-
-    return bipartite_figures,len(max_sets)
+    return bipartite_figures, len(max_sets)
 
 def getConcaveCorners(cornerLists):
     concave_corners = []
@@ -130,7 +128,6 @@ def getPartition(input):
             'dir_patterns': list(itertools.product([0, 1], repeat=len(concave_corners))),
             'interior_edges': interior_edges
         }
-        
 
     regions = []
     degSet = deg_partitions[degSetIndex]
@@ -171,9 +168,6 @@ def getPartition(input):
         'colors': colors
     }
     return data
-    
-# if __name__ == "__main__":
-    # Start the WebSocket server
 
 async def handle_client(websocket, path):
     async for message in websocket:
@@ -214,22 +208,3 @@ async def start_server():
         await server.wait_closed()
     sys.stdout.flush()
 asyncio.run(start_server())
-
-    # print("hello2")
-    # input_json = sys.argv[1]
-    # input = json.loads(input_json)
-
-    # function = input['function']
-    # if(function=="stagePartitioning"):
-    #     stagePartitioning(input)
-
-    # max_sets = degenerateDecomposition.getMaxIndependentSet(horizontal,vertical,intersections,corner_lists)
-    # corner_lists = degenerateDecomposition.decompose(max_sets[deg_set_num],corner_lists)
-    
-    # regions = []
-    # nondegenerateDecomposition.decompose(0, corner_lists, regions, k)
-    # data = {
-    #     'regions': regions,
-    #     'k': len(independent_sets)
-    # }
-    # print(json.dumps(data))

@@ -52,13 +52,11 @@ async function fetchPdbContent(pdbId: string): Promise<string | null> {
 export default function GrasshopperPage({ params }: ProjectProps) {
   const [loading, setLoading] = useState(true);
   const [openGUI, setOpenGUI] = useState(false);
+  const [fireRender, setFireRender] = useState(false);
   const canvasRef = useRef(null);
-  const defaultOption = { label: '1E6V', value: '1E6V', description: 'placeholder' };
-  const [selectedOption, setSelectedOption] = useState<Option | null>(defaultOption);
-  const [atomData, setAtomData] = useState("ATOM      1  N   LEU A   8      40.310  22.627 119.798  1.00 26.69           N" +
-    "ATOM      2  CA  LEU A   8      40.324  21.151 120.037  1.00 26.66           C" +
-    "ATOM      3  C   LEU A   8      41.637  20.670 120.636  1.00 26.69           C" +
-    "ATOM      4  O   LEU A   8      41.650  19.814 121.533  1.00 26.53           O");
+  // const defaultOption = { label: '1E6V', value: '1E6V', description: 'placeholder' };
+  const [selectedOption, setSelectedOption] = useState<Option | null>();
+  const [atomData, setAtomData] = useState('');
 
   useEffect(() => {
     async function download(entryID: string) {
@@ -74,7 +72,9 @@ export default function GrasshopperPage({ params }: ProjectProps) {
     }
     if (selectedOption) {
       download(selectedOption.label);
+      setFireRender(true);
     }
+    console.log(selectedOption)
   }, [selectedOption]);
 
   const toggleGUI = () => {
@@ -87,6 +87,9 @@ export default function GrasshopperPage({ params }: ProjectProps) {
 
   const handleRenderComplete = (value: boolean) => {
     setLoading(value);
+    if (!value) {
+      setFireRender(false);
+    }
   }
 
   // const onCompute = async(values: any , displayParams: any) => {
@@ -106,7 +109,6 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   const href = '/computational-design/'
 
   useEffect(() => {
-    setLoading(true);
     const stageThree = async () => {
       // const m: RhinoModule = await rhino3dm(); // Wait for the promise to resolve
       // console.log('m', m, typeof m); 
@@ -114,12 +116,11 @@ export default function GrasshopperPage({ params }: ProjectProps) {
       // rhino = m;
 
       if (canvasRef.current) {
-        await init(canvasRef.current);
+        await init();
       }
-
-      setLoading(false);
     };
     stageThree();
+    // setSelectedOption({ label: '7XHS', value: '7XHS', description: 'Crystal structure of CipA crystal produced by cell-free protein synthesis' })
   }, []);
 
   return (
@@ -135,33 +136,40 @@ export default function GrasshopperPage({ params }: ProjectProps) {
           <div className={styles.canvasGUI}>
             <div className={styles.canvasContainer} id='canvas-container'>
               {loading && <Spinner />}
-              <button className={styles.toggleGUI} onClick={()=>toggleGUI()}>Controls</button>
+              <button className={styles.toggleGUI} onClick={() => toggleGUI()}>Controls</button>
               <canvas className={styles.mainCanvas} id='canvas' ref={canvasRef} />
               {/* {`$visibility: loading ? 'visible' : 'hidden' }`} */}
             </div>
-            <GUI atomData={atomData} onRenderComplete={handleRenderComplete} openGUI={openGUI} toggle={toggleGUI}/>
+            <GUI 
+              atomData={atomData} 
+              render={fireRender} 
+              onRenderComplete={handleRenderComplete} 
+              openGUI={openGUI} 
+              toggle={toggleGUI} 
+            />
           </div>
-          <div className='searchbar'>
-            <PdbSearchBar onChange={handleSelectChange} />
-          </div>
+            <div className={styles.searchbar}>
+              <div className={styles.currentProtein}>Protein Data Bank Search:</div>
+              <PdbSearchBar onChange={handleSelectChange} />
+            </div>
         </div>
         <div className={styles.content}>
           <Mdx code={project.body.code} />
         </div>
       </div>
       <div className={styles.pagination}>
-                {previousProject &&
-                    <Link className={`noSelect ${styles.pageButton}`} href={href + previousProject?.slugAsParams}>
-                        <ArrowLeftIcon className='h-8 w-8' /> {previousProject.title}
-                    </Link>
-                }
-                <div className="flex-grow" />
-                {nextProject &&
-                    <Link className={`noSelect ${styles.pageButton} ${styles.nextPage}`} href={href + nextProject?.slugAsParams}>
-                        {nextProject.title} <ArrowRightIcon className='h-8 w-8' />
-                    </Link>
-                }
-            </div>
+        {previousProject &&
+          <Link className={`noSelect ${styles.pageButton}`} href={href + previousProject?.slugAsParams}>
+            <ArrowLeftIcon className='h-8 w-8' /> {previousProject.title}
+          </Link>
+        }
+        <div className="flex-grow" />
+        {nextProject &&
+          <Link className={`noSelect ${styles.pageButton} ${styles.nextPage}`} href={href + nextProject?.slugAsParams}>
+            {nextProject.title} <ArrowRightIcon className='h-8 w-8' />
+          </Link>
+        }
+      </div>
     </div>
   );
 }

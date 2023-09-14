@@ -54,6 +54,14 @@
     height: 85vh;
 }
 
+.carouselSingle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 50vh;
+    width: 100vw;
+}
+
 .carouselSlideContainer {
     position: relative;
     width: 100%;

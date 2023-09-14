@@ -10,6 +10,20 @@
     /* margin: 1rem 0rem 1rem 1rem; */
 }
 
+@media (max-width:786px){
+    .carousel.open {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        margin: 1rem;
+        border: none;
+    }
+
+    .carousel.closed {
+        display: none;
+    }
+}
+
 .graphCarouselSlideContainer {
     position: relative;
     width: 100%;
@@ -75,7 +89,7 @@
 }
 
 .thumbnailIndicators {
-    position: fixed;
+    position: relative;
     width: 22vw;
     display: flex;
     /* justify-content: center; */
@@ -86,6 +100,7 @@
     overflow-y: hidden;
     object-fit: fill;
     z-index: 100;
+    padding-bottom: 1rem;
     /* left: 0;  */
 }
 
@@ -128,3 +143,5 @@
     padding: 0.5rem; 
     justify-content: center;
 }
+
+

@@ -1,7 +1,6 @@
 'use client'
 import * as THREE from 'three';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
-import styles from 'styles/pages/computational.module.css'
 export var scene, camera, renderer, controls
 
 
@@ -9,20 +8,30 @@ export async function init() {
     // Create the scene, camera, and renderer
     scene = new THREE.Scene();
   
-    let width = 800;
-    let height = 600;
-  
-    if (typeof window !== 'undefined') {
-      // Running in a browser environment
-      width = window.innerWidth;
-      height = window.innerHeight;
+    const container = document.getElementById('canvas-container');
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    // console.log(width)
+
+    camera = new THREE.PerspectiveCamera(45, width/height, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: document.getElementById('canvas') });
+    renderer.setSize(width, height);
+
+    function updateCanvasSize() {
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        renderer.setSize(containerWidth,containerHeight);
+        camera.aspect = containerWidth / containerHeight;
+        camera.updateProjectionMatrix();
     }
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize, false);
   
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    const canvas = document.getElementById('minrect-canvas');
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: canvas });
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(canvas.offsetWidth,  canvas.offsetHeight)
     // document.body.appendChild(renderer.domElement)
     // const layer_meshes = new rhino.Layer()
     // layer_meshes.name = 'Meshes'

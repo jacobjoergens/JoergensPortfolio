@@ -13,7 +13,14 @@ import { reset, crvPoints, curves } from "./drawCurve.js";
 import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Spinner from "@/components/layout/Spinner";
-import { removeListener } from "process";
+import AWS from 'aws-sdk'
+
+AWS.config.update({
+    accessKeyId: 'AKIA25HHPKOKT7DJ6JV4',
+    secretAccessKey: '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',
+  });
+
+const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/min-rect-partition'
 
 let bipartite_figures: string[] = [];
 
@@ -57,7 +64,7 @@ export default function ProjectPage() {
     useEffect(() => {
         const stageThree = async () => {
             await init(); // Call the init function when the component mounts
-            await spinUpSocket();
+            // await spinUpSocket();
         }
         stageThree();
         console.log('crvPoints at mount:', crvPoints)
@@ -71,8 +78,23 @@ export default function ProjectPage() {
             console.log('crvPoints:', crvPoints)
             scene.remove(curves);
             setInitValues();
-            const part_out = await stagePartitioning(crvPoints);
-            bipartite_figures = part_out.bipartite_figures;
+            // const part_out = await stagePartitioning(crvPoints);
+            const response = await fetch(apiGatewayURL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json',},
+                mode: 'cors',
+                body: JSON.stringify({
+                    'action' : 'stage',
+                    'params' : {
+                        'crvPoints':crvPoints,
+                        'k':4,
+                    }
+                })
+            })
+            console.log(response)
+            const staged = await response.json();
+            console.log(staged)
+            bipartite_figures = staged.bipartite_figures;
             if (bipartite_figures.length == 0) {
                 setIsDegenerate(false);
             }

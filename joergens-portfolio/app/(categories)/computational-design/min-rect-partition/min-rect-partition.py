@@ -169,10 +169,10 @@ def getPartition(input):
     }
     return data
 
-def lambda_handler(event):
+def lambda_handler(event, context):
     try:
         # Parse the request to determine which function to call
-        request_data = json.loads(event["body"])
+        request_data = json.loads(event)
         action = request_data.get("action")
         params = request_data.get("params")
 

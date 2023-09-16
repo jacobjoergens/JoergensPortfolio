@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server'
 import RhinoCompute from 'compute-rhino3d';
-import path from 'path'
-import fs from 'fs'
 import '../../deps';
+import AWS from 'aws-sdk'
 
-async function runCompute(definition, params) {
+AWS.config.update({
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    region: 'us-east-2',
+});
+
+async function runCompute(params) {
     let data = {}
-    // data.definition = definition
     data.inputs = params
-    // console.log(data.inputs.keys());
     try {
-        // let definitionPath = path.join(process.cwd(), 'app/(categories)/computational-design/sculptural-language/BranchNodeRnd.gh');
-        RhinoCompute.url = 'http://18.222.210.44:80/';
-        RhinoCompute.apiKey = 'TMqHt.2h;4q8cakYAroEMD&KmXUKw5qB';
-        // RhinoCompute.url = 'http://localhost:8081/'
+        RhinoCompute.url = process.env.RHINO_COMPUTE_URL;
+        RhinoCompute.apiKey = process.env.RHINO_COMPUTE_API_KEY;
         // set parameters
         let trees = []
         if (data.inputs !== undefined) { //TODO: handle no inputs
@@ -23,18 +24,20 @@ async function runCompute(definition, params) {
                 trees.push(param)
             }
         }
-        // if (data.values !== undefined) {
-        //     for (let index = 0; index < res.locals.params.values.length; index++) {
-        //         let param = new compute.Grasshopper.DataTree('')
-        //         param.data = res.locals.params.values[index]
-        //         trees.push(param)
-        //     }
-        // }
 
+        const s3 = new AWS.S3();
+
+        const params = {
+            Bucket: 'rhino.compute',
+            Key: 'stringPDB.gh',
+            Expires: 3600,
+        }
         // call compute server
         try{
-            const definition = 'https://joergens.blob.core.windows.net/grasshopper-definitions/stringPDB.gh'
-            const response = await RhinoCompute.Grasshopper.evaluateDefinition(definition, trees, false);
+            const signedDefinitionURL = s3.getSignedUrl('getObject', params);
+            console.log('url:',signedDefinitionURL)
+            // const definition = 'https://joergens.blob.core.windows.net/grasshopper-definitions/stringPDB.gh'
+            const response = await RhinoCompute.Grasshopper.evaluateDefinition(signedDefinitionURL, trees, false);
             const responseJson = await response.json();
             return responseJson;
         } catch(error) {
@@ -56,7 +59,7 @@ export async function POST(req) {
 
     // const definition = new Uint8Array(buffer)
 
-    const res = await runCompute(null, request.values);
+    const res = await runCompute(request.values);
     return new NextResponse(JSON.stringify(res), {
         status: 200,
         headers: { "Content-Type": "application/json" }

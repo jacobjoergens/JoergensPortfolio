@@ -7,9 +7,7 @@ import json
 import asyncio
 import websockets
 import itertools
-import copy
 import matplotlib.pyplot as plt
-# import spaceDecomposition
 
 
 

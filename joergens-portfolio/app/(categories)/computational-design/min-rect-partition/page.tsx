@@ -16,11 +16,36 @@ import Spinner from "@/components/layout/Spinner";
 import AWS from 'aws-sdk'
 
 AWS.config.update({
-    accessKeyId: 'AKIA25HHPKOKT7DJ6JV4',
-    secretAccessKey: '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',
-  });
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+});
 
-const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/min-rect-partition'
+// const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/partition'
+
+
+// Configure AWS SDK with your region
+AWS.config.update({ region: 'us-east-2' }); // Replace 'YOUR_REGION' with your AWS region
+
+// Create an AWS Lambda service object
+const lambda = new AWS.Lambda();
+
+// Define the Lambda function name and payload
+const functionName = 'min-rect-partition'; // Replace with your Lambda function name
+const payload = {
+    action: 'stage',
+    params: {
+        'crvPoints': crvPoints,
+        'k': 4,
+    },
+};
+
+// Configure the Lambda function parameters
+const params = {
+    FunctionName: functionName,
+    InvocationType: 'RequestResponse', // Can be 'Event' for asynchronous invocation
+    Payload: JSON.stringify(payload),
+};
+
 
 let bipartite_figures: string[] = [];
 
@@ -75,35 +100,51 @@ export default function ProjectPage() {
     useEffect(() => {
         console.log('applied:', applied)
         async function applyPart() {
-            console.log('crvPoints:', crvPoints)
+            console.log('crvPoints:', crvPoints);
             scene.remove(curves);
             setInitValues();
-            // const part_out = await stagePartitioning(crvPoints);
-            const response = await fetch(apiGatewayURL, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json',},
-                mode: 'cors',
-                body: JSON.stringify({
-                    'action' : 'stage',
-                    'params' : {
-                        'crvPoints':crvPoints,
-                        'k':4,
+            let response;
+            // : AWS.Lambda.InvocationResponse;
+
+            // Wrap the Lambda invocation in a Promise
+            const lambdaInvocation = new Promise((resolve, reject) => {
+                lambda.invoke(params, (err, data) => {
+                    if (err) {
+                        console.error('Error invoking Lambda:', err);
+                        reject(err);
+                    } else {
+                        const payloadBuffer = data.Payload;
+                        if (payloadBuffer) {
+                            response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
+                            bipartite_figures = JSON.parse(response.body).bipartite_figures
+                            console.log(response)
+                        } else {
+                            response = {}; // Fallback in case payloadBuffer is undefined
+                        }
+
+                        resolve(response);
                     }
-                })
-            })
-            console.log(response)
-            const staged = await response.json();
-            console.log(staged)
-            bipartite_figures = staged.bipartite_figures;
-            if (bipartite_figures.length == 0) {
-                setIsDegenerate(false);
+                });
+            });
+
+            try {
+                await lambdaInvocation; // Wait for the Lambda invocation to complete
+                console.log(bipartite_figures.length)
+                if (bipartite_figures.length === 0) {
+                    setIsDegenerate(false);
+                }
+
+                await showPartition(0);
+                setGroupLength(lengthDegSet);
+                zoomCameraToSelection(camera, controls);
+                removeListeners();
+                controls.enableRotate = true;
+                setLoading(false);
+            } catch (error) {
+                // Handle any errors that occurred during the Lambda invocation or showPartition
+                console.error('Error in applyPart:', error);
+                // You may want to set an error state or perform other error handling here
             }
-            await showPartition(0);
-            setGroupLength(lengthDegSet);
-            zoomCameraToSelection(camera, controls)
-            removeListeners();
-            controls.enableRotate = true;
-            setLoading(false);
         }
 
         async function applyReset() {

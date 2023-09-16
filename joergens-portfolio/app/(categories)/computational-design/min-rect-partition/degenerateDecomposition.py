@@ -3,9 +3,9 @@ import numpy as np
 from itertools import combinations
 from ingest import cornerList
 import matplotlib.pyplot as plt
-import sys
 import base64
 import io
+
 
 def getDegCorners(deg_chord,dir):
     opdir = (dir+1)%2
@@ -104,8 +104,6 @@ def generateGraphs(max_sets, G, top, bottom, horizontal, vertical, h_counter, v_
         label_pos = {}
         max_part_len = max(1, max_part_len)
         step = 9/max_part_len 
-        print(step, bottom_len, top_len, max_part_len)
-        sys.stdout.flush()
         if(bottom_len>top_len):
             h,v = (bottom_len-top_len)/2*step,0
         elif(top_len>bottom_len):

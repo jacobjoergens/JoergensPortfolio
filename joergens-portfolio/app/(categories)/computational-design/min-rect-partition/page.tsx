@@ -13,11 +13,11 @@ import { reset, crvPoints, curves } from "./drawCurve.js";
 import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Spinner from "@/components/layout/Spinner";
-import AWS from 'aws-sdk'
+import AWS from 'aws-sdk';
 
 AWS.config.update({
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY, 
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, 
     region: 'us-east-2'
 });
 

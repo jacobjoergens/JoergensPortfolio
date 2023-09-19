@@ -59,7 +59,6 @@ const Carousel = ({ images }: CarouselProps) => {
                                 // fill={true}
                                 width={500}
                                 height={400}
-                                object-fit="contain"
                             // fill={true}
                             />
                         </div>

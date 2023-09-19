@@ -419,11 +419,6 @@
         margin: 2rem;
         padding: 1rem 3rem 1rem 3rem;
     }
-
-    .content>figure {
-        padding: 1rem 3rem 1rem 3rem;
-    }
-
 }
 
 .content>p {
@@ -431,31 +426,6 @@
     margin-left: 1rem;
     font-size: 1.2rem;
     margin-bottom: 1rem;
-}
-
-.content>figure {
-    padding: 0.5rem;
-    border: 1px dotted var(--secondary-color);
-    border-radius: 1em;
-    font-size: 1.2rem;
-    color: var(--secondary-color);
-    margin-bottom: 1rem;
-}
-
-.content>figure>figcaption {
-    display: block;
-    font-style: italic;
-    text-align: center;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.content>figure>img {
-    display: block;
-    margin: 0 auto;
-    padding-top: 1rem;
-    padding-bottom: 0.5rem;
-    /* margin-top: 1rem; */
 }
 
 .content>blockquote {

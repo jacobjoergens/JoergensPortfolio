@@ -56,7 +56,7 @@ export default function ProjectPage({ params }: ProjectProps) {
       </div>
       <div className={styles.pagination}>
         {previousProject &&
-          <Link className={`noSelect ${styles.pageButton}`} href={'/woodwork/' + previousProject?.slugAsParams}>
+          <Link className={`noSelect ${styles.pageButton} ${styles.prevPage}`} href={'/woodwork/' + previousProject?.slugAsParams}>
             <ArrowLeftIcon className='h-8 w-8' /> {previousProject.title}
           </Link>
         }

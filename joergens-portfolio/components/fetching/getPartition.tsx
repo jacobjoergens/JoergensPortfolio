@@ -1,8 +1,7 @@
-import { degSetIndex } from '@/app/(categories)/computational-design/min-rect-partition/threeUI';
 import AWS from 'aws-sdk'
 
 AWS.config.update({
-    accessKeyId: process.env.S3_ACCESS_KEY,
+    accessKeyId: process.env.S3_ACCESS_KEY, 
     secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
 });
 
@@ -18,8 +17,8 @@ export default async function getPartition(partitionCache: any, degSetIndex: num
     // Define the Lambda function name and payload
     const functionName = 'min-rect-partition'; // Replace with your Lambda function name
     const payload = {
-        action: 'get',
-        params: {
+        'action': 'get',
+        'params': {
             'index': index,
             'degSetIndex': degSetIndex,
         },

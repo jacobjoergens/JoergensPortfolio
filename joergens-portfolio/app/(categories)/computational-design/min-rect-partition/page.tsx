@@ -17,23 +17,19 @@ import AWS from 'aws-sdk'
 
 AWS.config.update({
     accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY, 
+    region: 'us-east-2'
 });
 
 // const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/partition'
 
-
-// Configure AWS SDK with your region
-AWS.config.update({ region: 'us-east-2' }); // Replace 'YOUR_REGION' with your AWS region
-
 // Create an AWS Lambda service object
 const lambda = new AWS.Lambda();
-
 // Define the Lambda function name and payload
 const functionName = 'min-rect-partition'; // Replace with your Lambda function name
 const payload = {
-    action: 'stage',
-    params: {
+    'action': 'stage',
+    'params': {
         'crvPoints': crvPoints,
         'k': 4,
     },
@@ -92,15 +88,12 @@ export default function ProjectPage() {
             // await spinUpSocket();
         }
         stageThree();
-        console.log('crvPoints at mount:', crvPoints)
         setIsMounted(true);
         handleApply();
     }, []);
 
     useEffect(() => {
-        console.log('applied:', applied)
         async function applyPart() {
-            console.log('crvPoints:', crvPoints);
             scene.remove(curves);
             setInitValues();
             let response;
@@ -117,11 +110,9 @@ export default function ProjectPage() {
                         if (payloadBuffer) {
                             response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
                             bipartite_figures = JSON.parse(response.body).bipartite_figures
-                            console.log(response)
                         } else {
                             response = {}; // Fallback in case payloadBuffer is undefined
                         }
-
                         resolve(response);
                     }
                 });
@@ -129,7 +120,6 @@ export default function ProjectPage() {
 
             try {
                 await lambdaInvocation; // Wait for the Lambda invocation to complete
-                console.log(bipartite_figures.length)
                 if (bipartite_figures.length === 0) {
                     setIsDegenerate(false);
                 }

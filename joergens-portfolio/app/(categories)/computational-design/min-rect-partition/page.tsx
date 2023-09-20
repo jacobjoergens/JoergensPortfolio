@@ -14,17 +14,22 @@ import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Spinner from "@/components/layout/Spinner";
 import AWS from 'aws-sdk';
+// import dotenv from 'dotenv';
 
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, 
-    region: 'us-east-2'
-});
+// dotenv.config();
+
+// console.log('env:',process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
+// const config = {
+//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, 
+//     region: 'us-east-2'
+// };
+
+// AWS.config.update(config);
 
 // const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/partition'
 
 // Create an AWS Lambda service object
-const lambda = new AWS.Lambda();
 // Define the Lambda function name and payload
 const functionName = 'min-rect-partition'; // Replace with your Lambda function name
 const payload = {
@@ -100,6 +105,7 @@ export default function ProjectPage() {
             // : AWS.Lambda.InvocationResponse;
 
             // Wrap the Lambda invocation in a Promise
+            const lambda = new AWS.Lambda();
             const lambdaInvocation = new Promise((resolve, reject) => {
                 lambda.invoke(params, (err, data) => {
                     if (err) {

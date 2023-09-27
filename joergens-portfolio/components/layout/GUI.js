@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import styles from 'styles/pages/computational.module.css';
-import { ChevronRightIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { compute, rhinoToThree } from "@/app/(categories)/computational-design/protein-earrings/initThree";
 
-export default function GUI({ atomData, render, onRenderComplete, openGUI, toggle }) {
+export default function GUI({ atomData, handleGUIChange, openGUI, toggle }) {
   const [openSection, setOpenSection] = useState({ 'Parameters': true, 'Material': true });
   const buttonRef = useRef(null);
   const controlsRef = useRef(null);
   const GUIRef = useRef(null);
   const [parameterSliderValues, setParameterSliderValues] = useState(
     {
-      'Radius': { value: 8.5, min: 4, max: 20, step: 0.5, multiplier: 2 },
-      'Charge Strength': { value: 0.5, min: 0, max: 1, step: 0.1, multiplier: 10 },
+      'Radius': { value: 8.8, min: 4, max: 20, step: 0.1, multiplier: 10 },
+      'Charge Strength': { value: 0.50, min: 0, max: 1, step: 0.01, multiplier: 100 },
       'Trim Tolerance': { value: 10, min: 5, max: 15, step: 0.1, multiplier: 10 },
       'Smoothing Passes': { value: 0, min: 0, max: 10, step: 1, multiplier: 1 },
       'Scale': { value: 2.0, min: 1.0, max: 10, step: 0.1, multiplier: 10 },
@@ -59,9 +59,6 @@ export default function GUI({ atomData, render, onRenderComplete, openGUI, toggl
   };
 
   const handleParamSliderMouseUp = async () => {
-    // const sliderList = Object.keys(sliderValues).map(name => ({
-    //   [name]: sliderValues[name].value
-    // }));
     const extractedParamValues = {};
     Object.entries(parameterSliderValues).forEach(([sliderName, sliderData]) => {
       extractedParamValues[sliderName] = sliderData.value;
@@ -75,14 +72,10 @@ export default function GUI({ atomData, render, onRenderComplete, openGUI, toggl
     extractedDisplayValues['Color'] = selectedColor;
     extractedDisplayValues['Material'] = selectedMaterial;
     extractedParamValues['pdbID'] = atomData;
-    onRenderComplete(true);
-    await compute(extractedParamValues, extractedDisplayValues);
-    onRenderComplete(false);
-  };
 
-  if (render) {
-    handleParamSliderMouseUp();
-  }
+    // await compute(extractedParamValues, extractedDisplayValues);
+    handleGUIChange(extractedParamValues, extractedDisplayValues);
+  };
 
   const parameterSliders = Object.keys(parameterSliderValues).map(sliderName => {
     const slider = parameterSliderValues[sliderName];
@@ -144,6 +137,7 @@ export default function GUI({ atomData, render, onRenderComplete, openGUI, toggl
       extractedDisplayValues[sliderName] = sliderData.value;
     })
     extractedDisplayValues['Color'] = selectedColor;
+    extractedDisplayValues['Material'] = selectedMaterial;
     await rhinoToThree(extractedDisplayValues)
   };
 
@@ -173,10 +167,7 @@ export default function GUI({ atomData, render, onRenderComplete, openGUI, toggl
     }
   });
 
-  // console.log(contentHeight, document.getElementById('canvas').offsetHeight*.8)
   const containerStyle = {
-    // height: `${Math.min(contentHeight,document.getElementById('canvas')).offsetHeight*.8}px`,
-    // overflow: 'auto',
     transition: 'height 0.3s ease',
   };
 

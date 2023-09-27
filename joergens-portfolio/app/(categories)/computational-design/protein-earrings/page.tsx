@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react';
-import { init } from './initThree.js'
+import { init, compute, initPDB } from './initThree.js'
 import styles from "styles/pages/computational.module.css"
 import Spinner from '@/components/layout/Spinner';
 import GUI from '@/components/layout/GUI.js'
@@ -28,96 +28,75 @@ interface Option {
   description: string;
 }
 
+interface Parameters {
+  Radius: any;
+  'Charge Strength': any;
+  'Trim Tolerance': any;
+  'Smoothing Passes': any;
+  Scale: any;
+  pdbID: string;
+}
+
 function formatLinkLabel(label: LabelProps["label"]) {
   const words = label.split(" ");
   return words.join("\n");
 }
 
-async function fetchPdbContent(pdbId: string): Promise<string | null> {
-  const url = `https://files.rcsb.org/download/${pdbId}.pdb`;
-  try {
-    const response = await fetch(url);
-    if (response.ok) {
-      return await response.text();
-    } else {
-      console.error('Failed to fetch PDB content:', response.status);
-      return null;
-    }
-  } catch (error) {
-    console.error('Failed to fetch PDB content:', error);
-    return null;
-  }
-}
-
 export default function GrasshopperPage({ params }: ProjectProps) {
   const [loading, setLoading] = useState(true);
   const [openGUI, setOpenGUI] = useState(false);
-  const [fireRender, setFireRender] = useState(false);
-  const canvasRef = useRef(null);
-  // const defaultOption = { label: '1E6V', value: '1E6V', description: 'placeholder' };
-  const [selectedOption, setSelectedOption] = useState<Option | null>();
-  const [atomData, setAtomData] = useState('');
+  const [paramValues, setParamValues] = useState<Parameters>({
+    'Radius': 8.8,
+    'Charge Strength': 0.50,
+    'Trim Tolerance': 10,
+    'Smoothing Passes': 0,
+    'Scale': 2.0,
+    'pdbID': initPDB,
+  });
+  const [displayValues, setDisplayValues] = useState({
+    'Reflectivity': 1.00,
+    'Roughness': 0.00,
+    'Color': '#F7D498',
+    'Material': 'metal',
+  });
+
+  const handleSelectChange = (atom_record: string) => {
+    setParamValues(prevParamValues => ({
+      ...prevParamValues,
+      pdbID: atom_record,
+    }));
+  };
+
+  const handleGUIChange = (modelParams: Parameters, displayParams: any) => {
+    setParamValues(modelParams);
+    setDisplayValues(displayParams);
+  }
 
   useEffect(() => {
-    async function download(entryID: string) {
-      const pdbContent = await fetchPdbContent(entryID);
-      if (pdbContent) {
-        const atom_record = pdbContent
-          .split('\n')
-          .filter(line => line.trim().startsWith('ATOM'))
-          .join('\n'); // Join the filtered lines back into a single string
-        setAtomData(atom_record);
-      }
-
+    const callCompute = async () => {
+      await compute(paramValues, displayValues)
+      setLoading(false);
     }
-    if (selectedOption) {
-      download(selectedOption.label);
-      setFireRender(true);
-    }
-    console.log(selectedOption)
-  }, [selectedOption]);
+    setLoading(true);
+    callCompute();
+  }, [paramValues])
 
   const toggleGUI = () => {
     setOpenGUI(!openGUI);
   }
 
-  const handleSelectChange = (option: Option | null) => {
-    setSelectedOption(option);
-  };
-
-  const handleRenderComplete = (value: boolean) => {
-    setLoading(value);
-    if (!value) {
-      setFireRender(false);
-    }
-  }
-
-  // const onCompute = async(values: any , displayParams: any) => {
-  //   values['pdbID'] = `C:/Users/jacob/OneDrive/Documents/GitHub/JoergensPortfolio/joergens-portfolio/public/pdb/${selectedOption?.label}.pdb`;
-  //   await compute(values, displayParams);
-  // }
-
   const currentProjectIndex = allComputationalProjects.findIndex((project) => project.slugAsParams === 'protein-earrings');
   const nextProject = currentProjectIndex < allComputationalProjects.length - 1 ? allComputationalProjects[currentProjectIndex + 1] : null;
   const previousProject = currentProjectIndex > 0 ? allComputationalProjects[currentProjectIndex - 1] : null;
-
   const project = allComputationalProjects[currentProjectIndex]
-  // const nextProject = currentProjectIndex < allComputationalProjects.length - 1 ? allComputationalProjects[currentProjectIndex + 1] : null;
-  // const previousProject = currentProjectIndex > 0 ? allComputationalProjects[currentProjectIndex - 1] : null;
-
 
   const href = '/computational-design/'
 
   useEffect(() => {
     const stageThree = async () => {
-      // const m: RhinoModule = await rhino3dm(); // Wait for the promise to resolve
-      // console.log('m', m, typeof m); 
-      // console.log('Loaded rhino3dm.');
-      // rhino = m;
-        await init();
+      await init();
     };
     stageThree();
-    setSelectedOption({ label: '7XHS', value: '7XHS', description: 'Crystal structure of CipA crystal produced by cell-free protein synthesis' })
   }, []);
 
   return (
@@ -134,21 +113,20 @@ export default function GrasshopperPage({ params }: ProjectProps) {
             <div className={styles.canvasContainer} id='canvas-container'>
               {loading && <Spinner />}
               <button className={styles.toggleGUI} onClick={() => toggleGUI()}>Controls</button>
-              <canvas className={styles.mainCanvas} id='canvas' ref={canvasRef} />
+              <canvas className={styles.mainCanvas} id='canvas' />
               {/* {`$visibility: loading ? 'visible' : 'hidden' }`} */}
             </div>
-            <GUI 
-              atomData={atomData} 
-              render={fireRender} 
-              onRenderComplete={handleRenderComplete} 
-              openGUI={openGUI} 
-              toggle={toggleGUI} 
+            <GUI
+              atomData={paramValues['pdbID']}
+              handleGUIChange={handleGUIChange}
+              openGUI={openGUI}
+              toggle={toggleGUI}
             />
           </div>
-            <div className={styles.searchbar}>
-              <div className={styles.currentProtein}>Protein Data Bank Search:</div>
-              <PdbSearchBar onChange={handleSelectChange} />
-            </div>
+          <div className={styles.searchbar}>
+            <div className={styles.currentProtein}>Protein Data Bank Search:</div>
+            <PdbSearchBar setAtomData={handleSelectChange} />
+          </div>
         </div>
         <div className={styles.content}>
           <Mdx code={project.body.code} />

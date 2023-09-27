@@ -249,7 +249,7 @@ export default function ProjectPage() {
                         <li> - Press the escape key to undo </li>
                         <li> - Return to your original point to close the shape </li>
                         <li> - Add any number of polygonal holes by drawing curves inside the polygon </li>
-                        <li> - Click on "Apply Partition" </li>
+                        <li> - Click on &quot;Apply Partition&quot; </li>
                         <li> - Drag to rotate </li>
                         <li> - Drag two-fingers to zoom</li>
                     </ul>
@@ -257,9 +257,9 @@ export default function ProjectPage() {
                 <div className={`${styles.bubble} ${styles.mobile}`}>
                     <div className={styles.bubbleTitle}> Directions: </div>
                     <ul>
-                        <li> - You won't be able to draw a new shape on a touch screen </li>
+                        <li> - You won&apos;t be able to draw a new shape on a touch screen </li>
                         <li> - If you are on a device with a mouse, make the screen large </li>
-                        <li> - For the example below, drag to rotate, use two-fingers to zoom, change sets from the "Explore Degenegeracies" tab</li>
+                        <li> - For the example below, drag to rotate, use two-fingers to zoom, change sets from the &quot;Explore Degenegeracies&quot; tab</li>
                     </ul>
                 </div>
             </div>

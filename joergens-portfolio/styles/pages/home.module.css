@@ -59,42 +59,74 @@
     display: flex;
     flex-direction: row;
     font-size: 2rem;
-    left: 1rem;
-    text-align: start;
+    /* left: 0; */
+    text-align: center;
+    justify-content: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
-
 }
 .highlights {
     display: flex;
     flex-direction: row;
     align-items: center;
     text-align: center;
+    justify-content: center;
 }
 
-.highlight {
+.highlight{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    margin: 1rem;
+}
+.highlightCard {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 30%;
+    align-items: center;
+    width: 100%;
     padding: 1rem;
     border: 1px solid var(--primary-color);
     border-radius: 1rem;
     padding: 1rem;
     margin: 1rem;
     height: 100%;
+    position: relative;
 }
 
-.highlight:hover > img {
+.highlightTitle {
+    top: 1rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    width: 75%;
+}
+
+.highlight > img {
+    bottom: 0;
+}
+
+.highlight:hover > .highlightCard > img {
     opacity: 50%;
 }
+
+.highlight:hover > .highlightTitle {
+    color: var(--primary-color)
+}
+
+
 
 @media (max-width:786px){
     .highlights {
         flex-direction: column;
     }
-    .highlight{
-        width: 100%;
+    .highlightTitle{
+        width: 90vw;
+    }
+    .highlightCard{
+        width: 90vw;
     }
     .description { 
         width: 90%;

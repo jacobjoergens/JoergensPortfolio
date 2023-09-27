@@ -9,6 +9,7 @@
     color: var(--secondary-color);
     margin-bottom: 1rem;
     justify-content: center;
+    align-items: center;
 }
 
 .caption {
@@ -24,6 +25,7 @@
     margin: 0 auto;
     padding-top: 1rem;
     padding-bottom: 0.5rem;
+    justify-content: center;
     /* margin-top: 1rem; */
 }
 

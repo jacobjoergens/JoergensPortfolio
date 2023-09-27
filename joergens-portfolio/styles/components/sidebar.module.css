@@ -89,7 +89,11 @@
 }
 
 .sidebarItem:hover{
-    color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.sidebarItemActive:hover{
+    color: var(--primary-color);
 }
 
 .icon {
@@ -106,6 +110,10 @@
     fill: var(--background-color);
     width: 40px !important;
     height: 40px !important;
+}
+
+.icon>svg:hover{
+    stroke: var(--primary-color);
 }
 
 .navlist {

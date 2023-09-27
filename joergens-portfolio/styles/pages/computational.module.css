@@ -401,6 +401,8 @@
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
+    padding: 4rem;
+    font-size: 1.2rem;
 }
 
 @media (min-width: 768px) {
@@ -411,7 +413,7 @@
 
     .content {
         justify-content: center;
-        width: 50%;
+        width: 100%;
         margin: 3rem;
     }
 
@@ -423,7 +425,6 @@
 
 .content>p {
     position: relative;
-    margin-left: 1rem;
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
@@ -434,6 +435,23 @@
     border: 1px dotted var(--secondary-color);
     border-radius: 1em;
     font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+.content > h1 {
+    margin-bottom: 1rem;
+}
+
+.content > h2 {
+    margin-left: 1rem;
+}
+
+.content > h3 {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.content > p > a {
     color: var(--secondary-color);
 }
 

@@ -7,45 +7,20 @@ import GraphCarousel from "@/components/layout/GraphCarousel";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link.js";
 import Footer from "@/components/layout/Footer";
-import stagePartitioning from "@/components/fetching/stagePartitioning";
-import spinUpSocket from "@/components/fetching/spinUpSocket";
 import { reset, crvPoints, curves } from "./drawCurve.js";
 import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Spinner from "@/components/layout/Spinner";
-import AWS from 'aws-sdk';
-// import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
-// dotenv.config();
-
-// console.log('env:',process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
-// const config = {
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, 
-//     region: 'us-east-2'
-// };
-
-// AWS.config.update(config);
-
-// const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/partition'
-
-// Create an AWS Lambda service object
-// Define the Lambda function name and payload
-const functionName = 'min-rect-partition'; // Replace with your Lambda function name
-const payload = {
-    'action': 'stage',
-    'params': {
-        'crvPoints': crvPoints,
-        'k': 4,
-    },
-};
+dotenv.config();
 
 // Configure the Lambda function parameters
-const params = {
-    FunctionName: functionName,
-    InvocationType: 'RequestResponse', // Can be 'Event' for asynchronous invocation
-    Payload: JSON.stringify(payload),
-};
+// const params = {
+//     FunctionName: functionName,
+//     InvocationType: 'RequestResponse', // Can be 'Event' for asynchronous invocation
+//     Payload: JSON.stringify(payload),
+// };
 
 
 let bipartite_figures: string[] = [];
@@ -86,6 +61,7 @@ export default function ProjectPage() {
     const [isMounted, setIsMounted] = useState(false);
     const [isDegenerate, setIsDegenerate] = useState(true);
     const [openGraphs, setOpenGraphs] = useState(false);
+    const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
         const stageThree = async () => {
@@ -97,35 +73,67 @@ export default function ProjectPage() {
         handleApply();
     }, []);
 
+    
     useEffect(() => {
         async function applyPart() {
+            const payload = {
+                'action': 'stage',
+                'params': {
+                    'crvPoints': crvPoints,
+                    'k': 4,
+                },
+            };
             scene.remove(curves);
             setInitValues();
-            let response;
+            const response = await fetch('https://7dp7thzz3icorfu6uzpv4gfyza0fixth.lambda-url.us-east-2.on.aws/', {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            const response_data = await response.json()
+            bipartite_figures = response_data.bipartite_figures
+            
+            // console.log(bipartite_figures)
+            // let response
+
             // : AWS.Lambda.InvocationResponse;
 
-            // Wrap the Lambda invocation in a Promise
-            const lambda = new AWS.Lambda();
-            const lambdaInvocation = new Promise((resolve, reject) => {
-                lambda.invoke(params, (err, data) => {
-                    if (err) {
-                        console.error('Error invoking Lambda:', err);
-                        reject(err);
-                    } else {
-                        const payloadBuffer = data.Payload;
-                        if (payloadBuffer) {
-                            response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
-                            bipartite_figures = JSON.parse(response.body).bipartite_figures
-                        } else {
-                            response = {}; // Fallback in case payloadBuffer is undefined
-                        }
-                        resolve(response);
-                    }
-                });
-            });
+            // // Wrap the Lambda invocation in a Promise
+            // const config = {
+            //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            //     region: 'us-east-2',
+            //   };
+              
+            //   AWS.config.update(config);
+            //   const lambda = new AWS.Lambda();
+              
+            //   console.log('AWS Configuration:', AWS.config);
+            //   console.log('Environment Variables:', process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY);
+              
+            // const lambdaInvocation = new Promise((resolve, reject) => {
+            //     console.log('keys:',process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
+            //     lambda.invoke(params, (err, data) => {
+            //         if (err) {
+            //             console.error('Error invoking Lambda:', err);
+            //             reject(err);
+            //         } else {
+            //             const payloadBuffer = data.Payload;
+            //             if (payloadBuffer) {
+            //                 response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
+            //                 bipartite_figures = JSON.parse(response.body).bipartite_figures
+            //             } else {
+            //                 response = {}; // Fallback in case payloadBuffer is undefined
+            //             }
+            //             resolve(response);
+            //         }
+            //     });
+            // });
 
             try {
-                await lambdaInvocation; // Wait for the Lambda invocation to complete
+                // await lambdaInvocation; // Wait for the Lambda invocation to complete
                 if (bipartite_figures.length === 0) {
                     setIsDegenerate(false);
                 }
@@ -137,9 +145,7 @@ export default function ProjectPage() {
                 controls.enableRotate = true;
                 setLoading(false);
             } catch (error) {
-                // Handle any errors that occurred during the Lambda invocation or showPartition
-                console.error('Error in applyPart:', error);
-                // You may want to set an error state or perform other error handling here
+                setHasError(true);
             }
         }
 
@@ -163,8 +169,13 @@ export default function ProjectPage() {
     }, [applied]);
 
     const handleApply = (): void => {
-        setApplied(!applied);
-        setLoading(true);
+        if(hasError){
+            setApplied(false);
+            setHasError(false);
+        } else {
+            setApplied(!applied);
+            setLoading(true);
+        }
     }
 
     useEffect(() => {
@@ -231,24 +242,24 @@ export default function ProjectPage() {
                 </Link>
             </div>
             <div className={styles.directionContainer}>
-                <div className={styles.bubble}>
-                    <div className={styles.bubbleTitle}> Description: </div>
-                    <p>
-                        The basic idea of this model is to determine the minimum number of rectangles
-                        required to tile an orthogonal (right-angle only) polygon. You can
-                        read the fuller explanation below to see why I came across this question, why I found it more
-                        difficult than it first appeared, and what I am trying currently working to extend it to.
-                    </p>
-                </div>
-                <div className={styles.bubble}>
+                <div className={`${styles.bubble} ${styles.desktop}`}>
                     <div className={styles.bubbleTitle}> Directions: </div>
                     <ul>
-                        <li> - Click anywhere on the canvas to place points </li>
-                        <li> - Return to your original point to close a shape </li>
-                        <li> - Snaplines will help you match endpoints </li>
-                        <li> - Intersections are not allowed and will be highlighted</li>
-                        <li> - Polygonal holes (shapes within shapes) are permitted </li>
-                        <li> - Shapes within holes are not understood </li>
+                        <li> - Draw a polygon by clicking on the canvas to place vertices </li>
+                        <li> - Press the escape key to undo </li>
+                        <li> - Return to your original point to close the shape </li>
+                        <li> - Add any number of polygonal holes by drawing curves inside the polygon </li>
+                        <li> - Click on "Apply Partition" </li>
+                        <li> - Drag to rotate </li>
+                        <li> - Drag two-fingers to zoom</li>
+                    </ul>
+                </div>
+                <div className={`${styles.bubble} ${styles.mobile}`}>
+                    <div className={styles.bubbleTitle}> Directions: </div>
+                    <ul>
+                        <li> - You won't be able to draw a new shape on a touch screen </li>
+                        <li> - If you are on a device with a mouse, make the screen large </li>
+                        <li> - For the example below, drag to rotate, use two-fingers to zoom, change sets from the "Explore Degenegeracies" tab</li>
                     </ul>
                 </div>
             </div>
@@ -272,6 +283,16 @@ export default function ProjectPage() {
                 }
                 <div className={`${styles.canvasContainer} ${openGraphs ? styles.closed : styles.open}`} id='canvas-container'>
                     {loading && <Spinner />}
+                    {hasError &&
+                        <div className={styles.blockCanvas}> 
+                            <p> There was an error partitioning your input. Here are some things to keep in mind. 
+                                <ul>
+                                    <li> - You can apply a partition to a shape with holes but not to multiple shapes.</li>
+                                    <li> - Holes cannot be nested. </li>
+                                </ul>
+                            </p>
+                        </div>
+                    }
                     <canvas className={styles.mainCanvas} id='canvas'> </canvas>
 
                     {applied &&
@@ -306,7 +327,7 @@ export default function ProjectPage() {
                 // id='computeButton'
                 onClick={handleApply}
             >
-                {!applied ? 'Apply partition' : 'Create a new shape'}
+                {hasError ? 'Try again': !applied ? 'Apply partition' : 'Create a new shape'}
             </button>
             <div className={styles.content}>
                 <Mdx code={project.body.code} />

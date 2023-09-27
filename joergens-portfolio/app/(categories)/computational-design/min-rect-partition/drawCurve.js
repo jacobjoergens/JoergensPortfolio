@@ -73,9 +73,26 @@ export function onEsc() {
     }
 
     const nextVertex = vertices.pop();
-    updateDottedGeometry(vertices[vertices.length - 1], nextVertex);
-    updateSolidLine();
-    crvPoints[crvPoints.length - 1].pop();
+    if(vertices.length>0){
+        updateDottedGeometry(vertices[vertices.length - 1], nextVertex);
+        updateSolidLine();
+    } else {
+        scene.remove(dottedLine);
+        dottedGeometry = null; 
+        dottedLine = null;
+        crossings = new THREE.Group()
+        previewGroup = null;
+        solidGeometry = null;
+        solidLine = null;
+
+        vertices = [];
+        curves = new THREE.Group();
+    }
+    if(crvPoints[crvPoints.length-1].length>1){
+        crvPoints[crvPoints.length - 1].pop();
+    } else {
+        crvPoints = [];
+    }
 }
 
 export function reset() {
@@ -197,8 +214,8 @@ export function onMouseMove(event) {
         }
 
         const lastVertex = vertices[vertices.length - 1];
-        const dx = Math.abs(point.x - lastVertex.x);
-        const dy = Math.abs(point.y - lastVertex.y);
+        let dx = Math.abs(point.x - lastVertex.x);
+        let dy = Math.abs(point.y - lastVertex.y);
         let snap_intersects, orthogonal_vertex;
         let snapSet = [h_snapLine, v_snapLine];
         const order = [lastVertex, point];
@@ -214,7 +231,7 @@ export function onMouseMove(event) {
 
         if (vertices.length > 1) {
             const parallel = lastVertex.clone().sub(vertices[vertices.length - 2]).normalize();
-            if (direction.dot(parallel) < 0) {
+            if (direction.dot(parallel) != 0) {
                 order.reverse();
                 snapSet.reverse();
                 nextVertex.set(order[0].x, order[1].y, 0);

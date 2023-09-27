@@ -89,7 +89,7 @@ const GraphCarousel = ({ dataType, images, onImageChange, openGraphs }: Carousel
                     ))}
                 </div>
             </div>
-            {images.length > 1 &&
+            {images && images.length > 1 &&
                 <ul className={styles.thumbnailIndicators}>
                     {images?.map((image, index) => (
                         <li

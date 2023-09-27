@@ -178,7 +178,7 @@ export async function switchDegSet(index) {
 //     camera.lookAt(center);
 // }
 
-export function zoomCameraToSelection(camera, controls, fitOffset = 1.2) {
+export function zoomCameraToSelection(camera, controls, fitOffset = 1.5) {
     const box = new THREE.Box3();
     const regions = partitionCache[degSetIndex][currentIndex]['renderedRegions']
     box.setFromObject(regions)

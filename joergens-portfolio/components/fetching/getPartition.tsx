@@ -1,14 +1,15 @@
 import AWS from 'aws-sdk'
+import dotenv from 'dotenv';
 
-// AWS.config.update({
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-// });
+dotenv.config();
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-2',
+});
 
 // const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/min-rect-partition'
-
-// Configure AWS SDK with your region
-AWS.config.update({ region: 'us-east-2' }); // Replace 'YOUR_REGION' with your AWS region
 
 export default async function getPartition(partitionCache: any, degSetIndex: number, index: number) {
     // Create an AWS Lambda service object
@@ -32,43 +33,38 @@ export default async function getPartition(partitionCache: any, degSetIndex: num
     };
 
     try {
-        // const response = await fetch('/api/getPartition', {
-        // const response = await fetch(apiGatewayURL, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     mode: 'cors',
-        //     body: JSON.stringify({
-        //         'action' : 'get',
-        //         'params' : {
-        //             'index': index,
-        //             'degSetIndex': degSetIndex
+        const response = await fetch('https://7dp7thzz3icorfu6uzpv4gfyza0fixth.lambda-url.us-east-2.on.aws/', {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify(payload)
+        })
+        const response_data = await response.json()
+        partitionCache[degSetIndex][index] = response_data;
+        // let response;  // Declare a variable to store the Lambda response
+
+        // // Invoke the Lambda function
+        // const lambdaInvocation = new Promise((resolve, reject) => {
+        //     lambda.invoke(params, (err, data) => {
+        //         if (err) {
+        //             console.error('Error invoking Lambda:', err);
+        //             reject(err);
+        //         } else {
+        //             const payloadBuffer = data.Payload;
+        //             if (payloadBuffer) {
+        //               response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
+        //               partitionCache[degSetIndex][index] = JSON.parse(response.body);
+        //             } else {
+        //               response = {}; // Fallback in case payloadBuffer is undefined
+        //             }
+                    
+        //             resolve(response);
         //         }
-        //     })
+        //     });
         // });
 
-        let response;  // Declare a variable to store the Lambda response
-
-        // Invoke the Lambda function
-        const lambdaInvocation = new Promise((resolve, reject) => {
-            lambda.invoke(params, (err, data) => {
-                if (err) {
-                    console.error('Error invoking Lambda:', err);
-                    reject(err);
-                } else {
-                    const payloadBuffer = data.Payload;
-                    if (payloadBuffer) {
-                      response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
-                      partitionCache[degSetIndex][index] = JSON.parse(response.body);
-                    } else {
-                      response = {}; // Fallback in case payloadBuffer is undefined
-                    }
-                    
-                    resolve(response);
-                }
-            });
-        });
-
-        await lambdaInvocation;
+        // await lambdaInvocation;
     } catch (error) {
         console.error('Error in getPartition:', error);
     }

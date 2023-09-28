@@ -40,27 +40,29 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ setAtomData }) => {
     const customStyles: StylesConfig<Option, false> = {
         control: (provided, state) => ({
             ...provided,
-            paddingLeft: '1rem',
-            border: `1px solid ${isInputFocused ? secondaryColor : primaryColor}`, // Remove focus border
+            // paddingLeft: '1rem',
+            // border: `1px solid ${isInputFocused ? secondaryColor : primaryColor}`, // Remove focus border
+            // '&:hover': { border: `1px solid ${secondaryColor}`},
+            border: 'none',
             borderRadius: '1rem',
-            boxShadow: `0 0 0 ${isInputFocused ? '1px' : '0px'} ${primaryColor}`,
-            '&:hover': {
-                border: `1px solid ${secondaryColor}`
-            },
+            // boxShadow: `0 0 0 ${isInputFocused ? '1px' : '0px'} ${primaryColor}`,
+            boxShadow: 'none',
             backgroundColor: darkGreen,
             color: primaryColor,
             '&:focus .css-1hwfws3': {
                 color: 'transparent',
             },
             alignItems: 'center',
-            marginLeft: '1rem',
+            // marginLeft: '1rem',
             marginRight: '1rem',
+            width: '100%',
         }),
 
         input: (provided) => ({
             ...provided,
             margin: '0',
             color: primaryColor,
+            border: 'none',
             //   color: '#dd6858',
         }),
 
@@ -101,6 +103,7 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ setAtomData }) => {
             ...provided,
             backgroundColor: primaryColor,
         }),
+
     };
 
     const loadOptions = async (inputValue: string) => {
@@ -124,10 +127,12 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ setAtomData }) => {
     };
 
     const formatOptionLabel = (option: Option) => (
-        <div className={styles.proteinInfo}>
-            <div className={styles.label}> {option.label}</div>
-            <div className={styles.divider}></div>
-            <div className={styles.description}> {option.description}</div>
+        <div> 
+            <div className={styles.proteinInfo}>
+                <div className={styles.label}> {option.label}</div>
+                <div className={styles.divider}></div>
+                <div className={styles.description}> {option.description}</div>
+            </div>
         </div>
     );
 

@@ -90,6 +90,26 @@
     height: 100%;
 }
 
+
+.searchcontainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--primary-color);
+    background-color: var(--darkGreen);
+    justify-content: space-between;
+}
+
+.description{
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .currentProtein { 
     color: var(--primary-color);
     padding-left: 1rem;
@@ -98,14 +118,19 @@
     position: relative;
     z-index: 400;
     align-items: center;
-    flex-grow: 1; 
+    text-align: center;
+    width: -moz-fit-content;
+    width: fit-content;
 }
 
-.divider {
-    border-right: 1px solid var(--primary-color);
-    padding-left: 1rem;
-    margin-right: 1rem;
-    height: 1rem;
+.pdbSearch{
+    display: flex;
+    flex-grow: 1;
+    width: max-content;
+}
+
+.searchbar{
+    flex-grow: 1;
 }
 
 .proteinInfo {
@@ -113,30 +138,18 @@
     flex-direction: row;
     padding-left: 1rem;
     padding-right: 1rem;
-    /* width: 90%; */
+    /* width: 65cqw; */
     align-items: center;
     border: 1px solid var(--primary-color);
     border-radius: 1rem;
+    flex-grow: 1;
 }
 
-.description{
-    display: flex;
-    flex-wrap: wrap;
-    
-}
-
-/* .currentProtein > .proteinInfo > .label, 
-.currentProtein > .proteinInfo > .description {
-    align-items: center;
-    justify-content: center;
-} */
-
-.searchbar {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    width: 100%;
+.divider {
+    border-right: 1px solid var(--primary-color);
+    padding-left: 1rem;
+    margin-right: 1rem;
+    height: 1rem;
 }
 
 .toggleGUI {
@@ -165,11 +178,26 @@
         top:0;
         height: 100%;
         width: 100%;
-        z-index: 300;
+        z-index: 1000;
+        border-radius: 0;
+        overflow-y: hidden;
     }
     .canvasContainer{
         width:100%;
         margin-right: 2rem;
+    }
+    
+    /* .searchcontainer{
+        flex-direction: column;
+        margin-right: 1rem;
+    } */
+    .currentProtein{
+        width: 100%;
+        padding-top: 0.5rem;
+        text-align: center;
+    }
+
+    .searchbar{
     }
 }
 
@@ -200,7 +228,7 @@
     overflow-y: auto;
     height: 95%;
     max-height: 95%;
-    margin-top: 10px;
+    /* margin-top: 10px; */
     width: 95%;
 }
 
@@ -401,7 +429,7 @@
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
-    padding: 4rem;
+    padding: 1rem;
     font-size: 1.2rem;
 }
 
@@ -415,6 +443,7 @@
         justify-content: center;
         width: 100%;
         margin: 3rem;
+        padding: 4rem;
     }
 
     .content>blockquote {

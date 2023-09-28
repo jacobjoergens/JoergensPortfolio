@@ -11,13 +11,6 @@ import Link from 'next/link';
 import PdbSearchBar from '@/components/fetching/pdbSearch';
 
 
-interface ProjectProps {
-  params: {
-    category: string;
-    project: string;
-  };
-}
-
 interface LabelProps {
   label: string;
 }
@@ -42,7 +35,7 @@ function formatLinkLabel(label: LabelProps["label"]) {
   return words.join("\n");
 }
 
-export default function GrasshopperPage({ params }: ProjectProps) {
+export default function GrasshopperPage() {
   const [loading, setLoading] = useState(true);
   const [openGUI, setOpenGUI] = useState(false);
   const [paramValues, setParamValues] = useState<Parameters>({
@@ -82,6 +75,12 @@ export default function GrasshopperPage({ params }: ProjectProps) {
   }, [paramValues])
 
   const toggleGUI = () => {
+    if(openGUI==false){
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    console.log(document.body.style.overflow)
     setOpenGUI(!openGUI);
   }
 
@@ -123,9 +122,11 @@ export default function GrasshopperPage({ params }: ProjectProps) {
               toggle={toggleGUI}
             />
           </div>
-          <div className={styles.searchbar}>
+          <div className={styles.searchcontainer}>
             <div className={styles.currentProtein}>Protein Data Bank Search:</div>
-            <PdbSearchBar setAtomData={handleSelectChange} />
+            <div className={styles.pdbSearch}>
+              <PdbSearchBar setAtomData={handleSelectChange} />
+            </div>
           </div>
         </div>
         <div className={styles.content}>

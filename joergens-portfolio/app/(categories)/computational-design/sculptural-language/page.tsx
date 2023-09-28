@@ -1,19 +1,10 @@
 'use client'
-import { useState, useEffect, useRef } from "react";
 import { allComputationalProjects } from "contentlayer/generated";
 import styles from "styles/pages/computational.module.css"
 import Link from "next/link";
 import { ArrowUturnLeftIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
-import rhino3dm from "rhino3dm";
 import { Mdx } from "@/components/mdx-components";
 import Footer from "components/layout/Footer";
-
-interface ProjectProps {
-    params: {
-        category: string;
-        project: string;
-    };
-}
 
 interface LabelProps {
     label: string;
@@ -24,10 +15,7 @@ function formatLinkLabel(label: LabelProps["label"]) {
     return words.join("\n");
 }
 
-export default function GrasshopperPage({ params }: ProjectProps) {
-    const [loading, setLoading] = useState(true);
-    const canvasRef = useRef(null);
-
+export default function GrasshopperPage() {
     const currentProjectIndex = allComputationalProjects.findIndex((project) => project.slugAsParams === 'sculptural-language');
 
     const project = allComputationalProjects[currentProjectIndex]

@@ -183,6 +183,37 @@
     bottom: 3rem;
 }
 
+.content { 
+    padding-top: 2rem; 
+    position: relative;
+    margin: 1rem;
+    color: var(--darkGreen);
+    padding: 4rem;
+}
+
+.content > p { 
+    position: relative; 
+    margin-left: 1rem;
+    font-size: 1rem; 
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}
+
+.content > figure {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.content > p > a {
+    color: var(--secondary-color);
+}
+
+.content > h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+}
+
 @media (max-width:786px){
     .toggleGraphs {
         display: block;
@@ -218,37 +249,10 @@
     .computeButton{
         display: none;
     }
-}
 
-.content { 
-    padding-top: 2rem; 
-    position: relative;
-    margin: 1rem;
-    color: var(--darkGreen);
-    padding: 4rem;
-}
-
-.content > p { 
-    position: relative; 
-    margin-left: 1rem;
-    font-size: 1rem; 
-    margin-bottom: 1rem;
-    margin-right: 1rem;
-}
-
-.content > figure {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-.content > p > a {
-    color: var(--secondary-color);
-}
-
-.content > h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
+    .content {
+        padding: 0rem;
+    }
 }
 
 /* @media (min-width: 768px) {

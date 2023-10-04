@@ -56,7 +56,7 @@ export async function init() {
   //   hdrCubeMap.needsUpdate = true;
   // });
 
-  new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
+  await new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
 
     texture.mapping = THREE.EquirectangularReflectionMapping;
 

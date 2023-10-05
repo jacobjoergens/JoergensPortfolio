@@ -67,6 +67,16 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
                 Research
               </Link>
             </li>
+            <li>
+              <Link
+                className={
+                  pathname === '/resume' ? styles.sidebarItemActive : styles.sidebarItem
+                }
+                href="/Joergens_Resume_2023.pdf" download="/Joergens_Resume_2023.pdf"
+              >
+                Resume
+              </Link>
+            </li>
           </ul>
         </div>
       )}

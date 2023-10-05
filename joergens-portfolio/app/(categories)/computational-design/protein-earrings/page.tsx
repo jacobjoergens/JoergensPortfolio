@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react';
-import { init, compute, initPDB } from './initThree.js'
+import { init, compute, initPDB, init3obj, collectResults } from './initThree.js'
 import styles from "styles/pages/computational.module.css"
 import Spinner from '@/components/layout/Spinner';
 import GUI from '@/components/layout/GUI.js'
@@ -38,6 +38,7 @@ function formatLinkLabel(label: LabelProps["label"]) {
 export default function GrasshopperPage() {
   const [loading, setLoading] = useState(true);
   const [openGUI, setOpenGUI] = useState(false);
+  const [firstRender, setFirstRender] = useState(true);
   const [paramValues, setParamValues] = useState<Parameters>({
     'Radius': 8.8,
     'Charge Strength': 0.50,
@@ -70,8 +71,22 @@ export default function GrasshopperPage() {
       await compute(paramValues, displayValues)
       setLoading(false);
     }
-    setLoading(true);
-    callCompute();
+
+    const stageThree = async () => {
+      await init();
+      await collectResults(init3obj, displayValues);
+      setFirstRender(false);
+      setLoading(false);
+    };
+    
+    if(firstRender){
+      console.log('got here');
+      stageThree();
+    } else {
+      console.log('got here too')
+      setLoading(true);
+      callCompute();
+    }
   }, [paramValues])
 
   const toggleGUI = () => {
@@ -91,12 +106,9 @@ export default function GrasshopperPage() {
 
   const href = '/computational-design/'
 
-  useEffect(() => {
-    const stageThree = async () => {
-      await init();
-    };
-    stageThree();
-  }, []);
+  // useEffect(() => {
+    
+  // }, []);
 
   return (
     <div>

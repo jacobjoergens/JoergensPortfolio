@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { init, compute, initPDB, init3obj, collectResults, scene } from './initThree.js'
 import styles from "styles/pages/computational.module.css"
 import Spinner from '@/components/layout/Spinner';
@@ -82,13 +82,11 @@ export default function GrasshopperPage() {
   
     const runEffect = async () => {
       if (firstRender) {
-        console.log('got here');
         await stageThree(); // Wait for stageThree to complete
         collectResults(init3obj, displayValues);
         setFirstRender(false);
         setLoading(false);
       } else {
-        console.log('got here too');
         setLoading(true);
         await callCompute(); // Wait for callCompute to complete
       }
@@ -104,7 +102,6 @@ export default function GrasshopperPage() {
     } else {
       document.body.style.overflow = 'auto';
     }
-    console.log(document.body.style.overflow)
     setOpenGUI(!openGUI);
   }
 

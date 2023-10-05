@@ -30,9 +30,9 @@ export default function GUI({ atomData, handleGUIChange, openGUI, toggle }) {
 
   // Define your preset colors for metal and plastic
   const metalColors = [
-    { name: 'Silver', code: '#C0C0C0' },
+    { name: 'Silver', code: '#AAA9AD' },
     { name: 'Gold', code: '#F7D498' },
-    { name: 'Bronze', code: '#CD7F32' },
+    { name: 'Bronze', code: '#B08D57' },
   ];
 
   const plasticColors = [
@@ -119,6 +119,10 @@ export default function GUI({ atomData, handleGUIChange, openGUI, toggle }) {
     }
     else {
       setSelectedColor('#F7D498');
+      setDisplaySliderValues(prevState => ({
+        ...prevState,
+        ['Reflectivity']: { ...prevState['Reflectivity'], value: 1.0 }
+      }));
     }
   }, [selectedMaterial])
 
@@ -170,7 +174,7 @@ export default function GUI({ atomData, handleGUIChange, openGUI, toggle }) {
   const containerStyle = {
     transition: 'height 0.3s ease',
   };
-
+  
   return (
     <div className={`${styles.GUIContainer} ${openGUI ? styles.open : styles.closed}`} style={containerStyle} ref={GUIRef}>
       <div className={styles.GUI}>

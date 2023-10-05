@@ -33,13 +33,20 @@
 }
 
 .profilepic {
-    width: 100%;
+    /* width: auto; */
     height: auto;
-    max-width: 500px;
+    width: 25%;
     text-align: center;
     padding: 30px; 
     justify-content: center;
+    position: relative;
+    display: flex;
+    border-radius: 1rem;
 }
+
+/* .profilepic > img{
+    height: 50%;
+} */
 
 .description {
     display: flex;
@@ -130,5 +137,8 @@
     }
     .description { 
         width: 90%;
+    }
+    .profilepic {
+        width: 100%;
     }
 }

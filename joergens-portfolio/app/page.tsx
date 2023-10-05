@@ -15,8 +15,8 @@ const Home = () => {
             <Image
               src='/images/me.jpg'
               alt='Jacob Joergens'
-              width={500}
-              height={300}
+              width={400}
+              height={400}
             />
           </div>
           {/* <div className={styles.profilepic}>

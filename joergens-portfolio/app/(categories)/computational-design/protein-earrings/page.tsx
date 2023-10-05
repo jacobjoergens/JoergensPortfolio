@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react';
-import { init, compute, initPDB, init3obj, collectResults } from './initThree.js'
+import { init, compute, initPDB, init3obj, collectResults, scene } from './initThree.js'
 import styles from "styles/pages/computational.module.css"
 import Spinner from '@/components/layout/Spinner';
 import GUI from '@/components/layout/GUI.js'
@@ -68,26 +68,35 @@ export default function GrasshopperPage() {
 
   useEffect(() => {
     const callCompute = async () => {
-      await compute(paramValues, displayValues)
-      setLoading(false);
-    }
-
+      await compute(paramValues, displayValues);
+      if (scene && scene.children.length > 0) {
+        setLoading(false);
+      } else {
+        callCompute();
+      }
+    };
+  
     const stageThree = async () => {
       await init();
-      await collectResults(init3obj, displayValues);
-      setFirstRender(false);
-      setLoading(false);
     };
-    
-    if(firstRender){
-      console.log('got here');
-      stageThree();
-    } else {
-      console.log('got here too')
-      setLoading(true);
-      callCompute();
-    }
-  }, [paramValues])
+  
+    const runEffect = async () => {
+      if (firstRender) {
+        console.log('got here');
+        await stageThree(); // Wait for stageThree to complete
+        collectResults(init3obj, displayValues);
+        setFirstRender(false);
+        setLoading(false);
+      } else {
+        console.log('got here too');
+        setLoading(true);
+        await callCompute(); // Wait for callCompute to complete
+      }
+    };
+  
+    runEffect(); // Run the async function
+  
+  }, [paramValues]);
 
   const toggleGUI = () => {
     if(openGUI==false){

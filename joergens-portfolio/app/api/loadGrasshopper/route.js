@@ -22,7 +22,7 @@ async function runCompute(params) {
         let trees = []
         if (data.inputs !== undefined) { //TODO: handle no inputs
             for (let [key, value] of Object.entries(data.inputs)) {
-                let param = await new RhinoCompute.Grasshopper.DataTree(key)
+                let param = new RhinoCompute.Grasshopper.DataTree(key)
                 param.append([0], Array.isArray(value) ? value : [value])
                 trees.push(param)
             }
@@ -47,7 +47,6 @@ async function runCompute(params) {
         }
         
     } catch (error) {
-        console.log('got here')
         console.log(error)
     }
 

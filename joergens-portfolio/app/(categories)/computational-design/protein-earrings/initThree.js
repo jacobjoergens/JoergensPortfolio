@@ -48,27 +48,20 @@ export async function init() {
   const pmremGenerator = new PMREMGenerator(renderer);
   pmremGenerator.compileCubemapShader();
 
-  // const hdrUrls = ['mistyMorning.exr'];
-  // const hdrPath = path.join(process.cwd(), 'textures/kloofendal/');
-  // hdrCubeMap = new THREE.CubeTextureLoader().setPath(hdrPath).load(hdrUrls, function () {
-  //   hdrCubeRenderTarget = pmremGenerator.fromCubemap(hdrCubeMap);
-  //   hdrCubeMap.magFilter = THREE.LinearFilter;
-  //   hdrCubeMap.needsUpdate = true;
-  // });
-
-  await new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
-
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-
-    exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
-    // exrBackground = texture;
-
-  });
+  const exrCubeRenderTargetPromise = new Promise((resolve, reject) => {
+    new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
+        console.log('renderTarget:', exrCubeRenderTarget);
+        resolve(); // Resolve the promise when the loading is complete
+    });
+});
 
 
-  // const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  // pmremGenerator.compileCubemapShader();
-  // scene.add(ambientLight);
+  await exrCubeRenderTargetPromise;
+
+  console.log('testing')
+
   camera.position.set(0, 0, 50);
   camera.lookAt(0, 0, 0);
   renderer.toneMappingExposure = 1.0;
@@ -78,7 +71,6 @@ export async function init() {
   controls.enableGrid = true;
   controls.enablePan = false;
   controls.enableZoom = true;
-  // window.addEventListener('resize', onWindowResize, false)
 
   animate()
 }
@@ -126,6 +118,10 @@ export async function collectResults(responseJson, displayParams) {
     doc = null;
   }
 
+  if(rhino == undefined) {
+    rhino = await rhino3dm();
+  }
+
   doc = new rhino.File3dm()
   // for each output (RH_OUT:*)...
   for (let i = 0; i < values.length; i++) {
@@ -148,7 +144,7 @@ export async function collectResults(responseJson, displayParams) {
     console.error('No rhino objects to load!')
     throw new Error('No rhino objects to load!');
   }
-
+  console.log('collecting...')
   await rhinoToThree(displayParams);
 
   return false;
@@ -159,7 +155,7 @@ export async function rhinoToThree(displayParams) {
   if (doc) {
     const buffer = new Uint8Array(doc.toByteArray()).buffer
     loader.parse(buffer, function (object) {
-      
+      console.log('converting...')
       let material = new THREE.MeshStandardMaterial({
         color: displayParams['Color'],
         envMap: exrCubeRenderTarget.texture,

@@ -52,15 +52,12 @@ export async function init() {
     new EXRLoader().load('/textures/kloofendal/studioSmall.exr', function (texture) {
         texture.mapping = THREE.EquirectangularReflectionMapping;
         exrCubeRenderTarget = pmremGenerator.fromEquirectangular(texture);
-        console.log('renderTarget:', exrCubeRenderTarget);
         resolve(); // Resolve the promise when the loading is complete
     });
 });
 
 
   await exrCubeRenderTargetPromise;
-
-  console.log('testing')
 
   camera.position.set(0, 0, 50);
   camera.lookAt(0, 0, 0);
@@ -96,7 +93,6 @@ export async function compute(values, displayParams) {
     });
     const responseData = await response.text();
     const responseJson = JSON.parse(responseData);
-    console.log('resjson:',responseJson)
     return (await collectResults(responseJson, displayParams));
   } catch (error) {
     console.error(error);
@@ -144,7 +140,6 @@ export async function collectResults(responseJson, displayParams) {
     console.error('No rhino objects to load!')
     throw new Error('No rhino objects to load!');
   }
-  console.log('collecting...')
   await rhinoToThree(displayParams);
 
   return false;
@@ -155,14 +150,17 @@ export async function rhinoToThree(displayParams) {
   if (doc) {
     const buffer = new Uint8Array(doc.toByteArray()).buffer
     loader.parse(buffer, function (object) {
-      console.log('converting...')
+      let mapIntensity = 1.0; 
+      if(displayParams['Material']=='plastic'){
+        mapIntensity = 0.5;
+      }
       let material = new THREE.MeshStandardMaterial({
         color: displayParams['Color'],
         envMap: exrCubeRenderTarget.texture,
         metalness: displayParams['Reflectivity'],
         roughness: displayParams['Roughness'],
         flatShading: false,
-        envMapIntensity: 1.0,
+        envMapIntensity: mapIntensity,
         emissive: '#000000',
         emissiveIntensity: 1,
       });
@@ -178,7 +176,7 @@ export async function rhinoToThree(displayParams) {
         metalness: 1.0,
         roughness: 0.0,
         flatShading: false,
-        envMapIntensity: 1.0
+        envMapIntensity: 1.0,
       })
       object.children[0].material = material; 
       object.children[1].material = hookMaterial;
@@ -230,7 +228,7 @@ function decodeItem(item) {
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
-function zoomCameraToSelection(camera, controls, selection, fitOffset = 1.2) {
+function zoomCameraToSelection(camera, controls, selection, fitOffset = 0.9) {
 
   const box = new THREE.Box3();
 

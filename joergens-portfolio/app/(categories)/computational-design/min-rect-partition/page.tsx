@@ -241,27 +241,11 @@ export default function ProjectPage() {
                     <ArrowUturnLeftIcon className="h-8 w-8" /> Back
                 </Link>
             </div>
-            <div className={styles.directionContainer}>
-                <div className={`${styles.bubble} ${styles.desktop}`}>
-                    <div className={styles.bubbleTitle}> Directions: </div>
-                    <ul>
-                        <li> - Draw a polygon by clicking on the canvas to place vertices </li>
-                        <li> - Press the escape key to undo </li>
-                        <li> - Return to your original point to close the shape </li>
-                        <li> - Add any number of polygonal holes by drawing curves inside the polygon </li>
-                        <li> - Click on &quot;Apply Partition&quot; </li>
-                        <li> - Drag to rotate </li>
-                        <li> - Drag two-fingers to zoom</li>
-                    </ul>
-                </div>
-                <div className={`${styles.bubble} ${styles.mobile}`}>
-                    <div className={styles.bubbleTitle}> Directions: </div>
-                    <ul>
-                        <li> - You won&apos;t be able to draw a new shape on a touch screen </li>
-                        <li> - If you are on a device with a mouse, make the screen large </li>
-                        <li> - For the example below, drag to rotate, use two-fingers to zoom, change sets from the &quot;Explore Degenegeracies&quot; tab</li>
-                    </ul>
-                </div>
+            <div className={styles.content}>
+                <h1>
+                    <strong>What You're Looking At</strong>
+                </h1>
+                <p> {project.description} </p>
             </div>
             <div className={styles.contentContainer}>
                 <button className={styles.toggleGraphs} onClick={() => toggleGraphs()}>
@@ -329,6 +313,26 @@ export default function ProjectPage() {
             >
                 {hasError ? 'Try again': !applied ? 'Apply partition' : 'Create a new shape'}
             </button>
+            <div className={`${styles.content} ${styles.desktop}`}>
+                <h1> <strong>Directions</strong></h1>
+                <ol type="1"> 
+                    <li> Draw a polygon by clicking on the canvas to place vertices </li>
+                    <li> Press the escape key to undo </li>
+                    <li> Return to your original point to close the shape </li>
+                    <li> Add any number of polygonal holes by drawing curves inside the polygon </li>
+                    <li> Click on &quot;Apply Partition&quot; </li>
+                    <li> Drag to rotate </li>
+                    <li> Drag two-fingers to zoom </li>
+                </ol>
+            </div>
+            <div className={`${styles.content} ${styles.mobile}`}>
+                <h1> <strong>Directions</strong></h1>
+                <ol type="1">
+                    <li> You won&apos;t be able to draw a new shape on a touch screen</li>
+                    <li> If you are on a device with a mouse, make the screen large</li>
+                    <li> For the example below, drag to rotate, use two-fingers to zoom, change sets from the &quot;Explore Degenegeracies&quot; tab</li>
+                </ol>
+            </div>
             <div className={styles.content}>
                 <Mdx code={project.body.code} />
             </div>

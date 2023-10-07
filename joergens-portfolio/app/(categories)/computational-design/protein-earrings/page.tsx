@@ -125,6 +125,12 @@ export default function GrasshopperPage() {
         </Link>
       </div>
       <div className={styles.mainContainer} id='mainContainer'>
+        <div className={styles.content}>
+            <h1>
+                <strong>What You're Looking At</strong>
+            </h1>
+            <p> {project.description} </p>
+        </div>
         <div className={styles.contentContainer}>
           <div className={styles.canvasGUI}>
             <div className={styles.canvasContainer} id='canvas-container'>

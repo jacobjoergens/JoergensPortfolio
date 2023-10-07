@@ -228,7 +228,7 @@ function decodeItem(item) {
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
-function zoomCameraToSelection(camera, controls, selection, fitOffset = 0.9) {
+function zoomCameraToSelection(camera, controls, selection, fitOffset = 1.1) {
 
   const box = new THREE.Box3();
 

@@ -32,7 +32,7 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
                 }
                 href="/"
               >
-                About Me
+                About
               </Link>
             </li>
             <li>
@@ -65,6 +65,16 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
                 href="/research"
               >
                 Research
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={
+                  pathname === '/coding' ? styles.sidebarItemActive : styles.sidebarItem
+                }
+                href="/coding"
+              >
+                Coding
               </Link>
             </li>
             <li>

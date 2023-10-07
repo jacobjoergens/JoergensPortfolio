@@ -5,14 +5,7 @@ import Link from "next/link"
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
 import Layout from "@/components/layout/Layout"
 
-
-interface projectProps {
-  params: {
-    category: string | undefined
-  }
-}
-
-export default async function projectPage({ params }: projectProps) {
+export default async function projectPage() {
 
   const href = '/'
   return (

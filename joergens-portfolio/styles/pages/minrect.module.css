@@ -60,6 +60,12 @@
     align-items: center;
 }
 
+.bubble > h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+}
+
 .computeButton {
     background-color: var(--primary-color);
     color: var(--background-color);
@@ -73,38 +79,6 @@
 
 .computeButton:hover {
     background-color: var(--secondary-color);
-}
-
-.bubble {
-    border-radius: 1rem; 
-    border: 1px solid var(--primary-color);
-    color: var(--darkGreen);
-    margin: 1rem;
-    padding: 1rem;
-    flex-grow: 1; 
-    min-width: 40%;
-    flex-direction: column;
-}
-
-.bubble.mobile{
-    display: none;
-}
-.bubble.desktop{
-    display: flex;
-}
-
-.bubble > ul{
-    padding-left: 1rem;
-}
-
-.bubble > p{
-    padding-left: 1rem;
-}
-
-.bubbleTitle {
-    font-size: 20px;
-    font-weight: 300;
-    margin-bottom: 1rem;
 }
 
 .contentContainer {
@@ -184,14 +158,19 @@
 }
 
 .content { 
-    padding-top: 2rem; 
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
-    padding: 4rem;
+    padding-left: 1rem;
+    width: 100%;
 }
 
-.content > p { 
+.content > ol {
+    list-style-type: decimal;
+    padding-left: 2rem;
+}
+
+.content > p, .content > ol{ 
     position: relative; 
     margin-left: 1rem;
     font-size: 1rem; 
@@ -212,6 +191,15 @@
     font-size: 1.5rem;
     margin-bottom: 1rem;
     margin-left: 1rem;
+}
+
+.content.mobile{
+    display: none;
+    flex-direction: column;
+}
+.content.desktop{
+    display: flex;
+    flex-direction: column;
 }
 
 @media (max-width:786px){
@@ -240,10 +228,10 @@
     .directionContainer{
         flex-direction: column;
     }
-    .bubble.mobile{
+    .content.mobile{
         display: flex;
     }
-    .bubble.desktop{
+    .content.desktop{
         display: none;
     }
     .computeButton{

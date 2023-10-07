@@ -429,7 +429,8 @@
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
-    padding: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
     font-size: 1.2rem;
 }
 
@@ -442,8 +443,8 @@
     .content {
         justify-content: center;
         width: 100%;
-        margin: 3rem;
-        padding: 4rem;
+        padding-left: 4rem;
+        padding-right: 4rem;
     }
 
     .content>blockquote {

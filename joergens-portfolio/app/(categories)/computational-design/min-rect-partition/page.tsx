@@ -243,7 +243,7 @@ export default function ProjectPage() {
             </div>
             <div className={styles.content}>
                 <h1>
-                    <strong>What You're Looking At</strong>
+                    <strong>What You&apos;re Looking At</strong>
                 </h1>
                 <p> {project.description} </p>
             </div>
@@ -324,7 +324,7 @@ export default function ProjectPage() {
                     <li> Drag to rotate </li>
                     <li> Drag two-fingers to zoom </li>
                 </ol>
-            </div>
+            </div> 
             <div className={`${styles.content} ${styles.mobile}`}>
                 <h1> <strong>Directions</strong></h1>
                 <ol type="1">

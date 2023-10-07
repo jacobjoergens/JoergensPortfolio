@@ -127,7 +127,7 @@ export default function GrasshopperPage() {
       <div className={styles.mainContainer} id='mainContainer'>
         <div className={styles.content}>
             <h1>
-                <strong>What You're Looking At</strong>
+                <strong>What You&apos;re Looking At</strong>
             </h1>
             <p> {project.description} </p>
         </div>

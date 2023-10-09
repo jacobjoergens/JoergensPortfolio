@@ -14,11 +14,11 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
 
   return (
     <div className={isSidebarOpen ? styles.sidebar + ' ' + styles.open : styles.sidebar}>
-      <button className={styles.icon} onClick={handleToggleSidebar} aria-label="Close Sidebar">
+      <button className={`.noSelect ${styles.icon}`} onClick={handleToggleSidebar} aria-label="Close Sidebar">
         {isSidebarOpen ? (
-          <XMarkIcon className=" h-6 w-6" />
+          <XMarkIcon className=".noSelect h-6 w-6" />
         ) : (
-          <Bars4Icon className=" h-6 w-6" />
+          <Bars4Icon className=".noSelect h-6 w-6" />
         )}
       </button>
 

@@ -161,75 +161,29 @@
     z-index: 300;
 }
 
-@media (max-width: 768px){
-    .toggleGUI {
-        display: block;
-        right: 1rem;
-        top: 1rem;
-        position: absolute;
-    }
-    .GUIContainer.closed{
-        display: none;
-    }
-    .GUIContainer.open{
-        display: flex;
-        position: absolute;
-        left:0;
-        top:0;
-        height: 100%;
-        width: 100%;
-        z-index: 1000;
-        border-radius: 0;
-        overflow-y: hidden;
-    }
-    .canvasContainer{
-        width:100%;
-        margin-right: 2rem;
-    }
-    
-    /* .searchcontainer{
-        flex-direction: column;
-        margin-right: 1rem;
-    } */
-    .currentProtein{
-        width: 100%;
-        padding-top: 0.5rem;
-        text-align: center;
-    }
-
-    .searchbar{
-    }
-}
-
 .GUIContainer {
     margin-right: 2rem;
     background-color: var(--darkGreen);
-    /* border: 1px solid var(--primary-color); */
     border-radius: 1em;
     width: 18%;
     height: 100%;
     color: var(--primary-color);
     position: relative;
-    /* right: 1em;
-    top: 1em; */
     align-items: center;
+    justify-content: center;
 }
 
 .GUI {
-    /* position: absolute;
-    right: 1em;
-    top: 1em; */
-    /* height: 50%; */
+    position: relative;
     padding: 0.5rem;
     z-index: 100;
     color: var(--primary-color);
-    /* height: 50vw; */
-    /* position: absolute; */
     overflow-y: auto;
-    height: 95%;
-    max-height: 95%;
-    /* margin-top: 10px; */
+    height: 100%;
+    max-height: 90%;
     width: 95%;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 /* Hide the default scrollbar */
@@ -283,6 +237,49 @@
 .categories {
     /* height: 50px; */
     padding-bottom: 1em;
+}
+
+@media (max-width: 768px){
+    .toggleGUI {
+        display: block;
+        right: 1rem;
+        top: 1rem;
+        position: absolute;
+    }
+
+    .canvasContainer{
+        width: 100%;
+        margin-right: 2rem;
+    }
+
+    .GUIContainer.closed{
+        display: none;
+    }
+
+    .GUIContainer.open{
+        display: block;
+        position: fixed;
+        left:0;
+        top:0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        z-index: 1000;
+        border-radius: 0;
+        overflow-y: hidden;
+    }
+
+    .GUIContainer.open > .GUI {
+        width: 100vw;
+        height: 100vh;
+        margin-top: 1rem;
+    }
+   
+    .currentProtein{
+        width: 100%;
+        padding-top: 0.5rem;
+        text-align: center;
+    }
 }
 
 .sectionHeader {
@@ -429,28 +426,9 @@
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     font-size: 1.2rem;
-}
-
-@media (min-width: 768px) {
-    .mainContainer {
-        justify-content: center;
-        align-items: center;
-    }
-
-    .content {
-        justify-content: center;
-        width: 100%;
-        padding-left: 4rem;
-        padding-right: 4rem;
-    }
-
-    .content>blockquote {
-        margin: 2rem;
-        padding: 1rem 3rem 1rem 3rem;
-    }
 }
 
 .content>p {
@@ -488,8 +466,9 @@
 .pagination {
     position: relative;
     display: flex;
-    flex-direction: row;
-    font-size: 2rem;
+    width: 100%;
+    flex-direction: column;
+    font-size: 1.5rem;
     justify-content: space-between;
     padding: 1rem;
     padding-top: 2rem;
@@ -503,7 +482,8 @@
     align-items: center;
     line-height: 1;
     justify-content: flex-end;
-    color: var(--secondary-color)
+    color: var(--secondary-color);
+    padding-bottom: 1rem;
 }
 
 .nextPage {
@@ -513,6 +493,29 @@
 
 .pageButton:hover {
     color: var(--primary-color);
+}
+
+@media (min-width: 768px) {
+    .mainContainer {
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        justify-content: center;
+        width: 100%;
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
+
+    .content>blockquote {
+        margin: 2rem;
+        padding: 1rem 3rem 1rem 3rem;
+    }
+
+    .pagination{
+        flex-direction: row;
+    }
 }
 
 .footer {

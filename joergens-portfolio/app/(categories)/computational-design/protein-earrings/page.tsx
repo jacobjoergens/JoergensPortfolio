@@ -75,11 +75,11 @@ export default function GrasshopperPage() {
         callCompute();
       }
     };
-  
+
     const stageThree = async () => {
       await init();
     };
-  
+
     const runEffect = async () => {
       if (firstRender) {
         await stageThree(); // Wait for stageThree to complete
@@ -91,16 +91,16 @@ export default function GrasshopperPage() {
         await callCompute(); // Wait for callCompute to complete
       }
     };
-  
+
     runEffect(); // Run the async function
-  
+
   }, [paramValues]);
 
   const toggleGUI = () => {
-    if(openGUI==false){
-      document.body.style.overflow = 'hidden';
+    if (openGUI == false) {
+      document.body.style.overflowY = 'hidden';
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflowY = 'auto';
     }
     setOpenGUI(!openGUI);
   }
@@ -113,18 +113,17 @@ export default function GrasshopperPage() {
   const href = '/computational-design/'
 
   // useEffect(() => {
-    
+
   // }, []);
 
   return (
-    <div>
-      <div className={styles.header}>
+      <div className={styles.mainContainer} id='mainContainer'>
+        <div className={styles.header}>
         <h1 className={styles.title}>{formatLinkLabel(project.title)}</h1>
         <Link className={`noSelect backButton`} href={href}>
           <ArrowUturnLeftIcon className="h-8 w-8" /> Back
         </Link>
-      </div>
-      <div className={styles.mainContainer} id='mainContainer'>
+        </div>
         <div className={styles.content}>
             <h1>
                 <strong>What You&apos;re Looking At</strong>
@@ -156,7 +155,6 @@ export default function GrasshopperPage() {
         <div className={styles.content}>
           <Mdx code={project.body.code} />
         </div>
-      </div>
       <div className={styles.pagination}>
         {previousProject &&
           <Link className={`noSelect ${styles.pageButton}`} href={href + previousProject?.slugAsParams}>
@@ -170,6 +168,6 @@ export default function GrasshopperPage() {
           </Link>
         }
       </div>
-    </div>
+      </div>
   );
 }

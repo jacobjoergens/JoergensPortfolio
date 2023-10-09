@@ -2,7 +2,7 @@
     left: 0;
     top: 0;
     position: fixed;
-    width: 60px;
+    width: 100px;
     height: 100%;
     background-color: transparent;
     color: transparent;
@@ -28,28 +28,6 @@
     overflow-y: auto;
 }
 
-@media (min-width: 786px) {
-    .sidebar.open {
-        width: 25%;
-    }
-
-    .sidebar.open > .icon {
-        left: 10px;
-        transition: left .75s ease-in-out;
-    }
-
-    .sidebar.open > .navlist{
-        font-size: calc(3cqw);
-    }
-
-    
-    .children.open {
-        width: 75%;
-        left: 25%;
-        transition: width .75s ease-in-out, left .75s ease-in-out;
-        overflow-y: auto;
-    }
-  }
 
 .sidebarItems {
     direction: rtl;
@@ -98,22 +76,37 @@
 
 .icon {
     /* left: 1rem; */
-    top: 1rem;
-    right: 10px;
-    z-index: 500;
+    top: 1.25rem;
+    left: 1rem;
+    z-index: 2000;
     position: absolute;
     display: block;
+    padding: 0.5rem;
+    border: 1px solid var(--primary-color);
+    /* background-color: var(--primary-color); */
+    border-radius: 3rem;
+    box-shadow: 0 0 0 0 var(--primary-color);
+    transition: box-shadow .15s ease-in-out;
+    box-sizing: border-box;
 }
 
 .icon>svg {
-    stroke: var(--secondary-color);
-    fill: var(--background-color);
-    width: 40px !important;
-    height: 40px !important;
+    stroke: var(--primary-color);
+    fill: var(--primary-color);
+    width: 30px !important;
+    height: 30px !important;
+    transition: stroke-width .15s ease-in-out;
 }
 
-.icon>svg:hover{
+.icon:hover{
+    box-shadow: 0 0 0 2px var(--primary-color);
+    transition: box-shadow .15s ease-in-out;
+}
+
+.icon:hover > svg {
     stroke: var(--primary-color);
+    stroke-width: 2;
+    transition: stroke-width .15s ease-in-out;
 }
 
 .navlist {
@@ -152,3 +145,30 @@
 .navItem:hover{
     color: var(--secondary-color);
 }
+
+@media (min-width: 786px) {
+    .icon {
+        top:2.5rem;
+        left: 2rem;
+    }
+    .sidebar.open {
+        width: 25%;
+    }
+
+    .sidebar.open > .icon {
+        left: 2rem;
+        transition: left .75s ease-in-out;
+    }
+
+    .sidebar.open > .navlist{
+        font-size: calc(3cqw);
+    }
+
+    
+    .children.open {
+        width: 75%;
+        left: 25%;
+        transition: width .75s ease-in-out, left .75s ease-in-out;
+        overflow-y: auto;
+    }
+  }

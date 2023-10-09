@@ -78,6 +78,7 @@
     align-items: center;
     text-align: center;
     justify-content: center;
+    padding-left: 1.5rem;
 }
 
 .highlight{
@@ -128,6 +129,7 @@
 @media (max-width:786px){
     .highlights {
         flex-direction: column;
+        padding-left: 0;
     }
     .highlightTitle{
         width: 90vw;

@@ -27,7 +27,7 @@ const Home = () => {
               height={300}
             />
           </div> */}
-          <div className={styles.description}> I am a computational designer, woodworker, and physicist. I’m currently living in New York and working as a cheese monger. In the past few months, I’ve spent my free time coding this website from scratch. It’s intended as a living resume and as a place to highlight some of the projects I’ve worked on. </div>
+          <div className={styles.description}> I am a computational designer, coder, physicist, and woodworker based in New York City. This website is an interactive resume highlighting some of my projects.  </div>
           <div className={styles.section}>
             <div className={styles.sectionHeader}> Highlights </div>
             <div className={styles.highlights}>

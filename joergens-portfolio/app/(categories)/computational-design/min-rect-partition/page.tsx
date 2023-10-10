@@ -319,7 +319,7 @@ export default function ProjectPage() {
                     <li> Draw a polygon by clicking on the canvas to place vertices </li>
                     <li> Press the escape key to undo </li>
                     <li> Return to your original point to close the shape </li>
-                    <li> Add any number of polygonal holes by drawing curves inside the polygon </li>
+                    <li> Add any number of polygonal holes by drawing shapes inside the polygon </li>
                     <li> Click on &quot;Apply Partition&quot; </li>
                     <li> Drag to rotate </li>
                     <li> Drag two-fingers to zoom </li>

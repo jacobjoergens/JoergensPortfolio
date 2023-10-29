@@ -84,7 +84,7 @@ function animate() {
 // }
 
 export async function compute(values, displayParams) {
-  let data = JSON.stringify({ values: values })
+  let data = JSON.stringify({ values: values, bucketKey: 'stringPDB.gh' })
   try {
     const response = await fetch('/api/loadGrasshopper', {
       method: 'POST',

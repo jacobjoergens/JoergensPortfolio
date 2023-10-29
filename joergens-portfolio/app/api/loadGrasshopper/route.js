@@ -12,7 +12,7 @@ AWS.config.update({
     region: 'us-east-2',
 });
 
-async function runCompute(params) {
+async function runCompute(params, bucketKey) {
     let data = {}
     data.inputs = params
     try {
@@ -32,7 +32,7 @@ async function runCompute(params) {
 
         const params = {
             Bucket: 'rhino.compute',
-            Key: 'stringPDB.gh',
+            Key: bucketKey,
             Expires: 3600,
         }
         // call compute server
@@ -61,7 +61,7 @@ export async function POST(req) {
 
     // const definition = new Uint8Array(buffer)
 
-    const res = await runCompute(request.values);
+    const res = await runCompute(request.values, request.bucketKey);
     return new NextResponse(JSON.stringify(res), {
         status: 200,
         headers: { "Content-Type": "application/json" }

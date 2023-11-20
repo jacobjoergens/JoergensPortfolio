@@ -8,7 +8,7 @@ const nextConfig = {
           '/api/startServer': ['/app/(categories)/computational-design/min-rect-partition/min-k-partition.py'],
         },
       },
-      // reactStrictMode: true, 
+      // reactStrictMode: false, 
       swcMinify: true,
       webpack: (config) => {
     
@@ -18,6 +18,8 @@ const nextConfig = {
           new CopyPlugin({
             patterns: [
               { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/app/(categories)/computational-design/protein-earrings/"},
+              { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/app/(categories)/computational-design/mass-timber-typology/"},
+              { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/app/(categories)/computational-design/min-rect-partition/"},
               { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "./static/chunks/"} //app/(categories)/computational-design/protein-earrings/
             ]
           })

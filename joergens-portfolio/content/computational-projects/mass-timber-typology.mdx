@@ -1,0 +1,16 @@
+---
+title: "Mass Timber Typology" 
+description: "What you’re looking at is a 3D model of a material-efficient, prefabricated structural system designed for affordable mass timber construction. You can play around with the design of the building and learn more about it by reading the directions and description below."
+---
+# **Description** 
+Mass timber, or engineered wood, is a low-carbon alternative to concrete and steel. It has been hailed as a way to help mitigate the 13 per cent of global emissions that stem from the construction of buildings and the materials used in the process. Studies have shown that substituting mass timber for steel and concrete in mid-rise buildings can reduce the emissions associated with manufacturing, transporting, and installing building materials [by 13%-26%](https://www.fpl.fs.usda.gov/documnts/pdf2022/fpl_2022_pasternack001.pdf). 
+
+As is the case with all things sustainable, there is no black and white but only hues of grey. Timber’s climate potential is clear, but [it can also easily be missed]( https://www.dezeen.com/2023/03/31/mass-timber-carbon-assessment-timber-revolution/). Life-cycle assessments of a building’s carbon footprint do not typically consider anything that happens in the forest. Yet bad forest management will tell a bad carbon story regardless of what happens further down the value chain. If its raw material was harvested by clear-cutting or through other harmful practices such as converting old-growth forests into tree plantations, a timber building might be more emissions-intensive than its concrete equivalent. 
+
+With all this in mind, I’ve developed the above model by adapting the structural system developed by [Paul Mayencourt](https://paulmayencourt.com/lowcarbon-timber-design/hollowcore-timber). The system was designed to add to timber’s inherent climate potential on two fronts. The first is simply to cutdown on material usage. Mass timber is expensive and whether harvested in a good or bad manner its embedded carbon is non-zero. Compared to a standard cross-laminated timber (CLT) and beam design, the hollow core in the system above offers large material savings. The second is that the system was designed for the use of Laminated Veneer Lumber (LVL) from small-diameter trees. CLT is often employed for larger panels in building construction and certainly has its place in taller buildings. LVL is its leaner cousin which uses smaller diameter trees simplifying forest management and uses those trees more efficiently so that for an LVL plank you need to fell fewer trees than for a CLT plank of the same thickness. 
+
+# **How It Works**
+Input data is sent to a Grasshopper file which is passed to a Rhino.Compute server hosted on an AWS EC2 instance. The Rhino compute server returns rhino3dm JSON data which is loaded and rendered in the browser using Three.js.
+
+# **Next Steps**
+Right now, the typology is incomplete in the sense that it is only structural. I have been developing a wall system that can be rearranged for flexible room configurations. When I finish that I will be adding that to this model. Afterwards I’ll add a parametric façade to round out the typology. 

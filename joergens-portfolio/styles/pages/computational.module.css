@@ -6,8 +6,8 @@
     height: 40px;
     animation: spin 1s linear infinite;
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 48%;
+    left: 48%;
     z-index: 2;
 }
 
@@ -322,6 +322,19 @@
     color: var(--darkGreen);
 }
 
+.parameterContainer>button{ 
+    margin: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+}
+
+.parameterContainer button:hover {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
 .materialContainer>button {
     margin: 0.5rem;
     padding-left: 0.5rem;
@@ -460,6 +473,10 @@
 }
 
 .content > p > a {
+    color: var(--primary-color);
+}
+
+.content > p > a:hover{
     color: var(--secondary-color);
 }
 

@@ -41,6 +41,13 @@
     font-size: 1.2rem;
 }
 
+.content > p > a {
+    color: var(--primary-color);
+}
+
+.content > p > a:hover{
+    color: var(--secondary-color);
+}
 
 .stack {
     display: flex;

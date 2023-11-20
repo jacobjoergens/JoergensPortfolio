@@ -51,7 +51,12 @@
     flex-direction: column;
     position: relative;
 }
+
 .content > p > a {
+    color: var(--primary-color);
+}
+
+.content > p > a:hover{
     color: var(--secondary-color);
 }
 

@@ -128,7 +128,7 @@ const GraphCarousel = ({ dataType, images, onImageChange, openGraphs, toggle }: 
                 >
                     <ArrowLeftIcon className="noSelect h-6 w-12" />
                 </button>
-                <div> {currentIndex + 1}/{images.length}</div>
+                {images && <div> {currentIndex + 1}/{images.length}</div>}
                 <button
                     aria-label="Next"
                     className={`${styles.carouselButton}`}

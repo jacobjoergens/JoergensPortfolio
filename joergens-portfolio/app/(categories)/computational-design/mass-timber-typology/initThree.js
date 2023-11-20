@@ -464,7 +464,6 @@ function animateRotation(ztarget, ytarget) {
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
 export function zoomCameraToSelection(camera, controls, selection, fitOffset = 1.4, offsetY = 0) {
-  controls.enableRotate = false;
   const box = new THREE.Box3();
   for(let i = 0; i<selection.children.length; i++){
     const child = selection.children[i]
@@ -511,7 +510,6 @@ export function zoomCameraToSelection(camera, controls, selection, fitOffset = 1
   controls.camera = camera
   controls.cursorZoom = true;
   controls.update()
-  controls.enableRotate = true;
 
   return center;
 }

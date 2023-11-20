@@ -1,7 +1,7 @@
 'use client'
 import styles from "styles/pages/minrect.module.css"
 import { useRef, useEffect, useState } from "react";
-import { createListeners as createSelector, removeListeners as removeSelector, renderer } from "../mass-timber-typology/initThree.js";
+import { createListeners as createSelector, removeListeners as removeSelector } from "../mass-timber-typology/initThree.js";
 import { camera, compute, controls, init, zoomCameraToSelection, rhinoToThree, scene } from "../mass-timber-typology/initThree.js";
 import { setInitValues, showPartition, switchDegSet, createListeners, removeListeners, lengthDegSet } from "./threeUI.js";
 import { removeCassette, removeUnit, setMapUpdateCallback } from '../mass-timber-typology/interact.js';
@@ -129,7 +129,6 @@ export default function ProjectPage() {
                 scale = 7/minDimension
                 const scaledRegions = currentPartition.clone()
                 scaledRegions.scale.set(scale, scale, 1)
-                // zoomCameraToSelection(camera, controls, scene, 1.4, 2)
                 camera.position.z*=scale;
                 controls.update()
                 setCurrentPartition(scaledRegions);
@@ -231,18 +230,21 @@ export default function ProjectPage() {
                     setIsDegenerate(false);
                 }
 
-                let partition = await showPartition(0, false);
-                console.log(scene)
+                let partition = await showPartition(0,false);
+                // setNonDegIndex(-nonDegIndex+1)
                 camera.position.set(0, 0, 50);
-                // camera.lookAt(new THREE.Vector3(0,-15,0))
+                // // camera.lookAt(new THREE.Vector3(0,-15,0))
                 controls.update()
-
-                // zoomCameraToSelection(camera, controls, scene);
+                scene.add(partition)
+                zoomCameraToSelection(camera, controls, scene, 1.4, 6);
                 
                 //camera.position.set(-150, -200, 80);
                 //camera.lookAt(new THREE.Vector3(0,0,0))
                 // controls.update();
                 setCurrentPartition(partition);
+                // scene.add(partition)
+                // camera.position.set(0,0,50)
+                // controls.update()
                 if (generateBuilding) {
                     handleGenerate();
                 }
@@ -309,11 +311,11 @@ export default function ProjectPage() {
             setGenerated(false);
             removeSelector();
             change();
-            // zoomCameraToSelection(camera, controls, scene)
+            // 
 
             camera.position.set(0,0,50)
             controls.update()
-
+            // zoomCameraToSelection(camera, controls, scene, 1.4)
             // renderer.render(scene, camera)
         }
     }, [degIndex])
@@ -334,10 +336,11 @@ export default function ProjectPage() {
             setGenerateBuilding(false);
             setGenerated(false);
             removeSelector();
+            console.log('hello')
             change();
             camera.position.set(0,0,50)
             controls.update()
-            // zoomCameraToSelection(camera, controls, scene)
+            // zoomCameraToSelection(camera, controls, scene, 1.4)
         }
     }, [nonDegIndex])
 
@@ -520,7 +523,7 @@ export default function ProjectPage() {
                             >
                                 {hasError ? 'Try again' : !applied ? 'Apply partition' : 'Create a new shape'}
                             </button>
-                            {!generateBuilding && <button className={styles.computeButton} onClick={handleGenerate}>Generate Building</button>}
+                            {!generateBuilding && <button onClick={handleGenerate}>Generate Building</button>}
                         </div>
                         
                     </div>

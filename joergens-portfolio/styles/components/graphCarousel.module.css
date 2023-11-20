@@ -1,22 +1,30 @@
 .carousel { 
-    width: 30vw;
-    border-right: 1px dashed var(--darkGreen);
-    /* border-radius: 1rem; */
+    width: 100%;
+    background-color: var(--darkGreen);
+    border-radius: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-bottom: 1rem;
     height: 100%;
+    justify-content: center;
     /* margin: 1rem 0rem 1rem 1rem; */
+    /* margin-bottom: 1rem; */
+    margin-right: 1rem;
 }
 
 @media (max-width:786px){
     .carousel.open {
         display: flex;
-        width: 100%;
-        height: 100%;
-        margin: 1rem;
-        border: none;
+        position: fixed;
+        left:0;
+        top:0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        z-index: 1000;
+        border-radius: 0;
+        overflow-y: hidden;
     }
 
     .carousel.closed {
@@ -27,7 +35,7 @@
 .graphCarouselSlideContainer {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 80%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -58,7 +66,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: 80%;
     width: 80%;
     padding: 0;
     object-fit: fill;
@@ -67,7 +75,7 @@
 .carouselSlide {
     position: absolute;
     width: 80%;
-    height: 100%;
+    height: 80%;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
     display: flex;
@@ -90,28 +98,30 @@
 
 .thumbnailIndicators {
     position: relative;
+    width: -moz-fit-content;
+    width: fit-content;
     max-width: 80%;
-    /* 22vw; */
     display: flex;
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* list-style-type: none; */
     padding-top: 1rem;
     overflow-x: auto;
     overflow-y: hidden;
     object-fit: fill;
     z-index: 100;
     padding-bottom: 1rem;
-    /* left: 0;  */
 }
 
 .thumbnailIndicator {
     padding: 0 0.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 .thumbnailIndicator button {
     background: none;
-    border: none;
+    border-left: 1px dotted var(--background-color);
+    border-right: 1px dotted var(--background-color);
     padding: 0;
     cursor: pointer;
     outline: none;
@@ -129,13 +139,12 @@
     object-fit: contain;
 }
 
-.thumbnailIndicator.active img {
-    opacity: 0.9;
-
+.thumbnailIndicator.active button {
+    box-shadow: 0 0 0 2px var(--background-color);
 }
 
 .thumbnailIndicator img {
-    opacity: 0.3;
+    opacity: 1;
 }
 
 .pagination {
@@ -143,6 +152,7 @@
     flex-direction: row;
     padding: 0.5rem; 
     justify-content: center;
+    color: var(--background-color)
 }
 
 

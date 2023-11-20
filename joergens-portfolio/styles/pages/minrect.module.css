@@ -19,13 +19,6 @@
     line-height: 1;
 }
 
-/* .loadingContainer {
-    position: fixed;
-    top: 45%;
-    width: 40px;
-    height: 40px;
-} */
-
 .loader {
     border: 5px solid var(--primary-color);
     border-top: 5px solid var(--secondary-color);
@@ -44,78 +37,76 @@
     100% { transform: rotate(360deg); }
   }
 
-.mainContainer {
+  .mainContainer {
     display: flex;
-    /* overflow: hidden; */
+    padding-top: 1rem;
     flex-direction: column;
     height: 100%;
+    width: 100%;
     color: var(--primary-color);
     background-color: var(--background-color);
-    align-items: center;
-}
-
-.directionContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.bubble > h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
-}
-
-.computeButton {
-    background-color: var(--primary-color);
-    color: var(--background-color);
-    border-radius: 1rem; 
-    padding: 0.5rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    height: 3rem;
-    width: 50%;
-}
-
-.computeButton:hover {
-    background-color: var(--secondary-color);
 }
 
 .contentContainer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     /* overflow: hidden; */
-    width: 96vw;
-    height: 80vh;
-    /* max-width: 100%;
-    max-height: 100vh; */
-    border-radius: 1em;
-    border: 1px solid var(--darkGreen);
-    margin: 2rem;
-    align-items: center;
-    position: relative;
-    /* padding: 1rem; */
+    width: 100%;
+    margin-right: 1rem;
+}
+
+.canvasGUI {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 85vh;
+    margin: 1rem;
+    /* margin-bottom: 1rem; */
 }
 
 .canvasContainer {
-    background-color: var(--background-color);
     display: flex;
     flex-direction: column;
-    border-radius: 1rem;
-    /* justify-content: center; */
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    width: 75%;
     position: relative;
+    margin-right: 1rem; 
+    border-radius: 1em;
+    background-color: var(--darkGreen);
+    height: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
 .mainCanvas {
-    transition: opacity 0.5s ease-in-out;
-    /* flex: 1; */
-    max-width: 100%;
-    max-height: 100%;
+    display: flex;
     position: relative;
-    top: 0; 
+    /* z-index: 1; */
+    width: 100%;
+    max-height: 100%;
+    height: 100%;
+}
+
+.GUIpanels {
+    display: flex;
+    flex-direction: column;
+    width: 21%;
+}
+
+.leftToggles > button {
+    /* background-color: var(--primary-color); */
+    border: 1px solid var(--background-color);
+    color: var(--background-color);
+    border-radius: 1rem; 
+    padding: 0.5rem;
+    height: auto;
+    width: -moz-fit-content;
+    width: fit-content;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.computeButton:hover {
+    box-shadow: 0 0 0 3px var(--background-color);
 }
 
 .blockCanvas {
@@ -125,28 +116,399 @@
     max-width: 100%;
     height: 100%;
     font-size: 3rem;
-    align-items: center;
-    justify-content: center;
+    align-items: right;
+    justify-content: right;
     padding: 1rem;
     background-color: var(--background-color);
     border-radius: 1rem;
     z-index: 1000;
 }
 
+.leftToggles { 
+    position: absolute;
+    top: 1rem;
+    left: 1rem; 
+    display: flex;
+    flex-direction: column;
+}
+
+.toggles {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.toggles > button{
+    display: flex;
+    border: 1px solid var(--background-color);
+    border-radius: 1rem;
+    color: var(--background-color);
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    width: -moz-fit-content;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;    
+    font-weight: 700;
+}
+
+.toggles > button:hover{
+    box-shadow: 0 0 0 3px var(--background-color);
+}
+
+.toggleState {
+    z-index: 50;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0.5rem; 
+    margin: 0.5rem;
+    /* margin-right: 2rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: auto;
+    min-width: 20px;
+    height: auto;
+    font-weight: 600;
+    font-size: large;
+}
+
+.stateButtonContainer {
+    font-size: medium;
+    font-weight: 400;
+    border: 1px solid var(--primary-color);
+    border-radius: 10rem;
+    background-color: var(--primary-color);
+    right: 0;
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    padding: 1rem; 
+}
+
+.stateButtonContainer>button{ 
+    display: flex;
+    flex-direction: row;
+    margin: 0.25rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    color: var(--darkGreen);
+    border: 1px solid var(--darkGreen);
+    border-radius: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.stateButtonContainer>button:hover {
+    box-shadow: 0 0 0 3px var(--darkGreen);
+}
+
 .toggleGraphs {
+    display: none !important;
+}
+
+.description{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.GUIContainer {
+    /* margin-right: 2rem; */
+    background-color: var(--darkGreen);
+    border-radius: 1em;
+    width: 100%;
+    height: 100%;
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+    top: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 300;
+}
+
+.GUI {
+    position: relative;
+    padding: 0.5rem;
+    z-index: 100;
+    color: var(--primary-color);
+    overflow-y: auto;
+    height: 100%;
+    max-height: 90%;
+    width: 95%;
+    margin-top: .5rem; 
+    margin-bottom: .5rem;
+}
+
+.GUIContainer.closed{
     display: none;
 }
 
+.GUIContainer.open{
+    display: block;
+    position: fixed;
+    left:0;
+    top:0;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    z-index: 1000;
+    border-radius: 0;
+    overflow-y: hidden;
+}
+
+.GUIContainer.open > .GUI {
+    width: 100vw;
+    height: 100vh;
+    margin-top: 1rem;
+}
+
+/* Hide the default scrollbar */
+.GUI::-webkit-scrollbar {
+    width: 3px;
+    height: 80%;
+}
+
+/* Track */
+.GUI::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+    height: 80%;
+}
+
+/* Handle */
+.GUI::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 1rem;
+    /* Add border-radius for rounded corners */
+    height: 5px;
+    width: 6px;
+}
+
+/* Handle on hover */
+.GUI::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+.exitGUI {
+    /* padding-top: 1em; */
+    padding: 1em;
+    flex-grow: 1;
+    direction: rtl;
+}
+
+.exitGUI>button {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    /* right: 1rem; */
+    /* right: 1rem; */
+    color:var(--darkGreen); 
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+    padding-right: 1rem;
+    padding: 0.5rem;
+}
+
+.categories {
+    /* height: 50px; */
+    padding-bottom: 1em;
+}
+
+@media (max-width: 768px){
+    .toggleGraphs {
+        display: flex;
+    }
+
+    .toggleState {
+        flex-direction: row;
+    }
+
+    .stateButtonContainer {
+        right: 1rem; 
+        margin-left: 2rem;
+        flex-direction: row;
+    }
+
+    .canvasContainer{
+        width: 100%;
+        margin-right: 2rem;
+    }
+
+    .GUIContainer.closed{
+        display: none;
+    }
+
+    .GUIContainer.open{
+        display: block;
+        position: fixed;
+        left:0;
+        top:0;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        z-index: 1000;
+        border-radius: 0;
+        overflow-y: hidden;
+    }
+
+    .GUIContainer.open > .GUI {
+        width: 100vw;
+        height: 100vh;
+        margin-top: 1rem;
+    }
+
+    .GUIpanels.closed{
+        display: none;
+    }
+
+    .GUIpanels.open{
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .toggles {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+    }
+}
+
+.sectionHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 700;
+}
+.sectionHeader>button {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5em;
+    font-weight: 700;
+}
+
+.slider {
+    /* height: 100%; */
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    padding-left: 2em;
+}
+
+.sliderInput {
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.materialContainer {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.active {
+    background-color: var(--primary-color);
+    color: var(--darkGreen);
+}
+
+.parameterContainer>button{ 
+    margin: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+}
+
+.parameterContainer button:hover {
+    box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+.materialContainer>button {
+    margin: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 1rem;
+}
+
+.materialContainer button:hover {
+    box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+/* Styles for the range input */
+.rangeInput {
+    color: var(--primary-color);
+    -webkit-appearance: none;
+    /* Remove default styling */
+    width: 75%;
+    /* Set the width of the range input */
+    height: 10px;
+    /* Set the height of the range input */
+    background: transparent;
+    /* Set a transparent background */
+    padding: 10%;
+}
+
+/* Styling the track */
+.rangeInput::-webkit-slider-runnable-track {
+    background: var(--primary-color);
+    /* Set the background color of the track */
+    height: 3px;
+    /* Set the height of the track */
+    border-radius: 1px;
+    /* Set the border radius to create rounded ends */
+}
+
+/* Styling the thumb */
+.rangeInput::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* Remove default styling */
+    width: 10px;
+    /* Set the width of the thumb */
+    height: 10px;
+    /* Set the height of the thumb */
+    background: var(--primary-color);
+    /* Set the background color of the thumb */
+    border-radius: 50%;
+    /* Create a circular shape for the thumb */
+    cursor: pointer;
+    /* Add a cursor on hover */
+    margin-top: -4px;
+    /* Adjust the vertical position of the thumb */
+}
+
+.rangeInput::-webkit-slider-thumb:hover{
+    background: var(--secondary-color);
+}
+
 .nav {
-    /* margin-bottom: 1rem; */
+    color: var(--background-color);
     padding: 0.5rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: -moz-fit-content;
     width: fit-content;
-    position: relative;
-    bottom: 1.5rem;
+    position: absolute;
+    bottom: 1rem;
+
 }
 
 .nav > p{
@@ -157,25 +519,31 @@
     bottom: 3rem;
 }
 
-.content { 
+.content {
     position: relative;
     margin: 1rem;
     color: var(--darkGreen);
-    padding-left: 1rem;
-    width: 100%;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 1.2rem;
 }
 
 .content > ol {
     list-style-type: decimal;
     padding-left: 2rem;
+    font-size: 1.2rem;
 }
 
 .content > p, .content > ol{ 
     position: relative; 
     margin-left: 1rem;
-    font-size: 1rem; 
+    font-size: 1.2rem; 
     margin-bottom: 1rem;
     margin-right: 1rem;
+}
+
+.content > h2 {
+    margin-left: 1rem;
 }
 
 .content > figure {
@@ -183,7 +551,12 @@
     flex-direction: column;
     position: relative;
 }
+
 .content > p > a {
+    color: var(--primary-color);
+}
+
+.content > p > a:hover{
     color: var(--secondary-color);
 }
 
@@ -203,31 +576,6 @@
 }
 
 @media (max-width:786px){
-    .toggleGraphs {
-        display: block;
-        z-index: 400;
-        background-color: var(--primary-color);
-        color: var(--background-color);
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: -moz-fit-content;
-        width: fit-content;
-        padding: 0.5rem;
-        border-radius: 1rem;
-    }
-    .canvasContainer.open {
-        display: flex;
-    }
-    .canvasContainer.closed{
-        display: none;
-    }
-    .nav {
-        bottom: 4rem;
-    }
-    .directionContainer{
-        flex-direction: column;
-    }
     .content.mobile{
         display: flex;
     }
@@ -242,14 +590,6 @@
         padding: 0rem;
     }
 }
-
-/* @media (min-width: 768px) {
-    .content {
-        justify-content: center;
-        width: 50%;
-        margin: 3rem;
-    }
-} */
 
 .pagination { 
     position: relative;

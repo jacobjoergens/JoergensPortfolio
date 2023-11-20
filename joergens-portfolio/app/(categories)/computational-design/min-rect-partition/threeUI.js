@@ -1,8 +1,7 @@
 import * as THREE from 'three'
-import { scene, camera, renderer, controls } from './initThree.js'
-import { onMouseMove, onMouseDown, onMouseUp, onEsc, curves } from './drawCurve.js';
+import { scene, camera, controls, renderer, zoomCameraToSelection } from '../mass-timber-typology/initThree.js'
+import { onMouseMove, onMouseDown, onMouseUp, onEsc } from './drawCurve.js';
 import getPartition from '@/components/fetching/getPartition';
-
 export let partitionCache = {}
 let activePartition
 export let currentIndex = 0
@@ -41,7 +40,7 @@ export function removeListeners(){
       });
 }
 
-export async function showPartition(direction) {
+export async function showPartition(direction,display=true) {
     let part = false; 
     if(activePartition){
         scene.remove(activePartition)
@@ -60,9 +59,12 @@ export async function showPartition(direction) {
     }
     lengthDegSet = partitionCache[degSetIndex][0].numNonDegParts.length
     activePartition = partitionCache[degSetIndex][currentIndex]['renderedRegions'];
-    scene.add(activePartition);
+    if(display){
+        scene.add(activePartition);
+        zoomCameraToSelection(camera, controls, scene);
+    }
     // scene.add(partitionCache[degSetIndex][currentIndex]['renderedRegions'])
-    return part;
+    return activePartition;
 }
 
 // export function drawPartition(currentIndex) {
@@ -119,25 +121,27 @@ function calculateBoxDimensions(points) {
         y = (squarecorner[1]-points[2][1])
     }
 
-    const centroid = new THREE.Vector3(squarecorner[0]-x/2,squarecorner[1]-y/2,5);
+    const centroid = new THREE.Vector3(squarecorner[0]-x/2,squarecorner[1]-y/2,0);
 
     return [centroid, Math.abs(x), Math.abs(y)];
 }
 
-export function drawPartition(currentIndex) {
+export function drawPartition(currentIndex, scaled=false) {
     const currentPartition = partitionCache[degSetIndex][currentIndex];
     const regions = currentPartition['regions'];
     const colors = currentPartition['colors'];
     const colorList = ['DarkRed', 'Firebrick', 'Crimson', 'IndianRed'];
 
     let renderedRegions = new THREE.Group();
-    
+    let minDimension = Infinity
+    let scale = 1
     for (let j = 0; j < regions.length; j++) {
         let points = regions[j];
         const regionMaterial = new THREE.MeshBasicMaterial({ color: colorList[colors[j]] });
 
         const dimensions = calculateBoxDimensions(points)
-        const boxGeo =  new THREE.BoxGeometry(dimensions[1],dimensions[2],5, 3, 3, 3)
+        minDimension = Math.min(minDimension, Math.abs(dimensions[1]), Math.abs(dimensions[2]))
+        const boxGeo =  new THREE.BoxGeometry(dimensions[1],dimensions[2],-1, 3, 3, 3)
         boxGeo.computeVertexNormals();
         // Create a mesh using the box geometry and material
         const boxMesh = new THREE.Mesh(boxGeo, regionMaterial);
@@ -145,7 +149,9 @@ export function drawPartition(currentIndex) {
         // Add the box to the group
         renderedRegions.add(boxMesh);
     }
-
+    scale = 7/minDimension
+    const scaledRegions = renderedRegions.clone()
+    scaledRegions.scale.set(scale, scale, 1)
     currentPartition['renderedRegions'] = renderedRegions;
 }
 
@@ -178,32 +184,32 @@ export async function switchDegSet(index) {
 //     camera.lookAt(center);
 // }
 
-export function zoomCameraToSelection(camera, controls, fitOffset = 1.5) {
-    const box = new THREE.Box3();
-    const regions = partitionCache[degSetIndex][currentIndex]['renderedRegions']
-    box.setFromObject(regions)
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
+// export function zoomCameraToSelection(camera, controls, fitOffset = 1.5) {
+//     const box = new THREE.Box3();
+//     const regions = partitionCache[degSetIndex][currentIndex]['renderedRegions']
+//     box.setFromObject(regions)
+//     const size = box.getSize(new THREE.Vector3());
+//     const center = box.getCenter(new THREE.Vector3());
   
-    const maxSize = Math.max(size.x, size.y, size.z);
-    const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
-    const fitWidthDistance = fitHeightDistance / camera.aspect;
-    const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+//     const maxSize = Math.max(size.x, size.y, size.z);
+//     const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
+//     const fitWidthDistance = fitHeightDistance / camera.aspect;
+//     const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
   
-    const direction = controls.target.clone()
-      .sub(camera.position)
-      .normalize()
-      .multiplyScalar(distance);
-    controls.maxDistance = distance * 10;
-    controls.target.copy(center);
+//     const direction = controls.target.clone()
+//       .sub(camera.position)
+//       .normalize()
+//       .multiplyScalar(distance);
+//     controls.maxDistance = distance * 10;
+//     controls.target.copy(center);
   
-    camera.near = distance / 100;
-    camera.far = distance * 100;
-    camera.updateProjectionMatrix();
-    camera.position.copy(controls.target).sub(direction);
+//     camera.near = distance / 100;
+//     camera.far = distance * 100;
+//     camera.updateProjectionMatrix();
+//     camera.position.copy(controls.target).sub(direction);
   
-    controls.update();
+//     controls.update();
   
-  }
+//   }
 
 

@@ -1,8 +1,10 @@
 'use client'
 import styles from "styles/pages/minrect.module.css"
 import { useRef, useEffect, useState } from "react";
-import { camera, controls, init, scene } from "./initThree.js";
-import { setInitValues, showPartition, switchDegSet, zoomCameraToSelection, createListeners, removeListeners, lengthDegSet } from "./threeUI.js";
+import { createListeners as createSelector, removeListeners as removeSelector, renderer } from "../mass-timber-typology/initThree.js";
+import { camera, compute, controls, init, zoomCameraToSelection, rhinoToThree, scene } from "../mass-timber-typology/initThree.js";
+import { setInitValues, showPartition, switchDegSet, createListeners, removeListeners, lengthDegSet } from "./threeUI.js";
+import { removeCassette, removeUnit, setMapUpdateCallback } from '../mass-timber-typology/interact.js';
 import GraphCarousel from "@/components/layout/GraphCarousel";
 import { ArrowRightIcon, ArrowLeftIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link.js";
@@ -11,17 +13,25 @@ import { reset, crvPoints, curves } from "./drawCurve.js";
 import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Spinner from "@/components/layout/Spinner";
+import GUI from "@/components/layout/minrectGUI.js";
 import dotenv from 'dotenv';
+import * as THREE from 'three'
 
 dotenv.config();
 
-// Configure the Lambda function parameters
-// const params = {
-//     FunctionName: functionName,
-//     InvocationType: 'RequestResponse', // Can be 'Event' for asynchronous invocation
-//     Payload: JSON.stringify(payload),
-// };
+interface modelParameters {
+    "Unit Width": number[],
+    "Unit Length": number[],
+    "Story Height": number,
+    'Structural': boolean,
+}
 
+interface displayParameters {
+    "Grid Width": number[],
+    "Grid Length": number[],
+    "Stories": number,
+    'displayType': string,
+}
 
 let bipartite_figures: string[] = [];
 
@@ -51,9 +61,20 @@ function formatLinkLabel(label: string) {
     return words.join("\n");
 }
 
+function calculateMinCells(gridDimension: number, maxCellDimension: number) {
+    let i = 1;
+    while (true) {
+        if (gridDimension / i < maxCellDimension) {
+            return i;
+        } else {
+            i += 1;
+        }
+    }
+}
+
 export default function ProjectPage() {
     const [applied, setApplied] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [nonDegIndex, setNonDegIndex] = useState(0);
     const [degIndex, setDegIndex] = useState(0);
     const [groupLength, setGroupLength] = useState(0);
@@ -62,18 +83,124 @@ export default function ProjectPage() {
     const [isDegenerate, setIsDegenerate] = useState(true);
     const [openGraphs, setOpenGraphs] = useState(false);
     const [hasError, setHasError] = useState(false);
+    const [openGUI, setOpenGUI] = useState(false);
+    const [selectedMaterials, setSelectedMaterials] = useState(0);
+    const [generateBuilding, setGenerateBuilding] = useState(true);
+    const [generated, setGenerated] = useState(false);
+    const [trigger, setTrigger] = useState(false)
+    const [showBuilding, setShowBuilding] = useState(true);
+
+    const [paramValues, setParamValues] = useState<modelParameters>({
+        'Unit Width': [13],
+        'Unit Length': [13],
+        'Story Height': 13,
+        'Structural': false,
+    });
+
+    const [displayValues, setDisplayValues] = useState<displayParameters>({
+        'Stories': 3,
+        'Grid Width': [3],
+        'Grid Length': [3],
+        'displayType': 'Textured'
+    });
+
+    const [currentPartition, setCurrentPartition] = useState<THREE.Group>()
+    const [points, setPoints] = useState<THREE.Vector3[]>([new THREE.Vector3(0, 0, 0)]);
 
     useEffect(() => {
         const stageThree = async () => {
             await init(); // Call the init function when the component mounts
-            // await spinUpSocket();
         }
         stageThree();
         setIsMounted(true);
         handleApply();
     }, []);
 
-    
+    useEffect(() => {        
+        function scalePartition() {
+            if(currentPartition){
+                let minDimension = Infinity
+                let scale = 1
+                let regions = currentPartition.children as THREE.Mesh[]
+                for (let i = 0; i < regions.length; i++){
+                    const bufferGeometry = regions[i].geometry as THREE.BoxGeometry;
+                    minDimension = Math.min(minDimension, Math.abs(bufferGeometry.parameters.width), Math.abs(bufferGeometry.parameters.height))
+                }
+                scale = 7/minDimension
+                const scaledRegions = currentPartition.clone()
+                scaledRegions.scale.set(scale, scale, 1)
+                // zoomCameraToSelection(camera, controls, scene, 1.4, 2)
+                camera.position.z*=scale;
+                controls.update()
+                setCurrentPartition(scaledRegions);
+                return scaledRegions;
+            }
+            return null
+        }
+        async function renderBuilding(currentPartition:any) {
+            if (currentPartition) {
+                let regions = currentPartition.children as THREE.Mesh[]
+                let newDisplayValues = displayValues;
+                let newParamValues = paramValues;
+                let newPoints = points;
+
+                for (let i = 0; i < regions.length; i++) {
+                    const bufferGeometry = regions[i].geometry as THREE.BoxGeometry;
+                    let bboxWidth = bufferGeometry.parameters.width * currentPartition.scale.x;
+                    let bboxLength = bufferGeometry.parameters.height * currentPartition.scale.y;
+
+                    const U = calculateMinCells(Math.abs(bboxWidth), 20);
+                    const V = calculateMinCells(Math.abs(bboxLength), 20);
+
+                    const point = regions[i].position.clone();
+                    point.x = point.x * currentPartition.scale.x - bboxWidth / 2;
+                    point.y = point.y * currentPartition.scale.y - bboxLength / 2;
+                    if (bufferGeometry.boundingBox) {
+                        point.z = point.z + bufferGeometry.boundingBox.max.z;
+                    }
+
+
+                    if (i === 0) {
+                        newDisplayValues['Grid Length'] = [V]
+                        newDisplayValues['Grid Width'] = [U]
+                        newParamValues['Unit Length'] = [(Math.abs(bboxLength) + (Math.sqrt(2) * (V - 1))) / V]
+                        newParamValues['Unit Width'] = [(Math.abs(bboxWidth) + (Math.sqrt(2) * (U - 1))) / U]
+                        newPoints = [point]
+                    } else {
+                        newDisplayValues['Grid Length'].push(V)
+                        newDisplayValues['Grid Width'].push(U)
+                        newParamValues['Unit Length'].push((Math.abs(bboxLength) + (Math.sqrt(2) * (V - 1))) / V)
+                        newParamValues['Unit Width'].push((Math.abs(bboxWidth) + (Math.sqrt(2) * (U - 1))) / U)
+                        newPoints.push(point)
+                    }
+                }
+                setPoints(newPoints);
+                setDisplayValues((prevDictionary) => ({
+                    ...prevDictionary,
+                    ...newDisplayValues,
+                }));
+
+                setParamValues((prevDictionary) => ({
+                    ...prevDictionary,
+                    ...newParamValues,
+                }));
+                await compute(newParamValues, newDisplayValues, newPoints, currentPartition)
+                setLoading(false);
+                
+                zoomCameraToSelection(camera, controls, scene, 1.4, 2)
+                setGenerated(true)
+            }
+        }
+        
+        if (generateBuilding) {
+            setLoading(true);
+            let partition = scalePartition();
+            if(partition) scene.add(partition)
+            renderBuilding(partition);
+            createSelector();
+        } 
+    }, [trigger])
+
     useEffect(() => {
         async function applyPart() {
             const payload = {
@@ -83,8 +210,11 @@ export default function ProjectPage() {
                     'k': 4,
                 },
             };
-            scene.remove(curves);
+            if (scene) {
+                scene.clear();
+            }
             setInitValues();
+            // console.log(JSON.stringify(payload))
             const response = await fetch('https://7dp7thzz3icorfu6uzpv4gfyza0fixth.lambda-url.us-east-2.on.aws/', {
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,54 +223,30 @@ export default function ProjectPage() {
                 body: JSON.stringify(payload)
             })
             const response_data = await response.json()
+            // console.log('lambda data:', response_data)
             bipartite_figures = response_data.bipartite_figures
-            
-            // console.log(bipartite_figures)
-            // let response
-
-            // : AWS.Lambda.InvocationResponse;
-
-            // // Wrap the Lambda invocation in a Promise
-            // const config = {
-            //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            //     region: 'us-east-2',
-            //   };
-              
-            //   AWS.config.update(config);
-            //   const lambda = new AWS.Lambda();
-              
-            //   console.log('AWS Configuration:', AWS.config);
-            //   console.log('Environment Variables:', process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY);
-              
-            // const lambdaInvocation = new Promise((resolve, reject) => {
-            //     console.log('keys:',process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY)
-            //     lambda.invoke(params, (err, data) => {
-            //         if (err) {
-            //             console.error('Error invoking Lambda:', err);
-            //             reject(err);
-            //         } else {
-            //             const payloadBuffer = data.Payload;
-            //             if (payloadBuffer) {
-            //                 response = JSON.parse(payloadBuffer.toString('utf-8') || '{}');
-            //                 bipartite_figures = JSON.parse(response.body).bipartite_figures
-            //             } else {
-            //                 response = {}; // Fallback in case payloadBuffer is undefined
-            //             }
-            //             resolve(response);
-            //         }
-            //     });
-            // });
 
             try {
-                // await lambdaInvocation; // Wait for the Lambda invocation to complete
                 if (bipartite_figures.length === 0) {
                     setIsDegenerate(false);
                 }
 
-                await showPartition(0);
+                let partition = await showPartition(0, false);
+                console.log(scene)
+                camera.position.set(0, 0, 50);
+                // camera.lookAt(new THREE.Vector3(0,-15,0))
+                controls.update()
+
+                // zoomCameraToSelection(camera, controls, scene);
+                
+                //camera.position.set(-150, -200, 80);
+                //camera.lookAt(new THREE.Vector3(0,0,0))
+                // controls.update();
+                setCurrentPartition(partition);
+                if (generateBuilding) {
+                    handleGenerate();
+                }
                 setGroupLength(lengthDegSet);
-                zoomCameraToSelection(camera, controls);
                 removeListeners();
                 controls.enableRotate = true;
                 setLoading(false);
@@ -150,17 +256,23 @@ export default function ProjectPage() {
         }
 
         async function applyReset() {
+            scene.clear();
+            camera.position.set(0,0,50)
+            camera.lookAt(new THREE.Vector3(0,0,0))
             setInitValues();
             createListeners();
+            removeSelector();
+            setGenerateBuilding(false);
+            setGenerated(false);
             controls.enableRotate = false;
             reset();
-            init();
             setIsDegenerate(true);
             setLoading(false);
         }
 
         if (isMounted) {
             if (applied) {
+                setLoading(true)
                 applyPart();
             } else {
                 applyReset();
@@ -168,8 +280,15 @@ export default function ProjectPage() {
         }
     }, [applied]);
 
+    const handleGenerate = (): void => {
+        setLoading(true);
+        scene.clear()
+        setGenerateBuilding(true);
+        setTrigger(!trigger);
+    }
+
     const handleApply = (): void => {
-        if(hasError){
+        if (hasError) {
             setApplied(false);
             setHasError(false);
         } else {
@@ -185,30 +304,47 @@ export default function ProjectPage() {
         }
 
         if (applied) {
+            scene.clear();
+            setGenerateBuilding(false);
+            setGenerated(false);
+            removeSelector();
             change();
+            // zoomCameraToSelection(camera, controls, scene)
+
+            camera.position.set(0,0,50)
+            controls.update()
+
+            // renderer.render(scene, camera)
         }
     }, [degIndex])
 
-    const handleDegChange = (index: number): void => {
-        setDegIndex(index);
-        setLoading(true);
-    }
-
     useEffect(() => {
-
         async function change() {
             if (nonDegIndex != prevNonDegRef.current) {
                 let dir = (nonDegIndex - prevNonDegRef.current) > 0;
-                await showPartition(dir ? 1 : -1);
+                let partition = await showPartition(dir ? 1 : -1);
+                setCurrentPartition(partition)
                 prevNonDegRef.current = nonDegIndex;
                 setLoading(false);
             }
         }
 
         if (applied) {
+            scene.clear();
+            setGenerateBuilding(false);
+            setGenerated(false);
+            removeSelector();
             change();
+            camera.position.set(0,0,50)
+            controls.update()
+            // zoomCameraToSelection(camera, controls, scene)
         }
     }, [nonDegIndex])
+
+    const handleDegChange = (index: number): void => {
+        setDegIndex(index);
+        setLoading(true);
+    }
 
     const handleNonDegChange = (dir: number) => {
         setLoading(true);
@@ -223,6 +359,62 @@ export default function ProjectPage() {
 
     const toggleGraphs = () => {
         setOpenGraphs(!openGraphs);
+    }
+
+    const toggleBuilding = () => {
+        function toggleGroupVisibility(group:THREE.Group, isVisible:boolean) {
+            group.traverse(function (child) {
+              if (child instanceof THREE.Mesh) {
+                child.visible = isVisible;
+              }
+            });
+          }
+
+        for(let i = 1; i < scene.children.length; i++){
+            toggleGroupVisibility(scene.children[i],!showBuilding);
+        }
+        setShowBuilding(!showBuilding)
+    }
+
+    const toggleGUI = () => {
+        if (openGUI == false) {
+            document.body.style.overflowY = 'hidden';
+        } else {
+            document.body.style.overflowY = 'auto';
+        }
+        setOpenGUI(!openGUI);
+    }
+
+    setMapUpdateCallback((updatedMap: any) => {
+        setSelectedMaterials(updatedMap.size);
+    });
+
+    const handleGUIChange = async (modelParams: modelParameters, displayParams: displayParameters) => {
+        let newParams = paramValues
+        let newDisplay = displayValues
+
+        function setNew() {
+            newParams['Story Height'] = modelParams['Story Height']
+            newParams['Structural'] = modelParams['Structural']
+            newDisplay['Stories'] = displayParams['Stories']
+            newDisplay['displayType'] = displayParams['displayType']
+        }
+
+        if (paramValues['Story Height'] != modelParams['Story Height'] ||
+            paramValues['Structural'] != modelParams['Structural']) {
+            setNew();
+            setLoading(true);
+            await compute(newParams, newDisplay, points, currentPartition)
+            setLoading(false);
+        } else if (displayValues['Stories'] != displayParams['Stories'] ||
+            displayValues['displayType'] != displayParams['displayType']) {
+            setNew();
+            setLoading(true);
+            await rhinoToThree(newParams, newDisplay, points, currentPartition);
+            setLoading(false);
+        }
+        setParamValues(newParams)
+        setDisplayValues(newDisplay)
     }
 
     const currentProjectIndex = allComputationalProjects.findIndex((project) => project.slugAsParams === 'min-rect-partition');
@@ -248,14 +440,8 @@ export default function ProjectPage() {
                 <p> {project.description} </p>
             </div>
             <div className={styles.contentContainer}>
-                <button className={styles.toggleGraphs} onClick={() => toggleGraphs()}>
-                    {openGraphs ?
-                        'Close'
-                        :
-                        'Explore degeneracies'
-                    }
-                </button>
-                {(applied && isDegenerate) &&
+                <div className={styles.canvasGUI}>
+                    {/* {(applied && isDegenerate) &&
                     (
                         <GraphCarousel
                             dataType="data:image/svg+xml;base64,"
@@ -264,73 +450,123 @@ export default function ProjectPage() {
                             openGraphs={openGraphs}
                         />
                     )
-                }
-                <div className={`${styles.canvasContainer} ${openGraphs ? styles.closed : styles.open}`} id='canvas-container'>
-                    {loading && <Spinner />}
-                    {hasError &&
-                        <div className={styles.blockCanvas}> 
-                            <p> There was an error partitioning your input. Here are some things to keep in mind. 
-                                <ul>
-                                    <li> - You can apply a partition to a shape with holes but not to multiple shapes.</li>
-                                    <li> - Holes cannot be nested. </li>
-                                </ul>
-                            </p>
+                } */}
+                    <div className={`${styles.canvasContainer}`} id='canvas-container'>
+                        {loading && <Spinner />}
+                        {selectedMaterials > 0 &&
+                            <div className={styles.toggleState}>
+                                Edit
+                                <div className={styles.stateButtonContainer}>
+                                    <button onClick={() => removeCassette()}> Open/Close </button>
+                                    <button onClick={() => removeUnit()}> Add/Remove </button>
+                                </div>
+                            </div>
+                        }
+                        {hasError &&
+                            <div className={styles.blockCanvas}>
+                                <p> There was an error partitioning your input. Here are some things to keep in mind.
+                                    <ul>
+                                        <li> - You can apply a partition to a shape with holes but not to multiple shapes.</li>
+                                        <li> - Holes cannot be nested. </li>
+                                    </ul>
+                                </p>
+                            </div>
+                        }
+                        
+                        <GUI
+                            handleGUIChange={handleGUIChange}
+                            openGUI={openGUI}
+                            toggle={toggleGUI}
+                        />
+                        <canvas className={styles.mainCanvas} id='canvas'> </canvas>
+                        <div className={styles.toggles}>
+                            <button className={styles.toggleGraphs} onClick={() => toggleGraphs()}>
+                                {openGraphs ?
+                                    'Close'
+                                    :
+                                    'Explore degeneracies'
+                                }
+                            </button>
+                            {generated && <button className={styles.toggleGUI} onClick={() => toggleGUI()}>Building Parameters</button>}
+                            {generated && <button className={styles.toggleGUI} onClick={() => toggleBuilding()}>Hide/Show Building</button>}
                         </div>
-                    }
-                    <canvas className={styles.mainCanvas} id='canvas'> </canvas>
-
-                    {applied &&
-                        (<div className={`${styles.nav} ${isDegenerate ? '' : styles.nondeg}`}>
+                        {applied &&
+                            (<div className={`${styles.nav} ${isDegenerate ? '' : styles.nondeg}`}>
+                                <button
+                                    type='button'
+                                    id='prevButton'
+                                    aria-label="Previous Partition"
+                                    onClick={() => handleNonDegChange(-1)}
+                                >
+                                    <ArrowLeftIcon className="noSelect h-6 w-12" />
+                                </button>
+                                <p>
+                                    Partition {nonDegIndex + 1} of {groupLength} {`${isDegenerate ? `under ${getCardinalAbbreviation(degIndex + 1)} nondegenerate set` : ''}`}
+                                </p>
+                                <button
+                                    type='button'
+                                    id='nextButton'
+                                    aria-label='Next Partition'
+                                    onClick={() => handleNonDegChange(1)}
+                                >
+                                    <ArrowRightIcon className="noSelect h-6 w-12" />
+                                </button>
+                            </div>)
+                        }
+                        <div className={styles.leftToggles}>
                             <button
-                                type='button'
-                                id='prevButton'
-                                aria-label="Previous Partition"
-                                onClick={() => handleNonDegChange(-1)}
+                                className={styles.computeButton}
+                                onClick={handleApply}
                             >
-                                <ArrowLeftIcon className="noSelect h-6 w-12" />
+                                {hasError ? 'Try again' : !applied ? 'Apply partition' : 'Create a new shape'}
                             </button>
-                            <p>
-                                Partition {nonDegIndex + 1} of {groupLength} {`${isDegenerate ? `under ${getCardinalAbbreviation(degIndex + 1)} nondegenerate set` : ''}`}
-                            </p>
-                            <button
-                                type='button'
-                                id='nextButton'
-                                aria-label='Next Partition'
-                                onClick={() => handleNonDegChange(1)}
-                            >
-                                <ArrowRightIcon className="noSelect h-6 w-12" />
-                            </button>
-                        </div>)
-                    }
+                            {!generateBuilding && <button className={styles.computeButton} onClick={handleGenerate}>Generate Building</button>}
+                        </div>
+                        
+                    </div>
+                    <div className={`${styles.GUIpanels} ${openGUI || openGraphs ? styles.open : styles.closed}`}>
+                        <GraphCarousel
+                            dataType="data:image/svg+xml;base64,"
+                            images={bipartite_figures}
+                            onImageChange={handleDegChange}
+                            openGraphs={openGraphs}
+                            toggle={toggleGraphs}
+                        />
+                    </div>
                 </div>
             </div>
-            <button
-                // onClick={handleComputeClick}
-                // disabled={true}
-                className={styles.computeButton}
-                // id='computeButton'
-                onClick={handleApply}
-            >
-                {hasError ? 'Try again': !applied ? 'Apply partition' : 'Create a new shape'}
-            </button>
             <div className={`${styles.content} ${styles.desktop}`}>
                 <h1> <strong>Directions</strong></h1>
-                <ol type="1"> 
-                    <li> Draw a polygon by clicking on the canvas to place vertices </li>
-                    <li> Press the escape key to undo </li>
+                <h2> <em>Draw Floorplan</em> </h2>
+                <ol type="1">
+                    <li> Click &quot;Create a new shape&quot; to draw a new floorplan</li>
+                    <li> Draw a shape by clicking on the canvas to place vertices (press the escape key to undo) </li>
                     <li> Return to your original point to close the shape </li>
                     <li> Add any number of polygonal holes by drawing shapes inside the polygon </li>
-                    <li> Click on &quot;Apply Partition&quot; </li>
-                    <li> Drag to rotate </li>
-                    <li> Drag two-fingers to zoom </li>
+                    <li> Click on &quot;Apply Partition&quot; to generate every possible minimal rectangular tiling of the input shape </li>
                 </ol>
-            </div> 
+                <h2> <em>In General</em> </h2>
+                <ol type="1">
+                    <li> Drag to rotate, use two-fingers to zoom, right-click drag to pan</li>
+                    <li> Explore every minimum rectangular tiling by navigating through the partitions across all non-degenerate sets </li>
+                    <li> Click &quot;Generate Building&quot; to render a building on top of the current partition</li>
+                    <li> Click &quot;Building Parameters&quot; to change the display and input parameters of the building model</li>
+                </ol>
+            </div>
             <div className={`${styles.content} ${styles.mobile}`}>
                 <h1> <strong>Directions</strong></h1>
+                <h2> <em>Draw Floorplan</em> </h2>
                 <ol type="1">
                     <li> You won&apos;t be able to draw a new shape on a touch screen</li>
                     <li> If you are on a device with a mouse, make the screen large</li>
                     <li> For the example below, drag to rotate, use two-fingers to zoom, change sets from the &quot;Explore Degenegeracies&quot; tab</li>
+                </ol>
+                <h2> <em>In General</em> </h2>
+                <ol type="1">
+                    <li> Drag to rotate, use two-fingers to zoom, right-click drag to pan</li>
+                    <li> Explore every minimum rectangular tiling by navigating through the partitions across all non-degenerate sets </li>
+                    <li> Click &quot;Generate Building&quot; to render a building on top of the current partition</li>
+                    <li> Click &quot;Building Parameters&quot; to change the display and input parameters of the building model</li>
                 </ol>
             </div>
             <div className={styles.content}>

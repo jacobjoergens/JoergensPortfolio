@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { scene, camera, renderer, controls } from './initThree.js'
+import { scene, camera, renderer, controls } from '../mass-timber-typology/initThree.js'
 export let crvPoints = [
         [
             [-17.32436752319336, 12.575545310974121, 0],

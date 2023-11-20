@@ -9,9 +9,10 @@ interface CarouselProps {
     images: string[];
     onImageChange: (index: number) => void;
     openGraphs: boolean;
+    toggle: () => void;
 }
 
-const GraphCarousel = ({ dataType, images, onImageChange, openGraphs }: CarouselProps) => {
+const GraphCarousel = ({ dataType, images, onImageChange, openGraphs, toggle }: CarouselProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const showImage = async (index: number) => {
@@ -70,6 +71,13 @@ const GraphCarousel = ({ dataType, images, onImageChange, openGraphs }: Carousel
 
     return (
         <div className={`${styles.carousel} ${openGraphs?styles.open:styles.closed}`}>
+            <div className={styles.exitGUI} >
+                {openGraphs && (
+                    <button aria-label="Close GUI" onClick={toggle}>
+                        Close
+                    </button>
+                )}
+            </div>
             <div className={`${styles.graphCarouselSlideContainer} ${currentIndex === 0 ? styles.start : ''}`}>
                 <div className={`noSelect ${styles.carouselImageContainer} `}>
                     {images?.map((image, index) => (

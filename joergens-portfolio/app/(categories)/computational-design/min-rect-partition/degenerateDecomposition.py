@@ -122,12 +122,14 @@ def generateGraphs(max_sets, G, top, bottom, horizontal, vertical, h_counter, v_
                 label_pos[node] = (pos[node][0] + 0.2, pos[node][1])
                 v+=step
 
+        nodeColor = '#eae9d2'
+
         for i in range(len(max_sets)):
             plt.figure(figsize=(2,9))
-            node_color = {node: 'black' if node in max_sets[i] else 'none' for node in node_list}
-            nx.draw_networkx_nodes(G, pos, node_size= min(200, 290-max_part_len*15),nodelist=node_list, node_shape='o', edgecolors='black', node_color=[node_color[node] for node in node_list])
+            node_color = {node: nodeColor if node in max_sets[i] else 'none' for node in node_list}
+            nx.draw_networkx_nodes(G, pos, node_size= min(200, 290-max_part_len*15),nodelist=node_list, node_shape='o', edgecolors=nodeColor, node_color=[node_color[node] for node in node_list])
             nx.draw_networkx_edges(G, pos, width=1.0, alpha=0.5, edge_color='gray')
-            nx.draw_networkx_labels(G, label_pos, labels, font_size=min(9, 9.9-max_part_len*0.15), font_family="monospace", font_color='black')
+            nx.draw_networkx_labels(G, label_pos, labels, font_size=min(9, 9.9-max_part_len*0.15), font_family="monospace", font_color=nodeColor)
             plt.xlim(-0.25, 1.25)
             plt.ylim(-1,10)
             plt.axis('off')

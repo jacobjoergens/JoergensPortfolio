@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { init, compute, scene, createListeners } from './initThree.js'
+import { init, compute, scene, createListeners, camera, controls, zoomCameraToSelection } from './initThree.js'
 import styles from "styles/pages/typology.module.css"
 import Spinner from '@/components/layout/Spinner';
 import GUI from '@/components/layout/CLTgui.js'
@@ -9,6 +9,7 @@ import { Mdx } from '@/components/mdx-components';
 import { allComputationalProjects } from 'contentlayer/generated';
 import Link from 'next/link';
 import { removeCassette, removeUnit, setMapUpdateCallback } from './interact.js';
+import * as THREE from 'three'
 
 interface LabelProps {
   label: string;
@@ -51,9 +52,7 @@ export default function GrasshopperPage() {
     'displayType': 'Textured'
   });
 
-  const handleGUIChange = (modelParams: any, displayParams: any) => {
-    console.log('modelParams:',modelParams)  
-    console.log('displayParams:',displayParams)  
+  const handleGUIChange = (modelParams: any, displayParams: any) => { 
     modelParams['Unit Width'] = [modelParams['Unit Width']]
     modelParams['Unit Length'] = [modelParams['Unit Length']]
     displayParams['Grid Width'] = [displayParams['Grid Width']]
@@ -70,9 +69,16 @@ export default function GrasshopperPage() {
 
   useEffect(() => {
     const callCompute = async () => {
-      await compute(paramValues, displayValues);
+      console.log('computing?')
+      const point = new THREE.Vector3(
+        -paramValues['Unit Width'][0]*displayValues['Grid Width'][0]/2,
+        -paramValues['Unit Length'][0]*displayValues['Grid Length'][0]/2,
+        -paramValues['Story Height']*displayValues['Stories']/2,)
+      await compute(paramValues, displayValues, [point]);
       if (scene) {
+        console.log('scene:',scene)
         setLoading(false);
+        zoomCameraToSelection(camera, controls, scene, 0.5, 6)
       } else {
         callCompute();
       }
@@ -90,7 +96,6 @@ export default function GrasshopperPage() {
     };
 
     runEffect(); // Run the async function
-
   }, [paramValues]);
 
   useEffect(() => {

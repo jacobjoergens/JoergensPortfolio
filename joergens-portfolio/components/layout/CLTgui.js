@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from 'styles/pages/typology.module.css';
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { compute, rhinoToThree } from "@/app/(categories)/computational-design/mass-timber-typology/initThree";
+import { zoomCameraToSelection, rhinoToThree, camera, controls, scene } from "@/app/(categories)/computational-design/mass-timber-typology/initThree";
+import * as THREE from 'three'
 
 function formatFeetAndInches(number) {
     // Extract feet and inches
@@ -126,6 +127,8 @@ export default function GUI({ handleGUIChange, openGUI, toggle }) {
         extractedDisplayValues['Grid Width'] = [extractedDisplayValues['Grid Width']]
         extractedDisplayValues['Grid Length'] = [extractedDisplayValues['Grid Length']]
         await rhinoToThree(extractedParamValues, extractedDisplayValues)
+
+        zoomCameraToSelection(camera, controls, scene, 0.5, 6)
       };
     
       const displaySliders = Object.keys(displaySliderValues).map(sliderName => {

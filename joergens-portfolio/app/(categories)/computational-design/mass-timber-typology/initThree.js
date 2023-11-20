@@ -443,9 +443,9 @@ function decodeItem(item) {
 }
 
 
-function animateRotation() {
-  const zstep = (camera.position.z-80)/5
-  const ystep = (camera.position.y+300)/5
+function animateRotation(ztarget, ytarget) {
+  const zstep = (camera.position.z-ztarget)/5
+  const ystep = (camera.position.y+ytarget)/5
   // Render the scene
   camera.position.z-=zstep
   camera.position.y-=ystep
@@ -453,8 +453,10 @@ function animateRotation() {
   renderer.render(scene, camera);
 
   // Continue the animation until the desired rotation is achieved
-  if (Math.abs(camera.position.z - 80)>1) {
-    requestAnimationFrame(animateRotation);
+  if (Math.abs(camera.position.z - ztarget)>1) {
+    requestAnimationFrame(function () {
+      animateRotation(ztarget, ytarget);
+    })
   }
 }
 
@@ -487,11 +489,16 @@ export function zoomCameraToSelection(camera, controls, selection, fitOffset = 1
   controls.maxDistance = distance * 10;
   
   camera.position.copy(center).sub(direction)
-  if(offsetY>0){
+  if(offsetY==2){
     camera.position.x=0;
     // camera.position.y=-300;
     // camera.position.z=80;
-    animateRotation();
+    animateRotation(80, 300);
+  } else if(offsetY==6){
+    controls.target.copy(center)
+    camera.position.x = center.x; 
+    camera.position.y-=100;
+    camera.position.z+=15;
   }
   camera.near = distance / 100;
   camera.far = distance * 100;

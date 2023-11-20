@@ -38,7 +38,7 @@ async function runCompute(params, bucketKey) {
         // call compute server
         try{
             const signedDefinitionURL = s3.getSignedUrl('getObject', params);
-            // const definition = 'https://joergens.blob.core.windows.net/grasshopper-definitions/stringPDB.gh'
+            // console.log(signedDefinitionURL)
             const response = await RhinoCompute.Grasshopper.evaluateDefinition(signedDefinitionURL, trees, false);
             const responseJson = await response.json();
             return responseJson;

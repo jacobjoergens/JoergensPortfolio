@@ -141,7 +141,6 @@ export async function collectResults(responseJson, displayParams) {
     throw new Error('No rhino objects to load!');
   }
   await rhinoToThree(displayParams);
-
   return false;
 }
 

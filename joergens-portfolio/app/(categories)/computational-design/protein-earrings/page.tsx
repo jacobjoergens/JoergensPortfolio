@@ -69,6 +69,7 @@ export default function GrasshopperPage() {
   useEffect(() => {
     const callCompute = async () => {
       await compute(paramValues, displayValues);
+
       if (scene && scene.children.length > 0) {
         setLoading(false);
       } else {

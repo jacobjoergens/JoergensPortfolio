@@ -1,20 +1,8 @@
 import AWS from 'aws-sdk'
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: 'us-east-2',
-});
 
 // const apiGatewayURL = 'https://u0whu8vww1.execute-api.us-east-2.amazonaws.com/production/min-rect-partition'
 
 export default async function getPartition(partitionCache: any, degSetIndex: number, index: number) {
-    // Create an AWS Lambda service object
-    const lambda = new AWS.Lambda();
-
     // Define the Lambda function name and payload
     const functionName = 'min-rect-partition'; // Replace with your Lambda function name
     const payload = {

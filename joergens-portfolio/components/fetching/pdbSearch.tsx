@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { StylesConfig } from 'react-select/dist/declarations/src';
@@ -147,7 +148,7 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ setAtomData }) => {
 
     const handleChange = (option: any) => {
         handleInputBlur();
-        setAtomData(option);
+        // setAtomData(option);
         async function download(entryID: string) {
             const pdbContent = await fetchPdbContent(entryID);
             if (pdbContent) {

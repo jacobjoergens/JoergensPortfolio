@@ -231,6 +231,7 @@ export default function ProjectPage() {
                 }
 
                 let partition = await showPartition(0,false);
+                console.log('part:',partition)
                 // setNonDegIndex(-nonDegIndex+1)
                 camera.position.set(0, 0, 50);
                 // // camera.lookAt(new THREE.Vector3(0,-15,0))
@@ -336,7 +337,6 @@ export default function ProjectPage() {
             setGenerateBuilding(false);
             setGenerated(false);
             removeSelector();
-            console.log('hello')
             change();
             camera.position.set(0,0,50)
             controls.update()
@@ -467,10 +467,10 @@ export default function ProjectPage() {
                         }
                         {hasError &&
                             <div className={styles.blockCanvas}>
-                                <p> There was an error partitioning your input. Here are some things to keep in mind.
+                                <p> There was an error partitioning your input. Here are some things to keep in mind:
                                     <ul>
-                                        <li> - You can apply a partition to a shape with holes but not to multiple shapes.</li>
-                                        <li> - Holes cannot be nested. </li>
+                                        <li> - You can apply a partition to a shape with holes but not to multiple shapes</li>
+                                        <li> - Holes cannot be nested </li>
                                     </ul>
                                 </p>
                             </div>
@@ -518,7 +518,7 @@ export default function ProjectPage() {
                         }
                         <div className={styles.leftToggles}>
                             <button
-                                className={styles.computeButton}
+                                className={`${styles.computeButton} ${hasError ? styles.errorReset:''}`}
                                 onClick={handleApply}
                             >
                                 {hasError ? 'Try again' : !applied ? 'Apply partition' : 'Create a new shape'}
@@ -562,7 +562,7 @@ export default function ProjectPage() {
                 <ol type="1">
                     <li> You won&apos;t be able to draw a new shape on a touch screen</li>
                     <li> If you are on a device with a mouse, make the screen large</li>
-                    <li> For the example below, drag to rotate, use two-fingers to zoom, change sets from the &quot;Explore Degenegeracies&quot; tab</li>
+                    <li> Change non-degenerate sets from the &quot;Explore Degenegeracies&quot; tab</li>
                 </ol>
                 <h2> <em>In General</em> </h2>
                 <ol type="1">

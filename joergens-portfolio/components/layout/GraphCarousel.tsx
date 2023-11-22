@@ -70,7 +70,7 @@ const GraphCarousel = ({ dataType, images, onImageChange, openGraphs, toggle }: 
     };
 
     return (
-        <div className={`${styles.carousel} ${openGraphs?styles.open:styles.closed}`}>
+        <div className={`${styles.carousel} ${openGraphs ? styles.open : styles.closed}`}>
             <div className={styles.exitGUI} >
                 {openGraphs && (
                     <button aria-label="Close GUI" onClick={toggle}>
@@ -78,65 +78,73 @@ const GraphCarousel = ({ dataType, images, onImageChange, openGraphs, toggle }: 
                     </button>
                 )}
             </div>
-            <div className={`${styles.graphCarouselSlideContainer} ${currentIndex === 0 ? styles.start : ''}`}>
-                <div className={`noSelect ${styles.carouselImageContainer} `}>
-                    {images?.map((image, index) => (
-                        <div
-                            className={`${styles.carouselSlide} ${currentIndex === index ? styles.active : ''}`}
-                            key={index}
-                        >
-                            <Image
-                                className='image'
-                                src={dataType + image}
-                                alt={`Image @ ${index}`}
-                                width={900}
-                                height={600}
-                            // fill={true}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-            {images && images.length > 1 &&
-                <ul className={styles.thumbnailIndicators}>
-                    {images?.map((image, index) => (
-                        <li
-                            className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
-                            key={index}
-                        >
-                            <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
-                                <div className={styles.thumbnailImageContainer}>
+            {(images && images.length > 0) ? (
+                <>
+                    <div className={`${styles.graphCarouselSlideContainer} ${currentIndex === 0 ? styles.start : ''}`}>
+                        <div className={`noSelect ${styles.carouselImageContainer} `}>
+                            {images?.map((image, index) => (
+                                <div
+                                    className={`${styles.carouselSlide} ${currentIndex === index ? styles.active : ''}`}
+                                    key={index}
+                                >
                                     <Image
+                                        className='image'
                                         src={dataType + image}
-                                        alt={`Thumbnail ${index + 1}`}
-                                        width={100}
-                                        height={100}
-                                        style={{ objectFit: 'contain' }}
+                                        alt={`Image @ ${index}`}
+                                        width={900}
+                                        height={600}
+                                    // fill={true}
                                     />
                                 </div>
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            }
-            <div className={styles.pagination}>
-                <button
-                    type="button"
-                    aria-label="Previous"
-                    className={`${styles.carouselButton}`}
-                    onClick={prevImage}
-                >
-                    <ArrowLeftIcon className="noSelect h-6 w-12" />
-                </button>
-                {images && <div> {currentIndex + 1}/{images.length}</div>}
-                <button
-                    aria-label="Next"
-                    className={`${styles.carouselButton}`}
-                    onClick={nextImage}
-                >
-                    <ArrowRightIcon className={`noSelect h-6 w-12`} />
-                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <ul className={styles.thumbnailIndicators}>
+                        {images?.map((image, index) => (
+                            <li
+                                className={`${styles.thumbnailIndicator} ${currentIndex === index ? styles.active : ''}`}
+                                key={index}
+                            >
+                                <button aria-label={`Thumbnail ${index + 1}`} onClick={() => showImage(index)}>
+                                    <div className={styles.thumbnailImageContainer}>
+                                        <Image
+                                            src={dataType + image}
+                                            alt={`Thumbnail ${index + 1}`}
+                                            width={100}
+                                            height={100}
+                                            style={{ objectFit: 'contain' }}
+                                        />
+                                    </div>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className={styles.pagination}>
+                        <button
+                            type="button"
+                            aria-label="Previous"
+                            className={`${styles.carouselButton}`}
+                            onClick={prevImage}
+                        >
+                            <ArrowLeftIcon className="noSelect h-6 w-12" />
+                        </button>
+                        {images && <div> {currentIndex + 1}/{images.length}</div>}
+                        <button
+                            aria-label="Next"
+                            className={`${styles.carouselButton}`}
+                            onClick={nextImage}
+                        >
+                            <ArrowRightIcon className={`noSelect h-6 w-12`} />
+                        </button>
+                    </div>
+                </>
+            ) : 
+            <div>
+                No Nondegenerate Sets
             </div>
+                }
         </div>
     );
 }

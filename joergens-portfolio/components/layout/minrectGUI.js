@@ -68,7 +68,6 @@ export default function GUI({ handleGUIChange, openGUI, toggle }) {
 
         extractedParamValues['Structural'] = structural;
         extractedDisplayValues['displayType'] = selectedDisplay;
-        console.log('extract:',extractedParamValues)
         handleGUIChange(extractedParamValues, extractedDisplayValues);
     };
 
@@ -126,7 +125,6 @@ export default function GUI({ handleGUIChange, openGUI, toggle }) {
 
         extractedParamValues['Structural'] = structural;
         extractedDisplayValues['displayType'] = selectedDisplay;
-        console.log('change',extractedDisplayValues)
         handleGUIChange(extractedParamValues, extractedDisplayValues);
         // await rhinoToThree(extractedParamValues, extractedDisplayValues, points)
     };
@@ -165,7 +163,6 @@ export default function GUI({ handleGUIChange, openGUI, toggle }) {
     }
 
     useEffect(() => {
-        console.log('trigger')
         handleParamSliderMouseUp()
     }, [selectedDisplay])
 

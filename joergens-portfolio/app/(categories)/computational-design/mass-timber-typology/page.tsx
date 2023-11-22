@@ -69,14 +69,12 @@ export default function GrasshopperPage() {
 
   useEffect(() => {
     const callCompute = async () => {
-      console.log('computing?')
       const point = new THREE.Vector3(
         -paramValues['Unit Width'][0]*displayValues['Grid Width'][0]/2,
         -paramValues['Unit Length'][0]*displayValues['Grid Length'][0]/2,
         -paramValues['Story Height']*displayValues['Stories']/2,)
       await compute(paramValues, displayValues, [point]);
       if (scene) {
-        console.log('scene:',scene)
         setLoading(false);
         zoomCameraToSelection(camera, controls, scene, 0.5, 6)
       } else {

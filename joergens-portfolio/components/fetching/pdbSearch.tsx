@@ -154,9 +154,11 @@ const PdbSearchBar: React.FC<PdbSearchBarProps> = ({ setAtomData }) => {
             if (pdbContent) {
                 const atom_record = pdbContent
                     .split('\n')
-                    .filter(line => line.trim().startsWith('ATOM'))
-                    .join('\n'); // Join the filtered lines back into a single string
-                setAtomData(atom_record);
+                    .filter(line => line.trim().startsWith('ATOM'));
+                    // .join('\n'); // Join the filtered lines back into a single string
+                console.log('atom_record length:',atom_record.length)
+                const joined_atom_record = atom_record.join('\n');
+                setAtomData(joined_atom_record);
             }
 
         }

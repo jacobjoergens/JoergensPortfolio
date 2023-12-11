@@ -106,7 +106,7 @@
 }
 
 .computeButton {
-    z-index: 1000;
+    z-index: 500;
 }
 
 .computeButton:hover {

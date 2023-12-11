@@ -122,11 +122,11 @@
 }
 
 .navItems {
-    padding-top: 100px;
+    padding-top: 3rem;
     display: flex;
     flex-direction: column;
     white-space: pre-line;
-    justify-content: space-around;
+    /* justify-content: space-around; */
     line-height: 0.9;
     height: 100%;
     overflow-y: auto;

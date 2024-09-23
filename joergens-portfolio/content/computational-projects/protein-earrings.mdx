@@ -1,6 +1,6 @@
 ---
 title: "Protein Earrings" 
-description: "What you’re looking at are earrings whose design is derived from protein structure. You'll find a fuller description of the model below along with directions, next steps, and technical overview." 
+description: "What you’re looking at are earrings whose design is derived from protein structure. You'll find a fuller description of the model below along with directions and technical overview." 
 ---
 # **Directions** 
 In the control panel, use the buttons and sliders to change the model and display parameters. These are explained in the description section. The default protein is the crystal structure of sOPH, a hydrolase found in microbes shown to break down PVA plastics. However, you can search by title for any protein in the [RCSB database](https://www.rcsb.org/) to change the underlying structure.
@@ -43,15 +43,6 @@ At each atom position the model receives from input, it places a metaball point 
 ### Changes the size of the earring hook
 
 There are other, hidden parameters that also feed into the model’s grammatical structure. I’ve decided not to include these in the user interface for a few different reasons. The first is to try to limit artifacts. Similar to what can happen in real protein synthesis, the grammatical structure of this model is blind to input. Whereas in nature, genetic mutations might yield protein variants that take on new, unexpected functions possibly associated with disease, this model’s grammar will output mutant forms (e.g. 2D shards, disjoint volumes) if fed a particular mix of inputs. I can’t calculate which of the hundreds of thousands of possible inputs will generate artifacts but I have constrained certain value ranges and filtered out everything but the largest mesh to avoid generating artifacts. The second reason I decided to limit user-facing parameters was to keep things simple. There is quite a lot to take in as it is and the parameter space already provides a dizzying number of possible combinations to explore. The third reason was to keep things running quickly. Some of these algorithms (marching cubes and mesh refinement in particular) can become remarkably expensive from a computational standpoint. To keep the language fluent, I decided to hide parameters that might cost more than a second. 
-
-# **Next Steps** 
-First and foremost, I’d like to make some of these. If you generate a pair of earrings that you like and want to have them made, note down the parameters you used and email me at jacob.joergens@gmail.com. 
-
-Second, I want to add some features. Off the top, it would be nice to be able to save parameters and download the 3dm file of the output geometry. 
-
-Third, there are still some parts of the model I’d like to optimize to further reduce computational load and wait times. 
-
-Fourth, if there’s decent interest then in the medium term I’d like to make an online storefront for these which would require some work. 
 
 # **How It Works**
 Input data is sent to a Grasshopper file which is passed to a Rhino.Compute server hosted on an AWS EC2 instance. The Rhino compute server returns rhino3dm JSON data which is loaded and rendered in the browser using Three.js. There are three categories of input data: 1) parameter values, 2) display values and 3) pdb atom data. Parameter and display values are both set in the graphical user interface. Changes to display values only trigger re-renders in the browser because they only involve Three.js. All other changes trigger calls to the Rhino.Compute Server to run the grasshopper file with updated parameters. When the page loads and all the components mount, the Rhino.Compute server is called with a default protein, in this case an enzyme found to break down PVA plastics. This default PDB data can be changed from the search bar which queries the RCSB Protein Data Bank API. 

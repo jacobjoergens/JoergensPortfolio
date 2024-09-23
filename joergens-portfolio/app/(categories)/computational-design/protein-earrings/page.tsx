@@ -126,6 +126,7 @@ export default function GrasshopperPage() {
         </Link>
         </div>
         <div className={styles.content}>
+            <div className='relative flex w-full border border-black rounded-lg p-2 text-center mb-4 justify-center'>Check out my online storefront, <a className='pl-1 text-[var(--primary-color)]' href='https://www.deinansatz.com'>dein Ansatz</a>, for a new, improved and fuller tool!</div>
             <h1>
                 <strong>What You&apos;re Looking At</strong>
             </h1>

@@ -2,6 +2,7 @@ import './globals.css'
 import { Schibsted_Grotesk } from 'next/font/google'
 import Script from 'next/script'
 import Footer from '@/components/layout/Footer'
+import { Analytics } from "@vercel/analytics/react"
 
 const grotesk = Schibsted_Grotesk({
   subsets: ['latin'],

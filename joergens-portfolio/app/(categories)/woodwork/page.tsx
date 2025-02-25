@@ -1,4 +1,3 @@
-'use client'
 import { allWoodworkingProjects } from "contentlayer/generated"
 import Navigation from "@/components/layout/Navigation"
 import Layout from "@/components/layout/Layout";

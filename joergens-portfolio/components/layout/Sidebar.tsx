@@ -82,7 +82,7 @@ const Sidebar = ({ isSidebarOpen, handleToggleSidebar }: SidebarProps) => {
                 className={
                   pathname === '/resume' ? styles.sidebarItemActive : styles.sidebarItem
                 }
-                href="/Joergens_Resume_2024.pdf" download="/Joergens_Resume_2024.pdf"
+                href="/Joergens Resume 2025.pdf" download="/Joergens Resume 2025.pdf"
               >
                 Resume
               </Link>

@@ -1,7 +1,5 @@
-'use client'
 import { allWoodworkingProjects } from "contentlayer/generated";
 import styles from "@/styles/pages/woodworking.module.css";
-import React from "react";
 import Carousel from "@/components/layout/Carousel";
 import { ArrowUturnLeftIcon, ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";

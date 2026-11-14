@@ -1,6 +1,7 @@
 'use client'
 import * as THREE from 'three';
 import { ArcballControls } from 'three/addons/controls/ArcballControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader';
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 import rhino3dm from 'rhino3dm';
@@ -65,12 +66,13 @@ export async function init() {
   camera.up.set(0,1,0)
   camera.lookAt(new THREE.Vector3(0,0,0))
   renderer.toneMappingExposure = 1.0;
-  controls = new ArcballControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
+  // controls = new ArcballControls(camera, renderer.domElement);
   controls.enableRotate = true;
-  controls.cursorZoom = true;
+  // controls.cursorZoom = true;
   controls.enablePan = true;
   controls.rotateSpeed = 0.2;
-  // controls.enableZoom = true;
+  controls.enableZoom = true;
   controls.update();
   controls.saveState();
   animate()
@@ -463,53 +465,97 @@ function animateRotation(ztarget, ytarget) {
 /**
  * Helper function that behaves like rhino's "zoom to selection", but for three.js!
  */
-export function zoomCameraToSelection(camera, controls, selection, fitOffset = 1.4, offsetY = 0) {
+// export function zoomCameraToSelection(camera, controls, selection, fitOffset = 1.4, offsetY = 0) {
+//   const box = new THREE.Box3();
+//   for(let i = 0; i<selection.children.length; i++){
+//     const child = selection.children[i]
+//     if(child instanceof THREE.Group){
+//       box.expandByObject(child);
+//     }
+//   }
+//   // const helper = new THREE.Box3Helper(box)
+//   // scene.add(helper)
+//   const size = box.getSize(new THREE.Vector3());
+//   const center = box.getCenter(new THREE.Vector3());
+//   const maxSize = Math.max(size.x, size.y, size.z);
+//   const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
+//   const fitWidthDistance = fitHeightDistance / camera.aspect;
+//   const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+//   // controls.target.copy(center)
+
+//   const direction = center.clone()
+//   .sub(camera.position)
+//   .normalize()
+//   .multiplyScalar(distance);
+//   controls.maxDistance = distance * 10;
+  
+//   camera.position.copy(center).sub(direction)
+//   if(offsetY==2){
+//     camera.position.x=0;
+//     // camera.position.y=-300;
+//     // camera.position.z=80;
+//     animateRotation(80, 300);
+//   } else if(offsetY==6){
+//     controls.target.copy(center)
+//     camera.position.x = center.x; 
+//     camera.position.y-=100;
+//     camera.position.z+=15;
+//   }
+//   camera.near = distance / 100;
+//   camera.far = distance * 100;
+  
+//   // camera.position.copy(center).sub(direction);
+
+//   // camera.lookAt(center)
+//   // camera.up = new THREE.Vector3(0,1,0)
+//   // camera.updateProjectionMatrix();
+//   controls.camera = camera
+//   controls.cursorZoom = true;
+//   controls.update()
+
+//   return center;
+// }
+
+export function zoomCameraToSelection(camera, controls, selection = scene, fitOffset = 1.1) {
+  renderer.render(scene, camera)
   const box = new THREE.Box3();
-  for(let i = 0; i<selection.children.length; i++){
-    const child = selection.children[i]
-    if(child instanceof THREE.Group){
-      box.expandByObject(child);
-    }
+  const Box3Helper = new THREE.Box3Helper(box, new THREE.Color(1, 0, 0));
+  // scene.add(Box3Helper);
+  // const axes = new THREE.AxesHelper(100);
+  // scene.add(axes);
+
+  let offset = 0
+  if ((selection instanceof THREE.Mesh || selection instanceof THREE.LineSegments) && selection.visible) {
+    box.expandByObject(selection)
+    offset = 60
+  } else {
+    selection.traverse((object) => {
+      if ((object instanceof THREE.Mesh || object instanceof THREE.LineSegments) && object.visible) {
+        box.expandByObject(object);
+      }
+    })
   }
-  // const helper = new THREE.Box3Helper(box)
-  // scene.add(helper)
+
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
+  console.log(center)
   const maxSize = Math.max(size.x, size.y, size.z);
   const fitHeightDistance = maxSize / (2 * Math.atan(Math.PI * camera.fov / 360));
   const fitWidthDistance = fitHeightDistance / camera.aspect;
   const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
-  // controls.target.copy(center)
 
-  const direction = center.clone()
-  .sub(camera.position)
-  .normalize()
-  .multiplyScalar(distance);
-  controls.maxDistance = distance * 10;
-  
-  camera.position.copy(center).sub(direction)
-  if(offsetY==2){
-    camera.position.x=0;
-    // camera.position.y=-300;
-    // camera.position.z=80;
-    animateRotation(80, 300);
-  } else if(offsetY==6){
-    controls.target.copy(center)
-    camera.position.x = center.x; 
-    camera.position.y-=100;
-    camera.position.z+=15;
-  }
-  camera.near = distance / 100;
+  controls.target = center;
+  camera.near = 0.01;
   camera.far = distance * 100;
-  
-  // camera.position.copy(center).sub(direction);
 
-  // camera.lookAt(center)
+  // if (bust.visible) {
+  //   camera.position.set(center.x - (distance * 1.5) / 1.9, center.y, (distance * 1.5) / 4) 
+  // } else {
+  camera.position.set(center.x, -distance*3, center.z)
+  camera.up = new THREE.Vector3(0,0,1)
+  // }
+  // camera.position.set(center.x, center.y, distance*2)
   // camera.up = new THREE.Vector3(0,1,0)
-  // camera.updateProjectionMatrix();
-  controls.camera = camera
-  controls.cursorZoom = true;
-  controls.update()
-
-  return center;
+  camera.lookAt(center)
+  controls.update();
 }

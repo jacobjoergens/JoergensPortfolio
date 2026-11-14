@@ -1,3 +1,7 @@
 .contentlayer/
 .next/
 .env
+
+# Python bytecode / JetBrains IDE
+__pycache__/
+.idea/
